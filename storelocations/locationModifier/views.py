@@ -17,6 +17,18 @@ from django.shortcuts import render
 from bs4 import BeautifulSoup
 import threading
 import time
+import configparser
+Config = configparser.RawConfigParser()
+data='configuration.ini'
+Config.read(data)
+config={}
+for each_sec in Config.sections():
+    config=dict((k, v) for k, v in  Config.items(each_sec))
+PATH=config.get('allpath')
+print(PATH)
+DRIVE=config.get('drive')
+
+
 class GetCompanyName(View):
     def get(self,request):
         companyname=request.GET.get('cname')
@@ -124,11 +136,11 @@ class GetCompanyName(View):
 from copy import deepcopy
 def gethtml(request):
     ip=str(socket.gethostbyname(socket.gethostname()))
-    internLIST=os.listdir(r'D:/jeevan/django/excelsheets')
+    internLIST=os.listdir(PATH)
     dataList=[]
     internLISTCopy=deepcopy(internLIST)
     for x in internLIST:
-        list=os.listdir(r'D:/jeevan/django/excelsheets/'+x)
+        list=os.listdir(PATH+x)
         if len(list)==0:
             internLISTCopy.remove(x)
         if len(list)!=0:
@@ -153,36 +165,26 @@ import datetime
 def jeevan():
     ip=None
     oldip=None
-    with open(r'D:\jeevan\django\storelocations\storelocations\ip.txt','r') as orr:
-        oldip=str(orr.readline())
+    try:
+        ip=str(socket.gethostbyname(socket.gethostname()))
+        with open(DRIVE+r'ip.txt','r') as orr:
+            oldip=str(orr.readline())
+        if ip.strip()!=oldip.strip():
+            send_mail_to_interns(ip)
+    except:
+        send_mail_to_interns(ip)
+def send_mail_to_interns(ip):
+    time=datetime.datetime.today()
+    print("ip is changed sending Email......to Interns")
+    body="Hello Interns\nIMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n For Getting Company Info id Ip is changed...at {time}\n Use this New url http://{ip}:7000/Home/   \n showing Bugs http://{ip}:7000/showbugs/ \n Please Use this urls in Mozila Browser\n IMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n                             Thank you".format(ip=ip,time=time)
+    send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in'])
+    with open(DRIVE+'ip.txt','w') as orr:
+        orr.write(ip)
 
-    ip=str(socket.gethostbyname(socket.gethostname()))
-    if ip.strip()!=oldip.strip():
-        time=datetime.datetime.today()
-        print("ip is changed sending Email......to Interns")
-        body="Hello Interns\nIMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n For Getting Company Info id Ip is changed...at {time}\n Use this New url http://{ip}:7000/Home/   \n showing Bugs http://{ip}:7000/showbugs/ \n Please Use this urls in Mozila Browser\n IMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n                             Thank you".format(ip=ip,time=time)
-        send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in',
-        'shalu.manisha@gmail.com',
-        'anusha.upputholla@cogentdatasolutions.in',
-        'rasikapotekar18@gmail.com',
-        'prasadpamidi579@gmail.com',
-        'pbandla8@gmail.com',
-        'santhialapati6@gmail.com',
-        'ravalim03@gmail.com',
-        'ponnala.aravindz@gmail.com',
-        'madhu21897@gmail.com',
-        'madarapuvarshini@gmail.com',
-        'katkamrohit11@gmail.com',
-        'navyasri671@gmail.com',
-        'devaki.sowmya@gmail.com',
-        'doolamravali432@gmail.com',
-        'tgc290397@gmail.com',])
-        with open(r'D:\jeevan\django\storelocations\storelocations\ip.txt','w') as orr:
-            orr.write(ip)
-try:
-    jeevan()
-except:
-    print("Internet Is not available Please send Manually.....!")
+jeevan()
+# except Exception as e:
+#     print(e)
+#     print("Internet Is not available Please send Manually.....!",str(e))
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')
@@ -260,16 +262,16 @@ def Fileuploader(request):
     pathname=request.POST['uploadIntern']
 
     for excelsheets in xceldata:
-        path=r'D:/jeevan/django/excelsheets/'+pathname+"/"+excelsheets.name
+        path=PATH+pathname+"/"+excelsheets.name
         fileread=open(path,'wb+')
         for chunk in excelsheets.chunks():
             fileread.write(chunk)
         fileread.close()
-    internLIST=os.listdir(r'D:/jeevan/django/excelsheets')
+    internLIST=os.listdir(PATH)
     dataList=[]
     internLISTCopy=deepcopy(internLIST)
     for x in internLIST:
-        list=os.listdir(r'D:/jeevan/django/excelsheets/'+x)
+        list=os.listdir(PATH+x)
         if len(list)==0:
             internLISTCopy.remove(x)
         if len(list)!=0:
@@ -277,25 +279,25 @@ def Fileuploader(request):
     return render(request,"Home.html",{'upload_status':"succsess",'dataLIST':dataList,"INTERNS":internLISTCopy})
 def deleteExcelSheets(request):
     pathname=request.GET.get('fname')
-    excelList=os.listdir(r'D:/jeevan/django/excelsheets/'+pathname)
+    excelList=os.listdir(PATH+pathname)
     if len(excelList)!=0:
         for excel in excelList:
-            os.remove(r'D:/jeevan/django/excelsheets/'+pathname+'/'+excel)
-    internLIST=os.listdir(r'D:/jeevan/django/excelsheets')
+            os.remove(PATH+pathname+'/'+excel)
+    internLIST=os.listdir(PATH)
     dataList=[]
     internLISTCopy=deepcopy(internLIST)
     for x in internLIST:
-        list=os.listdir(r'D:/jeevan/django/excelsheets/'+x)
+        list=os.listdir(PATH+x)
         if len(list)==0:
             internLISTCopy.remove(x)
         if len(list)!=0:
             dataList.append({x:list})
     return render(request,"Home.html",{'delete_status':"success",'dataLIST':dataList,"INTERNS":internLISTCopy})
 def viewfiles(request):
-    internLIST=os.listdir(r'D:/jeevan/django/excelsheets')
+    internLIST=os.listdir(PATH)
     dataList=[]
     for x in internLIST:
-        list=os.listdir(r'D:/jeevan/django/excelsheets/'+x)
+        list=os.listdir(PATH+x)
         if len(list)==0:
             internLIST.remove(x)
         else:
@@ -390,7 +392,7 @@ def raiseBug(request):
     datasave.save()
     bug=Bugs.objects.filter(company_info_id=cinfoid).latest()
     for excelsheets in bug_image:
-        path=r'D:/jeevan/django/storelocations/static/images/'+str(bug.Bug_id)+".png"
+        path=DRIVE+r'/jeevan/django/storelocations/static/images/'+str(bug.Bug_id)+".png"
         fileread=open(path,'wb+')
         for chunk in excelsheets.chunks():
             fileread.write(chunk)
@@ -514,13 +516,13 @@ def automated_deletion(model_obj):
     try:
         delete_request=requests.get(model_obj.apply_link,timeout=1000)
     except:
-        delte_file=open(r"""D:\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""connectionError.txt""",'a')
+        delte_file=open(DRIVE+r"""\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""connectionError.txt""",'a')
         delte_file.write(link+"  connectionError  "+str(datetime.datetime.now())+"\n")
         delte_file.close()
     else:
         if delete_request.status_code>=400 and delete_request.status_code<=499:
             model_obj.delete()
-            delte_file=open(r"""D:\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""deleteLink.txt""",'a')
+            delte_file=open(DRIVE+r"""\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""deleteLink.txt""",'a')
             delte_file.write(link+"   error400   "+str(datetime.datetime.now())+"\n")
             delte_file.close()
         elif delete_request.status_code>=200 and delete_request.status_code<=399:
@@ -532,12 +534,12 @@ def automated_deletion(model_obj):
             for error in error_list:
                 if error.lower() in page_text:
                     model_obj.delete()
-                    delte_file=open(r"""D:\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""deleteLink.txt""",'a')
+                    delte_file=open(DRIVE+r"""\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""deleteLink.txt""",'a')
                     delte_file.write(link+"  "+str(error)+"  "+str(datetime.datetime.now())+"\n")
                     delte_file.close()
                     break
         else:
-            delte_file=open(r"""D:\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""connectionError.txt""",'a')
+            delte_file=open(DRIVE+r"""\\jeevan\\django\\storelocations\\DeletedLinks\\"""+str(datetime.datetime.today().date())+"""connectionError.txt""",'a')
             delte_file.write(link+" error500  "+str(datetime.datetime.now())+"\n")
             delte_file.close()
 

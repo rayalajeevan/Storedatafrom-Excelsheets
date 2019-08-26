@@ -15,6 +15,7 @@ from langdetect import detect,detect_langs
 import time
 import requests
 import json
+import configparser
 import datetime as dt
 from copy import deepcopy
 from bs4 import BeautifulSoup
@@ -32,6 +33,15 @@ import re
 # arr=open(r'C:\Users\Emphyd12146rjee1\Desktop\test.html','w')
 # arr.write(str(data.get('job_description')).encode('ascii', 'ignore').decode("utf-8"))
 # arr.close()
+Config = configparser.RawConfigParser()
+data='configuration.ini'
+Config.read(data)
+config={}
+for each_sec in Config.sections():
+    config=dict((k, v) for k, v in  Config.items(each_sec))
+PATH=config.get('allpath')
+DRIVE=config.get('DRIVE')
+
 class ExcelSheetData(View):
     def get(self,request,*args,**kwrgs):
         pathname=request.GET.get('fname')
@@ -53,7 +63,7 @@ class ExcelSheetData(View):
         interns=0
         internsdupli=0
         jobsdupli=0
-        excelSheetList=os.listdir(r'D:/jeevan/django/excelsheets/'+pathname)
+        excelSheetList=os.listdir(PATH+pathname)
         finshed_task_sheets=[]
         columnnameError=[]
         columnnameErrorCount=0
@@ -70,19 +80,19 @@ class ExcelSheetData(View):
             joblist=[]
             parentList=[]
             childList=[]
-            path=r"D:/jeevan/django/excelsheets/"+pathname+"/{0}".format(sheet)
+            path=PATH+pathname+"/{0}".format(sheet)
             list=pd.read_excel(path)
             if sheet not in finshed_task_sheets:
                 companies+=1
                 if 'parent' in sheet or 'child'in sheet:
                     if 'parent' in sheet:
                         sheet1=[sh for sh in excelSheetList if sheet.replace('parent','child')==sh][0]
-                        path=r"D:/jeevan/django/excelsheets/"+pathname+"/{0}".format(sheet1)
+                        path=PATH+pathname+"/{0}".format(sheet1)
                         childListDataFrame=pd.read_excel(path)
                         parentlistDataframe=list
                     elif 'child' in sheet :
                         sheet1=[sh for sh in excelSheetList if sheet.replace('child','parent')==sh][0]
-                        path=r"D:/jeevan/django/excelsheets/"+pathname+"/{0}".format(sheet1)
+                        path=PATH+pathname+"/{0}".format(sheet1)
                         parentlistDataframe=pd.read_excel(path)
                         print(sheet,"-------",sheet1)
                         childListDataFrame=list
@@ -194,7 +204,7 @@ class ExcelSheetData(View):
                             dated['modified_date']=validatos(job['posted_date'])
                             datesList.append(dated)
                         except ValueError:
-                            open_html=open(r'C:\Users\Emphyd12146rjee1\Downloads\sample.html','w')
+                            open_html=open(r'C:\sample.html','w')
                             data="<body><b>scrappedBy</b>:{scarpby}<br><b>{job_title}</b><br><b>{posted_date}</b><br><b>{excel}</b></body>".format(scarpby=pathname,job_title=job.get('job_title'),posted_date=job.get('posted_date'),excel=sheet)
                             open_html.write(data)
                             open_html.close()
@@ -792,7 +802,7 @@ class DeleteModelObject(View):
 import os
 from django.http import Http404,HttpResponse
 def filedownlod(request):
-    filepath=r"D:\jeevan\django\excelsheetdatastore\media\Internships Catergories.xlsx"
+    filepath=DRIVE+r"\jeevan\django\excelsheetdatastore\media\Internships Catergories.xlsx"
     with open(filepath,'rb') as orr:
         respone=HttpResponse(orr.read(),content_type="application/.xlsx")
         respone['Content-Disposition']='inline; filename=' + filepath
