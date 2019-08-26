@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input[type=text], input[type=file],select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit],input[type=button]{
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover,input[type=button]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 2px;
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+#companydata {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#companydata td, #companydata th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#companydata tr:nth-child(even){background-color: #f2f2f2;}
+
+#companydata tr:hover {background-color: #ddd;}
+
+#companydata th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align:left;
+  background-color: #4CAF50;
+  color: white;
+}
+#uploaddata1 th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-right: 15px;
+  padding-left: 15px;
+  text-align:left;
+  background-color: #4CAF50;
+  color: white;
+}
+#uploaddata1 td, #uploaddata1 th {
+  border: 1px solid #ddd;
+  padding: 12px;
+}
+#companydata {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+</style>
+</head>
+
+<body>
+<h5 id="hidediv" onclick="show()" style="display:none"><font  size='2px'color="green">Show Search Bar</font></h5>
+<div id='showdiv'>
+  <form>
+    <label for="fname">Company Name</label>
+    <table>
+      <tr>
+        <td align='left'>
+    <input type="text" id="cname" name="firstname"  onkeypress="pageNaterNation()"placeholder="companyname..">
+  </td>
+  <td align='right'>
+    <select id="ddlViewBy">
+  <option value="1">Internships</option>
+  <option value="2" selected="selected">Company's</option>
+</select>
+  </td>
+</tr>
+  </table>
+
+
+    <input type="submit" value="Submit" onclick="return getCompanyInfoID(0)" id='showdiv'>
+</form>
+</div>
+
+<table id='cdata'><tr>
+  <td style="text-align:left">
+<h5 id="show"></h5></td>
+<td align="right">
+<h5 id='0'  text-align="right"  class="pageNation" onclick="pageNation(this)"><font size='3px' color="green"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             click here</font>   To see another 10</h5>
+</td>
+</tr>
+</table>
+<label id='lb'></label>
+<table id="companydata">
+  <tr>
+    <th>Company_name</th>
+    <th>company_info_id</th>
+    <th>jobs</th>
+  </tr>
+</table>
+<form id="myForm" action="/fileupload/" method="POST" enctype="multipart/form-data" >
+{% csrf_token %}
+  <table style="display:block" id='uploaddata' align="center">
+  <tr><td>
+  <input type='file' name='upload' accept=".xlsx,.xlsm" id='uploadfile'  multiple>
+
+</td><td>
+<select name='uploadIntern' id='intern'>
+  <option value="select">------------------------------Select-----------------------</option>
+  <option value="anusha">Anusha</option>
+  <option value="Sowmya">Sowmya</option>
+  <option value="Manisha">Manisha</option>
+  <option value="Rasika">Rasika</option>
+  <option value="Pravalika">Pravalika</option>
+  <option value="Ravali.D">Ravali.D</option>
+  <option value="Prasad">Prasad</option>
+  <option value="Ravali">Ravali</option>
+  <option value="Santhi sudha">Santhi sudha</option>
+   <option value="aravindh">aravindh</option>
+    <option value="Navya Sri">Navya Sri</option>
+    <option value="Rohit">Rohit</option>
+    <option value="madhu">madhu</option>
+    <option value="Himavarshini">Himavarshini</option>
+    <option value="Gopichand">Gopichand</option>
+
+</select></td>
+</tr>
+<tr><td><input type="submit"value="Upload" onclick="return FileselectoValidator()"></td><td>
+<input type="button" onclick="return Dumpdatabase()" value="Store To DataBase"></td>
+<td><input type="button" onclick="return DeleteFiles()" value="Delete excelsheets"></td></tr>
+</table>
+</form>
+<div style="display:block" id='uploader' >
+{% if INTERNS %}
+
+  <Span>FILES</Span>
+<table id="files">
+  <tr>
+    {% for name in INTERNS|slice:"0:5" %}
+    <th>{{ name }}</th>
+    {% endfor %}
+</tr>
+<tr>
+  {% for sheet in dataLIST|slice:"0:5" %}
+    {%  for key, value in sheet.items %}
+    <td>
+
+        <ol>
+      {% for data in value %}
+          <li>
+     <div class="dropdown">
+  <span class="dropbtn" id="{{ data }}sp">{{ data }}</span>
+  <div class="dropdown-content">
+    <a class="{{ key }}" id="{{ data }}" onclick="deleteIndividualSeet(this)">Delete Sheet</a>
+
+  </div>
+</div>
+          </li>
+      {% endfor%}
+    </ol>
+
+  </td>
+  {% endfor%}
+  {% endfor%}
+</tr>
+</table>
+<table id="files">
+  <tr>
+    {% for name in INTERNS|slice:"5:" %}
+    <th>{{ name }}</th>
+    {% endfor %}
+</tr>
+<tr>
+  {% for sheet in dataLIST|slice:"5:" %}
+    {%  for key,value in sheet.items %}
+    <td>
+
+        <ol>
+      {% for data in value %}
+   <li>   <div class="dropdown">
+  <span class="dropbtn" id="{{ data }}sp">{{ data }}</span>
+  <div class="dropdown-content">
+    <a class="{{ key }}" id="{{ data }}" onclick="deleteIndividualSeet(this)">Delete Sheet</a>
+
+  </div>
+</div>
+      {% endfor%}
+    </ol>
+
+  </td>
+  {% endfor%}
+  {% endfor%}
+</tr>
+</table>
+{% endif %}
+</div>
+<script type="text/javascript">
+
+var deletedatastatus="{{ delete_status }}"
+var alertforuplaoddata="{{ upload_status }}"
+var ipr="{{ data }}"
+if (ipr!=""){
+localStorage.setItem("ip", "{{ data }}");
+}
+if (alertforuplaoddata!=""){
+  alert(alertforuplaoddata)
+  location.href="http://"+localStorage.getItem("ip")+":7000/Home"
+}
+if (deletedatastatus!=""){
+  alert(deletedatastatus)
+  location.href="http://"+localStorage.getItem("ip")+":7000/Home"
+}
+function fun1(){
+document.getElementById("myForm").reset();
+}
+fun1();
+function deletesheet(the){
+    console.log(the)
+}
+function FileselectoValidator(){
+  if (document.getElementById("uploadfile").files.length == 0){
+    alert("Please  select Atleast One File")
+    return false
+  }
+  if (document.getElementById("intern").value=='select'){
+    alert("Please  select Atleast One Intern name")
+    return false
+  }
+
+}
+function deleteIndividualSeet(sheet){
+    let sheetname=sheet.id;
+    let foldername=sheet.className
+    let request=new XMLHttpRequest()
+    let req=request.open("get","http://"+localStorage.getItem('ip')+":7000/deleteindividualsheet/?folder="+foldername+"&sheet="+sheetname)
+    request.onreadystatechange=function () {
+        if(this.status==200 && this.readyState==4 ){
+            var status=JSON.parse(this.responseText)
+            alert(status["status"])
+            document.getElementById(sheet.id+"sp").innerHTML=sheet.id.strike()
+        }
+    }
+    request.send()
+}
+  function getCompanyInfoID(page){
+
+    var page=page
+    var e = document.getElementById("ddlViewBy");
+    var strUser = e.options[e.selectedIndex].value;
+    var show=document.getElementById('show')
+    show.innerText=""
+
+    var tablen=document.getElementById("companydata").rows.length;
+    if (tablen>1){
+    for(let i=0;i<=tablen;i++){
+      var intablen=document.getElementById("companydata").rows.length;
+      if (intablen>1){
+      document.getElementById("companydata").deleteRow(1)
+    }
+    }
+  }
+
+    var companyname=document.getElementById('cname').value;
+    var xhttp = new XMLHttpRequest();
+    var req=xhttp.open('GET','http://'+localStorage.getItem('ip')+':7000/getCompanyInfoID?cname='+companyname+'&pg='+page+'&val='+strUser)
+     xhttp.onreadystatechange = function() {
+       if(this.status==200 && this.readyState==4)
+       {
+         var data=JSON.parse(this.responseText)
+         var show=document.getElementById('show')
+         show.innerText="Showing "+data['showmin']+" to "+data['showmax']+" of "+data['max']
+         for(let i=0;i<=data["data"].length;i++){
+           var tabledata=document.getElementById('companydata').getElementsByTagName('tbody')[0]
+           var jobdata=data["data"][i]["jobsdata"]
+           let seletcor="<select onchange='return jobViwer(this)'><option>-------------------------------------------------------------------------Select-------------------------------------------------------------------------</option>"
+           for (x in jobdata){
+             let optioner="<option value='"+jobdata[x]["job_id"]+"' id='"+jobdata[x]["type"]+"'>"+jobdata[x]["job_title"] +"</option>"
+             seletcor=seletcor+optioner
+
+           }
+           seletcor=seletcor+"</select>"
+           var cname=data["data"][i]["company_name"]
+           var cid=data["data"][i]["company_info_id"]
+           var txt="<tr><td>"+cname+"</td><td><a href='http://{{ data }}:7000/comapnydata?cinfoid="+cid+"&val="+strUser+"'>"+cid+"</a></td><td>"+seletcor+"</td></tr>"
+
+           var olddata=tabledata.innerHTML;
+           seletcor=""
+           tabledata.innerHTML=olddata+txt
+
+         }
+
+       }
+       if (this.status>=400 && this.status<=600 && this.readyState==4)
+       {
+        var lbl= document.getElementById('lb');
+        lbl.innerText="Somethig Went wrong Try Again"
+       }
+     }
+    xhttp.send()
+    hide()
+    return false
+  }
+  function pageNation(the){
+    pg=parseInt(the.id)
+    pg=pg+1
+    getCompanyInfoID(pg)
+    the.id=pg
+  }
+  function pageNaterNation(){
+    var data=document.getElementsByClassName('pageNation')[0].id=0
+
+
+  }
+  function hide(){
+    document.getElementById('showdiv').style.display = "none";
+    document.getElementById('hidediv').style.display = "block";
+    document.getElementById('uploaddata').style.display = "none";
+    document.getElementById('uploader').style.display = "none";
+
+
+  }
+  function show(){
+    document.getElementById('showdiv').style.display = "block";
+    document.getElementById('hidediv').style.display = "none";
+    document.getElementById('uploaddata').style.display = "block"
+      document.getElementById('uploaddata1').style.display = "block"
+
+  }
+function jobViwer(val){
+  value=val.value
+  type=val[val.selectedIndex].id
+  txtarea="http://"+localStorage.getItem('ip')+":7000/jobView/?id="+value+"&type="+type
+  window.open(txtarea)
+}
+
+function Dumpdatabase(){
+  var fname=document.getElementById('intern').value
+  if (fname=="select"){
+    alert("Please select Atleast One Folder")
+    return false
+  }
+  window.open("http://"+localStorage.getItem("ip")+":8000/storedata/?auth=ksjdnvk&fname="+fname)
+
+}
+function DeleteFiles(){
+  var fname=document.getElementById('intern').value
+  if (fname=="select"){
+    alert("Please select Atleast One Folder")
+    return false
+  }
+  location.href="http://"+localStorage.getItem("ip")+":7000/deleteExcelSheets?fname="+fname
+}
+
+function requestSender(url){
+  var xhttp = new XMLHttpRequest();
+  var req=xhttp.open('GET',url)
+   xhttp.onreadystatechange = function() {
+     if(this.status==200 && this.readyState==4)
+     {
+       var data=JSON.parse(this.responseText)
+       return data
+     }
+     if (this.status>=400 && this.status<=600 && this.readyState==4){
+       return  897
+     }
+}
+xhttp.send()
+}
+function popup(mylink, windowname) {
+    if (! window.focus)return true;
+    var href;
+    if (typeof(mylink) == 'string') href=mylink;
+    else href=mylink.href; window.open(href, windowname, 'width=1200,height=600,scrollbars=yes');
+    return false; }
+    var Notificationdata;
+    function getNotification()
+    {
+
+    var xhttp = new XMLHttpRequest();
+    if (localStorage.getItem('noti')!=null){
+    var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid="+localStorage.getItem('noti'))
+    }
+    else{
+    var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid=14")
+    }
+    xhttp.onreadystatechange = function() {
+     if(this.status==200 && this.readyState==4)
+     {
+       Notificationdata=JSON.parse(this.responseText)
+       if (Notificationdata["data"]!=5){
+             if(localStorage.getItem('noti')==null){
+               localStorage.setItem('noti',14)
+               localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+             }
+             else if (parseInt(Notificationdata["data"]["bugid"])>parseInt(localStorage.getItem('noti'))){
+               localStorage.setItem('noti',Notificationdata["data"]["bugid"])
+               localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+               let assignby =JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_by"]
+               let assignto=JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_to"]
+               var notification = new Notification('Scrapping BugRaised', {
+                 icon: 'https://d2.alternativeto.net/dist/icons/octoparse_112785.png?width=200&height=200&mode=crop&upscale=false',
+                 body: 'Hii '+assignby+' rasied bug  on '+assignto});
+         }
+
+       }
+       else{
+         localStorage.setItem('noti',parseInt(localStorage.getItem('noti'))+1)
+       }
+     }
+     if (this.status>=400 && this.status<=600 && this.readyState==4){
+       return  897
+     }
+    }
+
+    xhttp.send()
+    }
+
+
+    // setInterval(function () { getNotification(); }, 15000);;
+
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+    #companydata {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 50%;
+    }
+
+    #companydata td, #companydata th {
+      border: 1px solid #ddd;
+      padding: 5px;
+    }
+
+    #companydata tr:nth-child(even){background-color: #f2f2f2;}
+
+    #companydata tr:hover {background-color: #ddd;}
+
+    #companydata th {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      text-align:left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+}
+
+
+
+
+
+
+#right {
+  width: 45%;
+  float: left;
+}
+.mainDiv {
+  width: 900px;
+margin-left: auto;
+margin-right: auto;
+}
+#left {
+  width: 45%;
+  float: left;
+}
+    </style>
+</head>
+<script>
+data="{{ data }}"
+var x;
+if (data!=""){
+
+  location.href="http://"+localStorage.getItem('ip')+":7000/pushcompany/"
+}
+</script>
+<body>
+  <div class='mainDiv'>
+  <div id="left">
+<form action="/pushcompany/" method="post">
+    {% csrf_token %}
+{{ form.as_p }}
+    <input type="submit" value="StoreCompanyData">
+</form>
+</div>
+<div id="right">
+<input type="text" id='txt'><br>
+<input type="button" value="Search" onclick="return searchLocationId()">
+<table id="companydata">
+  <tr>
+    <th>LocationId</th>
+    <th>City</th>
+    <th>State</th>
+  </tr>
+  <tr>
+    <td><span id='id' onclick="applyId(this)"></span></td>
+    <td><span id='city'></span></td>
+    <td><span id='state'></span></td>
+  </tr>
+</table>
+</div>
+</div>
+<script>
+function searchLocationId(){
+  pin_code=document.getElementById('txt').value
+  let request=new XMLHttpRequest()
+  let req=request.open("get","http://"+localStorage.getItem('ip')+":7000/getlocationid/?postal_code="+pin_code)
+  request.onreadystatechange=function () {
+      if(this.status==200 && this.readyState==4 ){
+          var status=JSON.parse(this.responseText)
+          document.getElementById('id').innerHTML="<h5>"+status["data"][0]["id"]+"</h5>"
+          document.getElementById('city').innerHTML="<h5>"+status["data"][0]["city"]+"</h5>"
+          document.getElementById('state').innerHTML="<h5>"+status["data"][0]["state"]+"</h5>"
+          return false
+      }
+      if(this.status>=300 && this.status<=500 && this.readyState==4){
+        alert("Something went Wrong Try again.........")
+        return false
+      }
+  }
+  request.send()
+}
+function applyId(val){
+  document.getElementById('locationId').value=val.innerText
+
+}
+</script>
+</body>
+</html>

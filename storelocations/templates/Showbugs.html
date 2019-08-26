@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Bugs DashBoard</title>
+    <style>
+    input[type=text], input[type=file],input[type=password],select {width: 50%;padding: 12px 20px;margin: 8px 0;display: inline-block;border: 1px solid #ccc;border-radius: 4px;box-sizing: border-box;
+    }
+
+    input[type=submit],button{width: 55%;background-color: #4CAF50;color: white;padding: 14px 20px;margin: 10px 0;border: none;border-radius: 3px;cursor: pointer;height: 20px;
+    }
+
+    input[type=submit]:hover,input[type=button]:hover {background-color: #45a047;
+    }
+
+    div {border-radius: 2px;background-color: #f2f2f2;padding: 10px;
+    }
+    #companydata {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;
+    }
+
+    #companydata td, #companydata th {border: 1px solid #ddd;padding: 8px;
+    }
+
+    #companydata tr:nth-child(even){background-color: #f2f2f2;}
+
+    #companydata tr:hover {background-color: #ddd;}
+
+    #companydata th {padding-top: 12px;padding-bottom: 12px;text-align:left;background-color: #4CAF50;color: white;};#uploaddata1 th {padding-top: 12px;padding-bottom: 12px;padding-right: 15px;padding-left: 15px;text-align:left;background-color: #4CAF50;color: white;};#uploaddata1 td, #uploaddata1 th {border: 1px solid #ddd;padding: 12px;};#companydata {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;
+    }
+div{
+    width: 300px;
+    height:50px;
+}
+select{
+    width: 250px;
+    height: 40px;
+}
+    input[type=date]{
+        width: 250px;
+    height: 35px;
+        border-radius: 4px;
+    }
+    </style>
+    <script>
+    var ipr="{{ ip }}"
+    if (ipr!=""){
+      localStorage.setItem('ip',ipr)
+    }
+    var objAgent = navigator.userAgent
+    if ((objOffsetVersion=objAgent.indexOf("Firefox"))==-1) {
+ alert("Please use Mozilla")
+}
+    var status="{{ status }}"
+    if (status!=""){
+      location.href='http://'+localStorage.getItem('ip') +':7000/showbugs/'
+    }
+    function home(){
+      location.href="http://"+localStorage.getItem('ip')+":7000/viewjobscount/"
+    }
+    function viewbug(the){
+      location.href="http://"+localStorage.getItem('ip')+":7000/viewbug?bugid="+the.id
+
+    }
+
+    var Notificationdata;
+    function getNotification()
+    {
+
+    var xhttp = new XMLHttpRequest();
+    if (localStorage.getItem('noti')!=null){
+    var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid="+localStorage.getItem('noti'))
+    }
+    else{
+    var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid=14")
+    }
+    xhttp.onreadystatechange = function() {
+     if(this.status==200 && this.readyState==4)
+     {
+       Notificationdata=JSON.parse(this.responseText)
+       if (Notificationdata["data"]!=5){
+             if(localStorage.getItem('noti')==null){
+               localStorage.setItem('noti',14)
+               localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+             }
+             else if (parseInt(Notificationdata["data"]["bugid"])>parseInt(localStorage.getItem('noti'))){
+               localStorage.setItem('noti',Notificationdata["data"]["bugid"])
+               localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+               let assignby =JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_by"]
+               let assignto=JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_to"]
+               var notification = new Notification('Scrapping BugRaised', {
+                 icon: 'https://d2.alternativeto.net/dist/icons/octoparse_112785.png?width=200&height=200&mode=crop&upscale=false',
+                 body: 'Hii '+assignby+' rasied bug on '+assignto});
+         }
+
+       }
+       else{
+         localStorage.setItem('noti',parseInt(localStorage.getItem('noti'))+1)
+       }
+     }
+     if (this.status>=400 && this.status<=600 && this.readyState==4){
+       return  897
+     }
+    }
+
+    xhttp.send()
+    }
+
+
+    // setInterval(function () { getNotification(); }, 15000);;
+    </script>
+  </head>
+  <body>
+
+    <a id="Home" onclick="return home()"><strong>Home</strong></a>
+    <table>
+        <form method="POST" action="/showbugs/">
+            {%    csrf_token %}
+        <tr>
+            <td>
+                <div>
+                    <span>Assigned BY</span><br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;               <select name="Bug_assigned_by__icontains">
+                        <option value="select">--select--</option>
+                        <option value="Manisha">Manisha</option>
+                        <option value="Santhi sudha">Santhi sudha</option>
+                        <option value="Prasad">Prasad</option>
+                        <option value="pravalika">pravalika</option>
+                        <option value="jeevan">Jeevan</option>
+                    </select>
+                </div>
+            </td>
+
+            <td>
+                <div>
+                    <span>Assigned To</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="Bug_assigned_to">
+                      <option value="select">------------------------------Select-----------------------</option>
+                      <option value="anusha">Anusha</option>
+                      <option value="Sowmya">Sowmya</option>
+                      <option value="Manisha">Manisha</option>
+                      <option value="Rasika">Rasika</option>
+                      <option value="Pravalika">Pravalika</option>
+                      <option value="Ravali.D">Ravali.D</option>
+                      <option value="Prasad">Prasad</option>
+                      <option value="Ravali">Ravali</option>
+                      <option value="Santhi sudha">Santhi sudha</option>
+                       <option value="aravindh">aravindh</option>
+                        <option value="Navya Sri">Navya Sri</option>
+                        <option value="Rohit">Rohit</option>
+                        <option value="madhu">madhu</option>
+                        <option value="Pushpa">Pushpa</option>
+                        <option value="DurgaDevi">DurgaDevi</option>
+                        <option value="madhu">madhu</option>
+                        <option value="Himavarshini">Himavarshini</option>
+                        <option value="Gopichand">Gopichand</option>
+    <option value="jeevan">jeevan</option>
+                    </select>
+                </div>
+            </td>
+             <td>
+                <div>
+                    <span>Resolved</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="Resolved__icontains">
+                        <option value="select">--select--</option>
+                        <option value="True">Resolved</option>
+                        <option value="False">Not Resolved</option>
+                    </select>
+                </div>
+            </td>
+              <td>
+                <div>
+                    <span>Assigned date</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" name="Assigned_date__icontains">
+
+                </div>
+                  <br>
+              </td>
+        </tr>
+            <tr>
+                <td></td><td></td><td></td><td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="Search" style="height: 40px">
+            </td></td>
+            </tr>
+        </form>
+    </table>
+
+    <table id="companydata">
+      <tr>
+        <th>BugId</th>
+        <th>Company Info id</th>
+        <th>company Name</th>
+        <th>Assigned Date</th>
+        <th>Assigned To</th>
+        <th>Assigned BY</th>
+      </tr>
+      {% for obj in data %}
+      <tr>
+        <td><a onclick="return viewbug(this)" id="{{ obj.bug_id}}">{{ obj.bug_id}}</a></td>
+        <td>{{ obj.company_info_id}}</td>
+        <td>{{ obj.company_name }}</td>
+        <td>{{ obj.assignedDate}}</td>
+        <td>{{ obj.assignTo }}</td>
+        <td>{{ obj.assigned_by }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

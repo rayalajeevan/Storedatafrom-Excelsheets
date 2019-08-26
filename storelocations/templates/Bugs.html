@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Bugs DashBoard</title>
+    <style>
+    input[type=text], input[type=file],input[type=password],select {width: 50%;padding: 12px 20px;margin: 8px 0;display: inline-block;border: 1px solid #ccc;border-radius: 4px;box-sizing: border-box;
+    }
+
+    input[type=submit],button{width: 25%;background-color: #4CAF50;color: white;padding: 14px 20px;margin: 8px 0;border: none;border-radius: 3px;cursor: pointer;
+    }
+
+    input[type=submit]:hover,input[type=button]:hover {background-color: #45a049;
+    }
+
+    div {border-radius: 2px;background-color: #f2f2f2;padding: 10px;
+    }
+    #companydata {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;
+    }
+
+    #companydata td, #companydata th {border: 1px solid #ddd;padding: 8px;
+    }
+
+    #companydata tr:nth-child(even){background-color: #f2f2f2;}
+
+    #companydata tr:hover {background-color: #ddd;}
+
+    #companydata th {padding-top: 12px;padding-bottom: 12px;text-align:left;background-color: #4CAF50;color: white;};#uploaddata1 th {padding-top: 12px;padding-bottom: 12px;padding-right: 15px;padding-left: 15px;text-align:left;background-color: #4CAF50;color: white;};#uploaddata1 td, #uploaddata1 th {border: 1px solid #ddd;padding: 12px;};#companydata {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div id='Login' align='center' style="display:block">
+      <form>
+      <input type="text" name="" id='username' placeholder="Username" required><br>
+      <input type='password' name="" value="" id='password' placeholder="Password" required><br>
+      <input type="submit" name="button" value="Login" onclick=" return login()">
+      </div>
+    </form>
+      <div id="logout" style="display:none">
+        <a  onclick=" return logout()" align='right'>Logout</a>
+      </div>
+
+  </body>
+<script type="text/javascript">
+var ipr="{{ ip }}"
+if (ipr!=""){
+  ip="{{ ip}}"
+}
+var status="{{ status}}"
+if (status!=""){
+  location.href="http://"+ip+":7000/showbugs"
+}
+var cred;
+function getCred(){
+  var xhttp = new XMLHttpRequest();
+  var req=xhttp.open('GET','http://'+localStorage.getItem('ip')+':7000/getcred?auth=jeeVAN')
+   xhttp.onreadystatechange = function() {
+     if(this.status==200 && this.readyState==4)
+     {
+       cred=JSON.parse(this.responseText)
+     }
+     if (this.status>=400 && this.status<=600 && this.readyState==4){
+       return  897
+     }
+}
+xhttp.send()
+}
+getCred()
+
+  if (localStorage.getItem('user')!=null){
+    location.href='http://'+localStorage.getItem('ip')+':7000/viewjobscount/'
+  }
+
+  function login(){
+    var data=""
+    var userid=document.getElementById('username').value;
+    var passwd=document.getElementById('password').value;
+    for (let obj in cred["data"]){
+    if (userid==cred["data"][obj]["username"] && cred["data"][obj]["password"]==passwd){
+
+      localStorage.setItem('user',cred["data"][obj]["username"])
+      location.href='http://'+localStorage.getItem('ip')+':7000/viewjobscount/'
+      data="login"
+      return false
+    }
+  }
+  if (data==""){
+  alert("Please Enter Valid Credentilas")
+  return false
+}
+return false
+}
+
+var Notificationdata;
+function getNotification()
+{
+
+var xhttp = new XMLHttpRequest();
+if (localStorage.getItem('noti')!=null){
+var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid="+localStorage.getItem('noti'))
+}
+else{
+var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid=14")
+}
+xhttp.onreadystatechange = function() {
+ if(this.status==200 && this.readyState==4)
+ {
+   Notificationdata=JSON.parse(this.responseText)
+   if (Notificationdata["data"]!=5){
+         if(localStorage.getItem('noti')==null){
+           localStorage.setItem('noti',14)
+           localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+         }
+         else if (parseInt(Notificationdata["data"]["bugid"])>parseInt(localStorage.getItem('noti'))){
+           localStorage.setItem('noti',Notificationdata["data"]["bugid"])
+           localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+           let assignby =JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_by"]
+           let assignto=JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_to"]
+           var notification = new Notification('Scrapping BugRaised', {
+             icon: 'https://d2.alternativeto.net/dist/icons/octoparse_112785.png?width=200&height=200&mode=crop&upscale=false',
+             body: 'Hii '+assignby+' rasied bug  on '+assignto});
+     }
+
+   }
+   else{
+     localStorage.setItem('noti',parseInt(localStorage.getItem('noti'))+1)
+   }
+ }
+ if (this.status>=400 && this.status<=600 && this.readyState==4){
+   return  897
+ }
+}
+
+xhttp.send()
+}
+
+
+// setInterval(function () { getNotification(); }, 15000);;
+</script>
+</html>

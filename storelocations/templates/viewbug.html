@@ -1,0 +1,105 @@
+
+<html>
+{% load static %}
+<style>
+input[type=text], input[type=file],input[type=password],select {width: 50%;padding: 12px 20px;margin: 8px 0;display: inline-block;border: 1px solid #ccc;border-radius: 4px;box-sizing: border-box;
+}
+
+input[type=submit],button{width: 25%;background-color: #4CAF50;color: white;padding: 14px 20px;margin: 8px 0;border: none;border-radius: 3px;cursor: pointer;
+}
+
+input[type=submit]:hover,input[type=button]:hover {background-color: #45a049;
+}
+
+div {border-radius: 2px;background-color: #f2f2f2;padding: 10px;
+}
+#companydata {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;
+}
+
+#companydata td, #companydata th {border: 1px solid #ddd;padding: 8px;
+}
+
+#companydata tr:nth-child(even){background-color: #f2f2f2;}
+
+#companydata tr:hover {background-color: #ddd;}
+
+#companydata th {padding-top: 12px;padding-bottom: 12px;text-align:left;background-color: #4CAF50;color: white;};#uploaddata1 th {padding-top: 12px;padding-bottom: 12px;padding-right: 15px;padding-left: 15px;text-align:left;background-color: #4CAF50;color: white;};#uploaddata1 td, #uploaddata1 th {border: 1px solid #ddd;padding: 12px;};#companydata {font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;
+}
+
+</style>
+<script>
+var Notificationdata;
+function getNotification()
+{
+
+var xhttp = new XMLHttpRequest();
+if (localStorage.getItem('noti')!=null){
+var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid="+localStorage.getItem('noti'))
+}
+else{
+var req=xhttp.open('GET',"http://"+localStorage.getItem('ip')+":7000/bugnotification?bugid=14")
+}
+xhttp.onreadystatechange = function() {
+ if(this.status==200 && this.readyState==4)
+ {
+   Notificationdata=JSON.parse(this.responseText)
+   if (Notificationdata["data"]!=5){
+         if(localStorage.getItem('noti')==null){
+           localStorage.setItem('noti',14)
+           localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+         }
+         else if (parseInt(Notificationdata["data"]["bugid"])>parseInt(localStorage.getItem('noti'))){
+           localStorage.setItem('noti',Notificationdata["data"]["bugid"])
+           localStorage.setItem(localStorage.getItem('noti'),JSON.stringify(Notificationdata))
+           let assignby =JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_by"]
+           let assignto=JSON.parse(localStorage.getItem(localStorage.getItem('noti')))["data"]["Bug_assigned_to"]
+           var notification = new Notification('Scrapping BugRaised', {
+             icon: 'https://d2.alternativeto.net/dist/icons/octoparse_112785.png?width=200&height=200&mode=crop&upscale=false',
+             body: 'Hii '+assignby+' rasied bug on '+assignto});
+     }
+
+   }
+   else{
+     localStorage.setItem('noti',parseInt(localStorage.getItem('noti'))+1)
+   }
+ }
+ if (this.status>=400 && this.status<=600 && this.readyState==4){
+   return  897
+ }
+}
+
+xhttp.send()
+}
+
+
+// setInterval(function () { getNotification(); }, 15000);;
+</script>
+<body><div id='BugRaise'>
+  <h3 align='center'>Resolve Bug</h3>
+  <form action="/ResolveBug/" method="POST">
+    {% csrf_token %}
+    <label><strong>Assigned By</strong></label><br>
+    <input type="hidden" name="bugid" value="{{ bug_id }}">
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='text' name='assignby' placeholder="Assigned By" required value="{{ assignBy }}" disabled><br>
+  <label><strong>Company Info Id</strong></label><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='text' name='infoid' placeholder="company_info_id"  value="{{cid}}" required disabled ><br>
+  <label><strong>Assign to</strong></label><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name='assignTo' required>
+    <option selected="{{assignTo}}">{{ assignTo }}</option>
+    </select><br>
+  <table>
+    <tr>
+      <td>
+  <label><strong>Bug description</strong></label><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<textarea name='Bugdesc' style="margin: 0px; width: 768px; height: 199px;" required disabled>{{ bugdesc}}</textarea></td><td>
+  <img src="{% static 'images/'%}{{ bug_id}}.png" alt="iame" width="500" height="280"></td>
+</tr></table>
+  {% if Resolved %}
+    <input type='submit' value='Resolve' >
+  {%else%}
+  <input type='submit' value='Already Resolved'  disabled>
+  {% endif %}
+</form>
+</div>
+</body>
+</html>

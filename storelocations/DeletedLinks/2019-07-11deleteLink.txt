@@ -1,0 +1,58 @@
+https://careers-uhy-us.icims.com/jobs/1729/corporate-finance-associate/job   error400   2019-07-11 04:25:30.202109
+https://careers-uhy-us.icims.com/jobs/1729/corporate-finance-associate/job   error400   2019-07-11 04:25:37.574530
+https://careers-forrester.icims.com/jobs/5146/customer-success-manager%2c-iii/job?hub=6   error400   2019-07-11 04:25:38.888605
+https://xerox.dejobs.org/webster-ny/data-analyst/1CF66A55C1B7447FA3F82CD7722BE274/job/   error400   2019-07-11 04:25:43.230854
+https://xerox.dejobs.org/webster-ny/program-team-technician/A1B0842418F640E8A73FB6F590C115E0/job/   error400   2019-07-11 04:25:43.255855
+https://xerox.dejobs.org/webster-ny/temporary-iwf-manufacturing-toner-packaging-machine-operator/A0486A72A6DE47EDACB04D7312153CB8/job/   error400   2019-07-11 04:25:43.282857
+https://xerox.dejobs.org/new-brunswick-can/administrative-support-associate-ii/D9F5EB566BAB449CB469259F17506BE8/job/   error400   2019-07-11 04:25:43.282857
+https://xerox.dejobs.org/branchburg-nj/print-supervisor-service-delivery-operations/AA3A829F4B844145AEA8C01793A411BE/job/   error400   2019-07-11 04:25:43.287857
+https://xerox.dejobs.org/webster-ny/professional-i-engineering-technical-support/EAB829B8F21740A7B9F64DDA6B26ACD3/job/   error400   2019-07-11 04:25:43.288857
+https://xerox.dejobs.org/virtual-usa/help-desk-manager/A749E07B9CBF4C6B9E298317BB4DE296/job/   error400   2019-07-11 04:25:43.319859
+https://xerox.dejobs.org/norwalk-ct/senior-executive-assistant/AC2028F71760430695F0D7E58036510A/job/   error400   2019-07-11 04:25:43.924894
+https://xerox.dejobs.org/portland-or/intelligent-workplace-services-specialist/5F6A53CA1F0F493E926CD141C7179577/job/   error400   2019-07-11 04:25:43.931894
+https://xerox.dejobs.org/raleigh-nc/xerox-it-program-manager/B2BBB5F4C6BE4764AFE4937DF3EFA3CF/job/   error400   2019-07-11 04:25:43.956895
+https://careers.cbiz.com/en-US/job/audit-tax-intern-spring-2020/J3Q18L63W8Q6Q9SPF97  job you have requested cannot be found  2019-07-11 04:26:31.689626
+https://jobs-bakertilly.icims.com/jobs/12136/senior-manager-%e2%80%93-national-tax---international-tax-services/job?mobile=false&width=584&height=500&bga=true&needsRedirect=false&jan1offset=0&jun1offset=0   error400   2019-07-11 04:27:14.052049
+https://jobs-bakertilly.icims.com/jobs/12157/tax-staff-consultant/job?mobile=false&width=584&height=500&bga=true&needsRedirect=false&jan1offset=0&jun1offset=0   error400   2019-07-11 04:27:14.075050
+https://jobs-bakertilly.icims.com/jobs/12308/staff-consultant/job?mobile=false&width=584&height=500&bga=true&needsRedirect=false&jan1offset=0&jun1offset=0   error400   2019-07-11 04:27:16.424184
+https://jobs.smilebrands.com/job/111915/Treatment-Coordinator  trying to apply for has been filled  2019-07-11 04:27:27.124796
+https://jobs.smilebrands.com/job/111861/Full-Time-Floater-Traveling-Dental-Hygienist  trying to apply for has been filled  2019-07-11 04:27:27.176799
+https://careers.southwestair.com/job/29874/Facilities-Maint-Tech   error400   2019-07-11 04:27:28.584880
+https://jobs.naturesbountyco.com/en-US/job/blending-operator-d/J3Q13C69ZDLW6PBDBBV  job you have requested cannot be found  2019-07-11 04:27:34.939243
+https://jobs.intel.com/ShowJob/Id/2127851/HR-Business-Analyst-(Temporary)/  the job you are looking for cannot be found  2019-07-11 04:27:49.189058
+https://h30631.www3.hp.com/job/tlaquepaque/americas-inventory-planner/3544/12238722  your creativity and your career at HP. We’ve been waiting for you  2019-07-11 04:28:08.064138
+https://jobs.target.com/job/owings-mills/asset-protection-specialist/1118/12459866  this job post no longer exists  2019-07-11 04:29:38.954336
+https://jobs.target.com/job/owings-mills/target-security-specialist/1118/12459858  this job post no longer exists  2019-07-11 04:29:40.309414
+https://www.coinbase.com/careers/positions/1658795   error400   2019-07-11 04:30:01.593631
+https://careers-chickfila.icims.com/jobs/6725/sr.-business-analyst%2c-cfa-business-services/job   error400   2019-07-11 04:30:03.059715
+https://career-schwab.icims.com/jobs/41538/managing-director---product-owner%2c-digital-services/job   error400   2019-07-11 04:31:46.619638
+https://careers.generalmills.com/job/9421369/senior-sourcing-manager-north-america-marketing-minneapolis-mn/   error400   2019-07-11 04:31:52.038948
+https://careers.cbiz.com/en-US/job/hr-business-analyst/J3P5Y36936K4J6F7Z3N  job you have requested cannot be found  2019-07-11 04:32:15.954316
+https://jobs.lever.co/zoom/f457e5aa-1b10-48ba-9b14-9a59679b8265   error400   2019-07-11 04:32:44.877971
+https://careers.fcagroup.com/job/9762481/indirect-purchasing-special-projects-lead-process-methods-senior-specialist-b-auburn-hills-mi/   error400   2019-07-11 04:33:36.111901
+https://careers.intuitive.com/jobs/192175?%3Flang=en-us   error400   2019-07-11 04:33:39.555098
+https://careers.enterprise.com/job/clearwater/car-detailer-cleawater/430/12177933  Job Not Found  2019-07-11 04:34:43.544758
+https://careers.enterprise.com/job/aurora/part-time-car-washer-south-aurora/430/12180978  Job Not Found  2019-07-11 04:34:43.990784
+https://careers.enterprise.com/job/grand-rapids/part-time-rental-sales-agent/430/12195115  Job Not Found  2019-07-11 04:34:47.598990
+https://careers.enterprise.com/job/richmond/full-time-service-agent-car-prep-innsbrook/430/12195110  Job Not Found  2019-07-11 04:34:47.599990
+https://careers.enterprise.com/job/tulsa/agreement-coordinator/430/12212405  Job Not Found  2019-07-11 04:34:48.788058
+https://www.21cfcareers.com/Search/JobDetail/R10008438?locale=en  Job Not Found  2019-07-11 04:34:59.417666
+https://jobs.intel.com/ShowJob/Id/2131666/Validation-and-Lab-management-Intern/  the job you are looking for cannot be found  2019-07-11 10:36:47.036271
+https://jobs.intel.com/ShowJob/Id/2100164/Student-Intern/  the job you are looking for cannot be found  2019-07-11 10:36:47.560301
+https://xerox.dejobs.org/new-brunswick-can/inside-sales-pse-pursuit-sales-executive/782A6894A3974988A70321792B8324E0/job/   error400   2019-07-11 10:36:53.870662
+https://cbscorporation.jobs/new-york-ny/producer/FAF192DFE085406B92CF683854E357FD/job/  page not found  2019-07-11 10:38:20.188599
+https://careers.southwestair.com/job/29975/Ramp-Agent   error400   2019-07-11 10:38:21.455671
+https://careers.southwestair.com/job/29603/Senior-Email-Developer   error400   2019-07-11 10:38:22.222715
+https://careers-armaninollp.icims.com/jobs/3110/senior-tax-associate%2c-corporate-tech-tax-%28seattle%2c-wa%29/job   error400   2019-07-11 10:38:42.592880
+https://www.lvmh.com/talents/our-offers/after-sales-representative-tagh00514/   error400   2019-07-11 10:43:07.058007
+https://www.uscellular.jobs/job/USCEUS2481/Retail-Wireless-Sales-Consultant-Part-Time-Claremore   error400   2019-07-11 10:43:09.575151
+https://mrm-mccann.com/careers/us/new-york/new-york/6510.html   error400   2019-07-11 10:43:33.947545
+https://mrm-mccann.com/careers/us/new-york/new-york/6510.html   error400   2019-07-11 10:43:34.501576
+https://mrm-mccann.com/careers/us/new-york/new-york/6510.html   error400   2019-07-11 10:43:37.058723
+https://www.jwt.com/en/careers/mirum_digital-associate-creative-director_22072   error400   2019-07-11 10:43:43.152071
+https://www.jwt.com/en/careers/mirum_senior-manager-analytics_22402   error400   2019-07-11 10:43:44.398142
+https://www.jwt.com/en/careers/mirum_senior-analyst_22401   error400   2019-07-11 10:43:44.767164
+https://www.jwt.com/en/careers/mirum_senior-analytics-analyst-1_21624   error400   2019-07-11 10:43:45.767221
+https://careers.enterprise.com/job/scottsdale/part-time-service-agent-car-detailer-scottsdale-north-phoenix/430/12153931  Job Not Found  2019-07-11 10:45:43.081931
+https://careers.enterprise.com/job/scottsdale/part-time-service-agent-car-detailer-north-scottsdale/430/12153934  Job Not Found  2019-07-11 10:45:43.154935
+https://careers.enterprise.com/job/reno/car-washer-part-time/430/12168594  Job Not Found  2019-07-11 10:45:43.154935
