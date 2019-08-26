@@ -24,6 +24,7 @@ from threading import Thread
 from fuzzywuzzy import fuzz
 import webbrowser
 import re
+#developed By Jeevan Rayala
 # dic=""""""
 # job={'job_location':'Agia Rd, Goalpara, Assam'}
 # data=Instructions(31,job).method_caller()
@@ -128,7 +129,7 @@ class ExcelSheetData(View):
                                                 if cdata.get('job_location')==None:
                                                     cdata['job_location']=pdata.get(key)
                                                 else:
-                                                    cdata['job_location']=cdata.get('job_location')+" "+pdata.get(key)                    
+                                                    cdata['job_location']=cdata.get('job_location')+" "+pdata.get(key)
                                     break
 
                     joblist=childList
