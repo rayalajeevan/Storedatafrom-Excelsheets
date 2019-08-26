@@ -25,7 +25,6 @@ config={}
 for each_sec in Config.sections():
     config=dict((k, v) for k, v in  Config.items(each_sec))
 PATH=config.get('allpath')
-print(PATH)
 DRIVE=config.get('drive')
 
 
@@ -177,14 +176,28 @@ def send_mail_to_interns(ip):
     time=datetime.datetime.today()
     print("ip is changed sending Email......to Interns")
     body="Hello Interns\nIMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n For Getting Company Info id Ip is changed...at {time}\n Use this New url http://{ip}:7000/Home/   \n showing Bugs http://{ip}:7000/showbugs/ \n Please Use this urls in Mozila Browser\n IMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n                             Thank you".format(ip=ip,time=time)
-    send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in'])
+    send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in','shalu.manisha@gmail.com',
+        'anusha.upputholla@cogentdatasolutions.in',
+        'rasikapotekar18@gmail.com',
+        'prasadpamidi579@gmail.com',
+        'pbandla8@gmail.com',
+        'santhialapati6@gmail.com',
+        'ravalim03@gmail.com',
+        'ponnala.aravindz@gmail.com',
+        'madhu21897@gmail.com',
+        'madarapuvarshini@gmail.com',
+        'katkamrohit11@gmail.com',
+        'navyasri671@gmail.com',
+        'devaki.sowmya@gmail.com',
+        'doolamravali432@gmail.com',
+        'tgc290397@gmail.com',])
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
-
-jeevan()
-# except Exception as e:
-#     print(e)
-#     print("Internet Is not available Please send Manually.....!",str(e))
+try:
+    jeevan()
+except Exception as e:
+    print(e)
+    print("Internet Is not available Please send Manually.....!",str(e))
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')
