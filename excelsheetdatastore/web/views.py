@@ -290,6 +290,11 @@ class ExcelSheetData(View):
                             job[key]=HtmlParser(value,info_id,job)
                         else:
                             job[key]=value
+                # detetcting JOB_TYPE
+                job_type_list=['intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime']
+                for type in job_type_list:
+                  if job.get('job_type','').lower().strip() in type:
+                        job['job_type']=type.capitalize()
                 job['scrapped_date']=datetime.now()
                 abborted=None
                 job['scrappedBy']=pathname
