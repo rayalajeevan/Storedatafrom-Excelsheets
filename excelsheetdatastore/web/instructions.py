@@ -37,6 +37,7 @@ class Instructions():
         27:self.rule_no_27,
         29:self.rule_no_29,
         31:self.rule_no_31,
+        32:self.rule_no_32,
         }
         self.instruction_id=instruction_id
         self.html_data=html_data
@@ -749,7 +750,10 @@ class Instructions():
         Long Wood Gardens
         """
         for key in ['apply_link']:
-            self.html_data[key]=self.html_data[key]+"?ATSPopupJob="+str(self.html_data['job_id'])
+            if '? ' in self.html_data[key]:
+                self.html_data[key]=self.html_data[key]+"&ATSPopupJob="+str(self.html_data['job_id'])
+            else:
+                self.html_data[key]=self.html_data[key]+"?ATSPopupJob="+str(self.html_data['job_id'])
         return self.html_data
     def rule_no_29(self):
         """
@@ -793,4 +797,14 @@ class Instructions():
                 elif len(value.split(','))>3:
                     value=' '.join(value.split(',')[-1:-4:-1])
             self.html_data[key]=str(value)
+        return self.html_data
+    def rule_no_32(self):
+        """
+        Navigant
+        """
+        for key in ['apply_link']:
+            if '? ' in self.html_data[key]:
+                self.html_data[key]=self.html_data[key]+"&JobOpeningId="+str(self.html_data['job_id'])
+            else:
+                self.html_data[key]=self.html_data[key]+"?JobOpeningId="+str(self.html_data['job_id'])
         return self.html_data
