@@ -516,7 +516,7 @@ def HtmlParser(data,info_id,job):
     return replacer(str(soup))
 
 def sheets_checking(request,pathname):
-    excelSheetList=os.listdir(r'D:/jeevan/django/excelsheets/'+pathname)
+    excelSheetList=os.listdir(PATH'+pathname)
     joblist=[]
     parentlistDataframe=None
     childListDataFrame=None
@@ -526,18 +526,18 @@ def sheets_checking(request,pathname):
     companies=0
     for sheet in excelSheetList:
         companies+=1
-        path=r'D:/jeevan/django/excelsheets/'+pathname+"/{0}".format(sheet)
+        path=PATH'+pathname+"/{0}".format(sheet)
         list=pd.read_excel(path)
         if sheet not in finshed_task_sheets:
             if 'parent' in sheet or 'child'in sheet:
                 if 'parent' in sheet:
                     sheet1=[sh for sh in excelSheetList if sheet.replace('parent','child')==sh][0]
-                    path=r'D:/jeevan/django/excelsheets/'+pathname+"/{0}".format(sheet1)
+                    path=PATH'+pathname+"/{0}".format(sheet1)
                     childListDataFrame=pd.read_excel(path)
                     parentlistDataframe=list
                 elif 'child' in sheet:
                     sheet1=[sh for sh in excelSheetList if sheet.replace('child','parent')==sh][0]
-                    path=r'D:/jeevan/django/excelsheets/'+pathname+"/{0}".format(sheet1)
+                    path=PATH'+pathname+"/{0}".format(sheet1)
                     parentlistDataframe=pd.read_excel(path)
                     childListDataFrame=list
                 finshed_task_sheets.append(sheet)
