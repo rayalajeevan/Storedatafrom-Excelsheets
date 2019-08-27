@@ -204,11 +204,11 @@ class ExcelSheetData(View):
                             dated['modified_date']=validatos(job['posted_date'])
                             datesList.append(dated)
                         except ValueError:
-                            open_html=open(r'C:\sample.html','w')
+                            open_html=open(DRIVE+'sample.html','w')
                             data="<body><b>scrappedBy</b>:{scarpby}<br><b>{job_title}</b><br><b>{posted_date}</b><br><b>{excel}</b></body>".format(scarpby=pathname,job_title=job.get('job_title'),posted_date=job.get('posted_date'),excel=sheet)
                             open_html.write(data)
                             open_html.close()
-                            webbrowser.open(r'C:\Users\Emphyd12146rjee1\Downloads\sample.html')
+                            webbrowser.open(DRIVE+'sample.html')
                             ExceptionList.append({'posted_date':job.get('posted_date')})
                             job['posted_date']=datetime.today().date()
                 if job.get('job_id')!=None  and len(str(job.get('job_id')))>=75:
