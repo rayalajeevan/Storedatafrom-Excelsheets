@@ -292,11 +292,12 @@ class ExcelSheetData(View):
                             job[key]=value
                 # detetcting JOB_TYPE
                 job_type_list=['intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime']
-                for type in job_type_list:
-                  if job.get('job_type','').lower().strip() in type:
-                        job['job_type']=type.capitalize()
+                for typer in job_type_list:
+                  if job.get('job_type','').lower().strip() in typer:
+                        job['job_type']=typer.capitalize()
                 job['scrapped_date']=datetime.now()
                 abborted=None
+
                 job['scrappedBy']=pathname
                 if job.get('posted_date')==None:
                     abborted="modified"
