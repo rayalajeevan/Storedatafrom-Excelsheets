@@ -40,7 +40,7 @@ config={}
 for each_sec in Config.sections():
     config=dict((k, v) for k, v in  Config.items(each_sec))
 PATH=config.get('allpath')
-DRIVE=config.get('DRIVE')
+DRIVE=config.get('drive')
 
 class ExcelSheetData(View):
     def get(self,request,*args,**kwrgs):
