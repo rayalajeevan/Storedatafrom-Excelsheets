@@ -120,7 +120,7 @@ class ExcelSheetData(View):
                                 for key in ['job_type','job_location','posted_date','functional_area','job_id']:
                                     if pdata.get(key)!=None and cdata.get(key)==None:
                                         cdata[key]=pdata.get(key)
-                                if cdata['job_location']==None:
+                                if cdata.get('job_location')==None:
                                     for key in ['city','state','country']:
                                         if pdata.get(key)!=None:
                                             if cdata.get('job_location')==None:
@@ -133,7 +133,7 @@ class ExcelSheetData(View):
                                     for key in ['job_type','job_location','posted_date','functional_area','job_id']:
                                         if pdata.get(key)!=None and cdata.get(key)==None:
                                             cdata[key]=pdata.get(key)
-                                    if cdata['job_location']==None:
+                                    if cdata.get('job_location')==None:
                                         for key in ['city','state','country']:
                                             if pdata.get(key)!=None:
                                                 if cdata.get('job_location')==None:
