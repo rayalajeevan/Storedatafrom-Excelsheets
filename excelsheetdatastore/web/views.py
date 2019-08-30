@@ -307,9 +307,10 @@ class ExcelSheetData(View):
                         job_errCount+=1
                         job_errorList.append({'job_description':str(job)})
                         continue
-                if 'This job posting is only available in the language of the country where the position is located. Please refer to the corresponding language to initiate your application.' in str(job.get('job_description')) or 'This job posting is only available in German language' in str(job.get('job_description')):
-                    job_errorList.append({"job_description":str(job)})
-                    continue
+                for item in [ 'This job posting is only available in the language of the country where the position is located. Please refer to the corresponding language to initiate your application.','This job posting is only available in German language','Sorry, this position has been filled.']:
+                    if item.lower() in str(job.get('job_description')).lower():
+                        job_errorList.append({"job_description":str(job)})
+                        continue
                 try:
                     for x in ['job_description','job_roles_responsibilities','qualifications']:
                         if str(job.get(x))!="None":
