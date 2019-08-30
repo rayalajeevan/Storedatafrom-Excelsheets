@@ -116,17 +116,19 @@ class ExcelSheetData(View):
                             del dic
                     for cdata in childList:
                         for pdata in parentList:
-                            if str(pdata.get('apply_link')).replace('s:',':')==str(cdata.get('apply_link')).replace('s:',':'):
+                            if fuzz.ratio(str(pdata.get('apply_link')).replace('s:',':'),str(cdata.get('apply_link')).replace('s:',':'))>80:
+                                print(True)
                                 for key in ['job_type','job_location','posted_date','functional_area','job_id']:
                                     if pdata.get(key)!=None and cdata.get(key)==None:
                                         cdata[key]=pdata.get(key)
                                 if cdata.get('job_location')==None:
                                     for key in ['city','state','country']:
-                                        if pdata.get(key)!=None:
+                                        print(cdata.get('job_location'),'  ',key)
+                                        if pdata.get(key)!=None and str(pdata.get(key)).strip()!='' and str(pdata.get(key)).strip()!='nan' and str(pdata.get(key)).lower()!='null':
                                             if cdata.get('job_location')==None:
                                                 cdata['job_location']=pdata.get(key)
                                             else:
-                                                cdata['job_location']=cdata.get('job_location')+" "+pdata.get(key)
+                                                cdata['job_location']=cdata.get('job_location')+" "+str(pdata.get(key))
                                 break
                             elif pdata.get('job_title')!=None and  pdata.get('job_id')!=None:
                                 if str(pdata.get('job_id')).strip()==str(cdata.get('job_id')).strip() :
@@ -135,7 +137,7 @@ class ExcelSheetData(View):
                                             cdata[key]=pdata.get(key)
                                     if cdata.get('job_location')==None:
                                         for key in ['city','state','country']:
-                                            if pdata.get(key)!=None:
+                                            if pdata.get(key)!=None and str(pdata.get(key)).strip()!='' and str(pdata.get(key)).strip()!='nan' and str(pdata.get(key)).lower()!='null':
                                                 if cdata.get('job_location')==None:
                                                     cdata['job_location']=pdata.get(key)
                                                 else:
