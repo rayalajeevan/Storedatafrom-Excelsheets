@@ -512,12 +512,13 @@ def HtmlParser(data,info_id,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        if 'location:' in   x.get_text().strip().lower() or 'locations:' in   x.get_text().strip().lower() or 'work location(s):' in   x.get_text().strip().lower() or 'team:' in   x.get_text().strip().lower() or 'reports to:'  in   x.get_text().strip().lower() or 'title:'  in   x.get_text().strip().lower() or 'hours:'  in   x.get_text().strip().lower() or 'pay rate:'  in   x.get_text().strip().lower() or 'Req. ID:'  in   x.get_text().strip() or 'Recruiter:'  in   x.get_text().strip() or 'Role:'  in   x.get_text().strip():
-            if x.parent!=None and len(x.parent.get_text().strip())<=70:
-                x.parent.decompose()
-            else:
-                if len(x.get_text().strip())<=100:
-                    x.decompose()
+        for item in ['location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months']:
+           if item.lower().strip() in x.getText().strip().lower():
+                if x.parent!=None and len(x.parent.get_text().strip())<=70:
+                    x.parent.decompose()
+                else:
+                    if len(x.get_text().strip())<=100:
+                        x.decompose()
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
     return replacer(str(soup))
 
