@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 class Beautify_company_jobs(models.Model):
     class Meta:
         db_table='beautify_company_jobs'
@@ -6,6 +7,7 @@ class Beautify_company_jobs(models.Model):
     beautify_company_id=models.BigIntegerField(primary_key=True)
     company_info_id=models.IntegerField()
     instruction_id=models.IntegerField()
+@python_2_unicode_compatible
 class web_internship_jobs(models.Model):
     class Meta:
         db_table='web_internship_jobs'
@@ -65,7 +67,7 @@ class web_internship_jobs(models.Model):
     scrapped_location=models.TextField(default=None)
     deleted_status=models.TextField(default=None)
 
-
+@python_2_unicode_compatible
 class company_jobs(models.Model):
     class Meta:
         db_table='web_company_jobs'
