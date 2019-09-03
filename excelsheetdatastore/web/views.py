@@ -227,7 +227,7 @@ class ExcelSheetData(View):
                         if 'intern-' in [str(x).lower().strip() for x in value.split()] or 'intern' in [str(x).lower().strip() for x in value.split()] or 'intern.' in [str(x).lower().strip() for x in value.split()] or 'intern,' in [str(x).lower().strip() for x in value.split()] or 'intern ' in [str(x).lower().strip() for x in value.split()]:
                             type="INI"
                             break
-                        if  'internship' in [str(x).lower().strip() for x in value.split()] or 'internship.' in [str(x).lower().strip() for x in value.split()] or 'internship,' in [str(x).lower().strip() for x in value.split()] or 'internship ' in [str(x).lower().strip() for x in value.split()] or 'internship' in [str(x).lower().strip() for x in value.split()] or 'internship' in [str(x).lower().strip() for x in value.split()]:
+                        if  'internship' in [str(x).lower().strip() for x in value.split()] or 'internship.' in [str(x).lower().strip() for x in value.split()] or 'internship,' in [str(x).lower().strip() for x in value.split()] or 'internship ' in [str(x).lower().strip() for x in value.split()] or 'internship' in [str(x).lower().strip() for x in value.split()] or 'internship' in [str(x).lower().strip() for x in value.split()] or 'internships' in [str(x).lower().strip() for x in value.split()]:
                             type="INI"
                             break
                         if 'fellowship' in [str(x).lower().strip() for x in value.split()] or 'fellowship.' in [str(x).lower().strip() for x in value.split()] or 'fellowship,' in [str(x).lower().strip() for x in value.split()] or 'fellowship' in [str(x).lower().strip() for x in value.split()] or 'fellowship' in [str(x).lower().strip() for x in value.split()] or 'fellowship' in [str(x).lower().strip() for x in value.split()]:
@@ -515,7 +515,7 @@ def HtmlParser(data,info_id,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        for item in ['location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months']:
+        for item in ['location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:']:
            if item.lower().strip() in x.getText().strip().lower():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
                     x.parent.decompose()
