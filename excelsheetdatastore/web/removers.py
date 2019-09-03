@@ -82,14 +82,14 @@ def validatos(date,*args,**kwrgs):
 import unicodedata
 from  bs4 import BeautifulSoup
 def string_error(data,*args,**kwrgs):
-    # if data!='' or data!='NULL' or data!='null' or data!=None or data!="None":
-    #     try:
-    #        unicode=unicodedata.normalize('NFKD', data).encode('ascii', 'ignore').decode("utf-8")
-    #        return unicodes
-    #     except:
-    #        return unicode
-    # else:
-    return data
+    if data!='' or data!='NULL' or data!='null' or data!=None or data!="None":
+        try:
+           unicode=unicodedata.normalize('NFKD', data).encode('ascii', 'ignore').decode("utf-8")
+           return unicodes
+        except:
+           return unicode
+    else:
+        return data
 
 def replacer(data):
     data=data.replace('Job Description :','')

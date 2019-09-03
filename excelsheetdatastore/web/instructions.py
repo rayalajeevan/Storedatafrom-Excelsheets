@@ -38,6 +38,8 @@ class Instructions():
         29:self.rule_no_29,
         31:self.rule_no_31,
         32:self.rule_no_32,
+        33:self.rule_no_33,
+        34:self.rule_no_34,
         }
         self.instruction_id=instruction_id
         self.html_data=html_data
@@ -807,4 +809,35 @@ class Instructions():
                 self.html_data[key]=self.html_data[key]+"&JobOpeningId="+str(self.html_data['job_id'])
             else:
                 self.html_data[key]=self.html_data[key]+"?JobOpeningId="+str(self.html_data['job_id'])
+        return self.html_data
+    def rule_no_33(self):
+        """
+        ING
+        """
+        for key in ['job_location']:
+            location=self.html_data[key]
+            modified_location=None
+            if len(location.split('|'))==5:
+                modified_location=location.split('|')[-2]
+            if modified_location==None:
+                if len(location.split('|'))==6:
+                    modified_location=location.split('|')[-2]
+            else:
+                if len(location.split('|'))==6:
+                    modified_location=modified_location+", "+location.split('|')[-2]
+            self.html_data[key]=modified_location
+
+        return self.html_data
+    def rule_no_34(self):
+        """
+        American airlines
+        """
+        for key in ['job_description']:
+            data=self.html_data[key]
+            data=re.sub('\s+',' ',str(data))
+            soup=BeautifulSoup(str(data),"html.parser")
+            for div in soup.findAll(['p']):
+                if 'location'.lower() in div.getText().lower():
+                    div.decompose()
+            self.html_data[key]=str(soup)
         return self.html_data
