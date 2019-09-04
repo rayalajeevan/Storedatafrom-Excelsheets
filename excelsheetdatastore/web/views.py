@@ -125,10 +125,13 @@ class ExcelSheetData(View):
                                     for key in ['city','state','country']:
                                         print(cdata.get('job_location'),'  ',key)
                                         if pdata.get(key)!=None and str(pdata.get(key)).strip()!='' and str(pdata.get(key)).strip()!='nan' and str(pdata.get(key)).lower()!='null':
-                                            if cdata.get('job_location')==None:
+                                            if cdata.get('job_location')==None and cdata.get('pin')==None :
                                                 cdata['job_location']=pdata.get(key)
                                             else:
                                                 cdata['job_location']=cdata.get('job_location')+" "+str(pdata.get(key))
+                                if cdata.get('pin')==None:
+                                    if pdata.get('pin')!=None:
+                                        cdata['pin']=pdata.get('pin')
                                 break
                             elif pdata.get('job_title')!=None and  pdata.get('job_id')!=None:
                                 if str(pdata.get('job_id')).strip()==str(cdata.get('job_id')).strip() :
@@ -138,10 +141,13 @@ class ExcelSheetData(View):
                                     if cdata.get('job_location')==None:
                                         for key in ['city','state','country']:
                                             if pdata.get(key)!=None and str(pdata.get(key)).strip()!='' and str(pdata.get(key)).strip()!='nan' and str(pdata.get(key)).lower()!='null':
-                                                if cdata.get('job_location')==None:
+                                                if cdata.get('job_location')==None and cdata.get('pin')==None :
                                                     cdata['job_location']=pdata.get(key)
                                                 else:
                                                     cdata['job_location']=cdata.get('job_location')+" "+pdata.get(key)
+                                    if cdata.get('pin')==None:
+                                        if pdata.get('pin')!=None:
+                                            cdata['pin']=pdata.get('pin')                
                                     break
 
                     joblist=childList
