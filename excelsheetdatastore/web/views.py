@@ -153,9 +153,8 @@ class ExcelSheetData(View):
                     for k,v in list.items():
                         dic1[k.lower()]=v[i]
                     joblist.append(dic1)
-
             for dic in joblist:
-                if dic.get('job_location')==None:
+                if dic.get('job_location')==None and dic.get('pin')==None:
                     del dic
             for dic12 in joblist:
                 dated={}
@@ -184,6 +183,13 @@ class ExcelSheetData(View):
                     closed_jobs.append(job)
                     closed_jobs_count+=1
                     continue
+                pin=None
+                if job.get('pin')!=None:
+                    pin=identifying_location_with_postalcode(job.get('pin'))
+                    if pin==0:
+                        pin==None
+                    else:
+                        job.update(pin)
                 job['job_location']=str(job.get('job_location','')).replace('Various Locations','').replace('nan','')
                 if job['job_description']==None or str(job['job_description'])=='nan' or str(job['job_description']).lower()=='null':
                     if (str(job.get('job_roles_responsibilities')).strip()=='nan' and str(job.get('qualifications')).strip()=='nan') or (str(job.get('job_roles_responsibilities')).strip()=='None' and str(job.get('qualifications')).strip()=='None') or (str(job.get('job_roles_responsibilities')).strip()=='' and str(job.get('qualifications')).strip()==''):
@@ -339,9 +345,10 @@ class ExcelSheetData(View):
                         anotherLanguagesJobs+=1
                         anotherLanguagesJobs_data.append({str(language_detector):str(job)})
                         continue
+                if pin==None:
+                    if 'remote'!=job['job_location'].lower().strip():
+                        job.update(locationIdentifier(job['job_location'].replace('Headquarters','').replace('Various Locations','').replace('Airport','').replace('school','')))
 
-                if 'remote'!=job['job_location'].lower().strip():
-                    job.update(locationIdentifier(job['job_location'].replace('Headquarters','').replace('Various Locations','').replace('Airport','').replace('school','')))
                 job['company_info_id']=int(float(job['company_info_id']))
                 if job.get('other_locations')!=None:
                     job['other_locations']=job.get('other_locations').replace(job.get('job_location'),'')
@@ -553,6 +560,14 @@ def sheets_checking(request,pathname):
                 finshed_task_sheets.append(sheet)
                 finshed_task_sheets.append(sheet1)
     return JsonResponse({'json':True})
+def identifying_location_with_postalcode(pin):
+    location=StoreLocation.objects.filter(postal_code=pin)
+    if len(location)!=0:
+        job_location=location[0].city+", "+location[0].state_code
+        country_type=location[0].country_code
+        return {'job_location':job_location,'country_type':country_type,'scrapped_location':pin}
+    else:
+        return 0
 
 class ApiData(View):
     def get(self,request,*args,**kwrgs):
