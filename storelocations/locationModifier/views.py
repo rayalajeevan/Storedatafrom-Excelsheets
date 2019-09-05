@@ -404,7 +404,7 @@ def raiseBug(request):
     datasave.save()
     bug=Bugs.objects.filter(company_info_id=cinfoid).latest()
     for excelsheets in bug_image:
-        path=DRIVE+r'/jeevan/django/storelocations/static/images/'+str(bug.Bug_id)+".png"
+        path=DRIVE+r'jeevan\django\git\Storedatafrom-Excelsheets\storelocations\static\images'+str(bug.Bug_id)+".png"
         fileread=open(path,'wb+')
         for chunk in excelsheets.chunks():
             fileread.write(chunk)

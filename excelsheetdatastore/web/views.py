@@ -27,9 +27,8 @@ import webbrowser
 import re
 #developed By Jeevan Rayala
 # dic=""""""
-# job={'job_location':'Agia Rd, Goalpara, Assam'}
-# data=Instructions(31,job).method_caller()
-# print(data)
+# job={'job_description':dic,'job_id':"CL416"}
+# data=Instructions(35,job).method_caller()
 # arr=open(r'C:\Users\Emphyd12146rjee1\Desktop\test.html','w')
 # arr.write(str(data.get('job_description')).encode('ascii', 'ignore').decode("utf-8"))
 # arr.close()
@@ -493,6 +492,7 @@ def HtmlParser(data,info_id,job):
             if '*' in x.getText().strip() and  len(x.getText().strip())<=20:
                  x.decompose()
                  break
+    removed_elements=[]
     for x in soup.findAll():
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             x.decompose()
@@ -530,13 +530,17 @@ def HtmlParser(data,info_id,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:']:
+        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :']:
            if item.lower().strip() in x.getText().strip().lower():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
+                    removed_elements.append(str(x.parent))
                     x.parent.decompose()
                 else:
                     if len(x.get_text().strip())<=100:
+                        removed_elements.append(str(x))
                         x.decompose()
+    for ele in removed_elements:
+        soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
     return replacer(str(soup))
 

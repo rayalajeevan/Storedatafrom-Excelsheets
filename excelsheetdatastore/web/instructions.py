@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
-from copy import copy
+from copy import copy,deepcopy
 from fuzzywuzzy import fuzz
 import re
 from web.removers import validatos,string_error,replacer,dataModify
 class Instructions():
     def __init__(self,instruction_id,html_data):
         self.instructions_dictionary={
+        35:self.rule_no_35,
         30:self.rule_no_30,
         28:self.rule_no_28,
         26:self.rule_no_26,
@@ -840,4 +841,25 @@ class Instructions():
                 if 'location'.lower() in div.getText().lower():
                     div.decompose()
             self.html_data[key]=str(soup)
+        return self.html_data
+    def rule_no_35(self):
+        """
+        korn Ferry
+        """
+        removed_elemnts=[]
+        for key in ['job_description']:
+            data=self.html_data[key]
+            data=re.sub('\s+',' ',str(data))
+            soup=BeautifulSoup(str(data),"html.parser")
+            for div in soup.findAll(['p']):
+                for item in ['Position','Organization','Location','Reporting Relationship','Direct reports','Website','Company','Direct Reports']:
+                    if item in div.getText():
+                        removed_elemnts.append(str(div))
+                        div.decompose()
+            for ele in soup.findAll():
+                if fuzz.ratio(self.html_data.get('job_id'),ele.getText()) >85:
+                    ele.decompose()
+            for x in removed_elemnts:
+                soup=str(soup)+str(x)
+            self.html_data[key]=str(soup).replace('APPLY NOW','')
         return self.html_data
