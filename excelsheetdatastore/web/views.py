@@ -147,7 +147,7 @@ class ExcelSheetData(View):
                                                     cdata['job_location']=cdata.get('job_location')+" "+pdata.get(key)
                                     if cdata.get('pin')==None:
                                         if pdata.get('pin')!=None:
-                                            cdata['pin']=pdata.get('pin')                
+                                            cdata['pin']=pdata.get('pin')
                                     break
 
                     joblist=childList
@@ -528,7 +528,7 @@ def HtmlParser(data,info_id,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        for item in ['location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:']:
+        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:']:
            if item.lower().strip() in x.getText().strip().lower():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
                     x.parent.decompose()
