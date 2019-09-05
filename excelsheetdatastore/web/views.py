@@ -193,9 +193,11 @@ class ExcelSheetData(View):
                 if job.get('pin')!=None:
                     pin=identifying_location_with_postalcode(job.get('pin'))
                     if pin==0:
+                        del job['pin']
                         pin==None
                     else:
                         job.update(pin)
+                        del job['pin']
                 job['job_location']=str(job.get('job_location','')).replace('Various Locations','').replace('nan','')
                 if job['job_description']==None or str(job['job_description'])=='nan' or str(job['job_description']).lower()=='null':
                     if (str(job.get('job_roles_responsibilities')).strip()=='nan' and str(job.get('qualifications')).strip()=='nan') or (str(job.get('job_roles_responsibilities')).strip()=='None' and str(job.get('qualifications')).strip()=='None') or (str(job.get('job_roles_responsibilities')).strip()=='' and str(job.get('qualifications')).strip()==''):

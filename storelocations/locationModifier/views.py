@@ -381,7 +381,6 @@ def GetCred(request):
         {'username':'PRASAD','password':'prasad579'},
         {'username':'sudha99','password':'sudha99'},
         {'username':'pravalika','password':'chinnari@123'},
-        {'username':'rasikapotekar18@gmail.com','password':'rasika@123456'},
         ]
         return JsonResponse({'data':list})
     else:
