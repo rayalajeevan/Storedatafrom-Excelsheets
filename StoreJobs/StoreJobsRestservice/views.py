@@ -6,7 +6,6 @@ from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
 from .models import WebCompanyJobs,WebInternshipJobs,TopCities
 import io
-import json
 from rest_framework import status
 from StoreJobsRestservice.removers import refining_job
 from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
@@ -36,9 +35,8 @@ class StoreJobsdata(APIView):
     def post(self,request):
         try:
             scrapped_data = JSONParser().parse(request)
-        except Exception as exc:
-            print(exc)
-            return JsonResponse({'detail':'Please send json format','error':str(exc)},status=status.HTTP_200_OK)
+        except:
+            return JsonResponse({'detail':'Please send json format'},status=status.HTTP_200_OK)
         try:
             data=refining_job(scrapped_data)
         except Exception as exc:

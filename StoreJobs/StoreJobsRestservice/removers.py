@@ -334,8 +334,8 @@ def HtmlParser(data,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship']:
-           if item.lower().strip() in x.getText().strip().lower():
+        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type']:
+           if item.strip() in x.getText().strip():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
                     removed_elements.append(str(x.parent))
                     x.parent.decompose()
@@ -405,16 +405,6 @@ def refining_job(job):
             job['country_type']=data[0].country_code
             pin="modified"
             del job['pin']
-    #setting up city and state into location
-
-    if job.get('job_location')==None:
-        for column_name in ['city','state','country']:
-            if job.get(column_name)!=None:
-                if job.get('job_location')==None:
-                    job['job_location']=job.get(column_name)
-                else:
-                    job['job_location']=job['job_location']+" "+job.get(column_name)
-                del job[column_name]
     #validateing column names
 
     for column_name in ['job_title','company_info_id','company_name','job_location','apply_link']:
@@ -425,7 +415,16 @@ def refining_job(job):
     if job.get('job_description')==None and job.get('job_roles_responsibilities')==None and job.get('qualifications')==None and job.get('job_requirements')==None:
         return {'error':{'column_name_error':"['job_description','job_roles_responsibilities','qualifications','job_requirements'] atleast one of the column must exist "}}
 
+    #setting up city and state into location
 
+    if job.get('job_location')==None:
+        for column_name in ['city','state','country']:
+            if job.get(column_name)!=None:
+                if job.get('job_location')==None:
+                    job['job_location']=job.get(column_name)
+                else:
+                    job['job_location']=job['job_location']+" "+job.get(column_name)
+                del job[column_name]
     #setting the posted date in database information
 
     job['posted_date']=str(validatos(job.get('posted_date')))
