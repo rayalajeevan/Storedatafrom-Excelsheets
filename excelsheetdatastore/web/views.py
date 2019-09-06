@@ -162,6 +162,12 @@ class ExcelSheetData(View):
             for job in joblist:
                 job['scrappedby']=pathname
                 job['tested_status']='False'
+                job['company_info_id']=int(job.get('company_info_id'))
+                try:
+                    if job.get('job_id')!=None:
+                        job['job_id']=int(job.get('job_id'))
+                except:
+                    pass
                 request_data=storeJob_request(job)
                 if request_data.get('error')==None and request_data.get('detail')==None:
                     if request_data.get('status')=='succses':
@@ -175,22 +181,22 @@ class ExcelSheetData(View):
 def storeJob_request(job):
     try:
         job_post_request=requests.post("http://"+str(socket.gethostbyname(socket.gethostname()))+':3000/get_data/',data=json.dumps(job))
-    except:
-        print_log_msg("StoreJobsRestservice Got connection Exception",Log.INFO.value)
-        print_log_msg("trying after 2 minute.......",Log.INFO.value)
+    except Exception as exc:
+        print("StoreJobsRestservice Got connection Exception",str(exc))
+        print("trying after 2 minute.......")
         time.sleep(120)
         try:
             return storeJob_request(job)
         except:
-            print_log_msg("trying after 2 minute.......",Log.INFO.value)
+            print("trying after 2 minute.......")
             time.sleep(120)
             return  storeJob_request(job)
     if job_post_request.status_code>=400 and job_post_request.status_code<500:
         time.sleep(120)
-        print_log_msg("StoreJob_request got 400 trying after 2 minutes",Log.INFO.value)
+        print("StoreJob_request got 400 trying after 2 minutes")
         return storeJob_request(job)
     if  job_post_request.status_code>=500 and job_post_request.status_code<600:
-        print_log_msg("StoreJobsRestservice Got exception",Log.INFO.value)
+        print("StoreJobsRestservice Got exception")
         return job_post_request.json()
     if job_post_request.status_code==201:
         return job_post_request.json()

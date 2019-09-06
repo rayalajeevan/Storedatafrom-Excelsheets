@@ -392,7 +392,7 @@ def refining_job(job):
             job_data[job_key]=job_value
     job=job_data
 
-    job=dict([(k.lower(),v.strip()) for k,v in job.items() ])#converting keys to lowercase
+    job=dict([(k.lower(),str(v).strip()) for k,v in job.items() ])#converting keys to lowercase
 
     #refineColumns
     job=refineColumns(job)

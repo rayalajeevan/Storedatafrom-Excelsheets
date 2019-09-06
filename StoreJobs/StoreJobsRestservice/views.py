@@ -40,6 +40,7 @@ class StoreJobsdata(APIView):
         try:
             data=refining_job(scrapped_data)
         except Exception as exc:
+            print(exc)
             return   JsonResponse({'detail':str(exc)},status=status.HTTP_200_OK)
         try:
             if data.get('error')==None:
