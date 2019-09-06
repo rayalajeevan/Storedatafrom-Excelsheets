@@ -490,4 +490,5 @@ def refining_job(job):
             job['apply_link']=job.get('apply_link')+"?job="+str(job.get('job_id'))
         else:
             job['apply_link']=job.get('apply_link')+"&job="+str(job.get('job_id'))
+    job['scrapped_date']=str(datetime.datetime.now())
     return {'type':type,'job':job}

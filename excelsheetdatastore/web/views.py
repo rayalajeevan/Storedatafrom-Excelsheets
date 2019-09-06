@@ -167,7 +167,7 @@ class ExcelSheetData(View):
                 for key,value in job.items():
                     if str(value).lower().strip()!='nan':
                         dic[key]=value
-                job=dic        
+                job=dic
                 try:
                     if job.get('job_id')!=None:
                         job['job_id']=int(job.get('job_id'))
