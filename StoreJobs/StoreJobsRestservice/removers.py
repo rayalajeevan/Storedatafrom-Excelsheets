@@ -251,11 +251,6 @@ def string_error(data,*args,**kwrgs):
         return None
 
 def replacer(data):
-    data=data.replace('Job Description :','')
-    data=data.replace('Job Description:','')
-    data=data.replace('Job Description','')
-    data=data.replace('Description:','')
-    data=data.replace('Description','')
     return data
 def HtmlParser(data,job):
     soup=BeautifulSoup(data,"html.parser")
