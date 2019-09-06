@@ -12,6 +12,7 @@ from web.textfromHtml import text_from_html
 from django.db.utils import DataError
 from datetime import datetime
 from langdetect import detect,detect_langs
+import socket
 import time
 import requests
 import json
@@ -67,12 +68,12 @@ class ExcelSheetData(View):
         columnnameError=[]
         columnnameErrorCount=0
         companies=0
-        job_errorList=[]
-        job_errCount=0
         anotherLanguagesJobs=0
         anotherLanguagesJobs_data=[]
-        closed_jobs_count=0
-        closed_jobs=[]
+        error_rows=[]
+        inserted_database_rows_count=0
+        error_rows_count=0
+        duplicate_job_rows=0
         for sheet in excelSheetList:
             parentlistDataframe=None
             childListDataFrame=None
@@ -115,8 +116,7 @@ class ExcelSheetData(View):
                             del dic
                     for cdata in childList:
                         for pdata in parentList:
-                            if fuzz.ratio(str(pdata.get('apply_link')).replace('s:',':'),str(cdata.get('apply_link')).replace('s:',':'))>80:
-                                print(True)
+                            if fuzz.ratio(str(pdata.get('apply_link')).replace('s:',':').lower(),str(cdata.get('apply_link')).replace('s:',':').lower())>95:
                                 for key in ['job_type','job_location','posted_date','functional_area','job_id']:
                                     if pdata.get(key)!=None and cdata.get(key)==None:
                                         cdata[key]=pdata.get(key)
@@ -158,256 +158,48 @@ class ExcelSheetData(View):
                     for k,v in list.items():
                         dic1[k.lower()]=v[i]
                     joblist.append(dic1)
-            for dic in joblist:
-                if dic.get('job_location')==None and dic.get('pin')==None:
-                    del dic
-            for dic12 in joblist:
-                dated={}
-                if dic12.get('job_location')==None:
-                    if dic12.get('city')!=None and  dic12.get('state')!=None:
-                        if str(dic12.get('city')).strip()=='nan':
-                            dic12['city']=''
-                        if str(dic12.get('state')).strip()=='nan':
-                            dic12['state']=''
-                        dic12['job_location']=dic12.get('city')+" , "+dic12.get('state')
-                        del dic12['city']
-                        del dic12['state']
-                if dic12.get('posted_date')!=None:
-                    dated['scrapped_date']=dic12['posted_date']
-                colmn=[]
-                try:
-                    checkJobs=dataModify(**dic12)
-                except TypeError as exc:
-                    columnnameErrorCount+=1
-                    columnnameError.append({str(sheet):str(exc)})
-                    if 'parent' in sheet or 'child' in sheet:
-                        continue
-                    break
-                job=dic12
-                if 'position has been closed' in str(job.get('job_description')).lower():
-                    closed_jobs.append(job)
-                    closed_jobs_count+=1
-                    continue
-                pin=None
-                if job.get('pin')!=None:
-                    pin=identifying_location_with_postalcode(job.get('pin'))
-                    if pin==0:
-                        del job['pin']
-                        pin==None
-                    else:
-                        job.update(pin)
-                        del job['pin']
-                job['job_location']=str(job.get('job_location','')).replace('Various Locations','').replace('nan','')
-                if job['job_description']==None or str(job['job_description'])=='nan' or str(job['job_description']).lower()=='null':
-                    if (str(job.get('job_roles_responsibilities')).strip()=='nan' and str(job.get('qualifications')).strip()=='nan') or (str(job.get('job_roles_responsibilities')).strip()=='None' and str(job.get('qualifications')).strip()=='None') or (str(job.get('job_roles_responsibilities')).strip()=='' and str(job.get('qualifications')).strip()==''):
-                        job_errCount+=1
-                        job_errorList.append({'job_description':str(job)})
-                        continue
-                """
-                Beautify the Data
-                """
-                Beautify_objects=Beautify_company_jobs.objects.filter(company_info_id=job['company_info_id'])
-                if len(Beautify_objects)!=0:
-                    for obj in Beautify_objects:
-                        job =Instructions(obj.instruction_id,job).method_caller()
-                for key,value in job.items():
-                    if str(value).strip()=='' or str(value).strip()=="NULL" or str(value).strip()=="null" or str(value).strip()==str(float('nan')):
-                        job[key]=None
-                if job.get('posted_date')!=None:
-                    if len(dated)!=0:
-                        try:
-                            dated['modified_date']=validatos(job['posted_date'])
-                            datesList.append(dated)
-                        except ValueError:
-                            open_html=open(DRIVE+'sample.html','w')
-                            data="<body><b>scrappedBy</b>:{scarpby}<br><b>{job_title}</b><br><b>{posted_date}</b><br><b>{excel}</b></body>".format(scarpby=pathname,job_title=job.get('job_title'),posted_date=job.get('posted_date'),excel=sheet)
-                            open_html.write(data)
-                            open_html.close()
-                            webbrowser.open(DRIVE+'sample.html')
-                            ExceptionList.append({'posted_date':job.get('posted_date')})
-                            job['posted_date']=datetime.today().date()
-                if job.get('job_id')!=None  and len(str(job.get('job_id')))>=75:
-                    job['job_id']=None
-                for key,value in job.items():
-                    if str(value).strip()=='nan' or str(value).strip()=='' or value==None:
-                        job[key.lower()]=None
-                    else:
-                        job[key.lower()]=str(value).strip()
-                type=None
-                for value in [job['job_title'],job.get('job_type'),job.get('functional_area')]:
-                    value=str(value).strip()
-                    if value!=None or value !='null' or value !="NULL" or str(value)!='nan' or value!='' :
-                        if 'intern-' in [str(x).lower().strip() for x in value.split()] or 'intern' in [str(x).lower().strip() for x in value.split()] or 'intern.' in [str(x).lower().strip() for x in value.split()] or 'intern,' in [str(x).lower().strip() for x in value.split()] or 'intern ' in [str(x).lower().strip() for x in value.split()]:
-                            type="INI"
-                            break
-                        if  'internship' in [str(x).lower().strip() for x in value.split()] or 'internship.' in [str(x).lower().strip() for x in value.split()] or 'internship,' in [str(x).lower().strip() for x in value.split()] or 'internship ' in [str(x).lower().strip() for x in value.split()] or 'internship' in [str(x).lower().strip() for x in value.split()] or 'internship' in [str(x).lower().strip() for x in value.split()] or 'internships' in [str(x).lower().strip() for x in value.split()]:
-                            type="INI"
-                            break
-                        if 'fellowship' in [str(x).lower().strip() for x in value.split()] or 'fellowship.' in [str(x).lower().strip() for x in value.split()] or 'fellowship,' in [str(x).lower().strip() for x in value.split()] or 'fellowship' in [str(x).lower().strip() for x in value.split()] or 'fellowship' in [str(x).lower().strip() for x in value.split()] or 'fellowship' in [str(x).lower().strip() for x in value.split()]:
-                            type="INI"
-                            break
-                        if 'aperentship'  in [str(x).lower().strip() for x in value.split()] or 'aperentship.'  in [str(x).lower().strip() for x in value.split()] or 'aperentship,'  in [str(x).lower().strip() for x in value.split()] or 'aperentship'  in [str(x).lower().strip() for x in value.split()] or 'aperentship'  in [str(x).lower().strip() for x in value.split()] or 'aperentship'  in [str(x).lower().strip() for x in value.split()]:
-                            type="INI"
-                            break
-                        if 'trainee'  in [str(x).lower().strip() for x in value.split()] or 'trainee.'  in [str(x).lower().strip() for x in value.split()] or 'trainee,'  in [str(x).lower().strip() for x in value.split()] or 'trainee'  in [str(x).lower().strip() for x in value.split()] or 'trainee'  in [str(x).lower().strip() for x in value.split()] or 'trainee'  in [str(x).lower().strip() for x in value.split()]:
-                            type="INI"
-                            break
-                        if 'apprenticeship'  in [str(x).lower().strip() for x in value.split()] or 'apprenticeship.'  in [str(x).lower().strip() for x in value.split()] or 'apprenticeship,'  in [str(x).lower().strip() for x in value.split()] or 'apprenticeship'  in [str(x).lower().strip() for x in value.split()] or 'apprenticeship'  in [str(x).lower().strip() for x in value.split()] or 'apprenticeship'  in [str(x).lower().strip() for x in value.split()]:
-                            type="INI"
-                            break
-                job=refineColumns(job)
-                if type==None:
-                    type="com"
-                if job.get('job_title')==None or str(job.get('job_title'))=='nan':
-                    job_errCount+=1
-                    job_errorList.append({'job_title':str(job)})
-                    continue
-                if job.get('job_description')==None or str(job.get('job_description'))=='nan' :
-                    if (str(job.get('job_roles_responsibilities')).strip()=='nan' and str(job.get('qualifications')).strip()=='nan') or (str(job.get('job_roles_responsibilities')).strip()=='None' and str(job.get('qualifications')).strip()=='None') or (str(job.get('job_roles_responsibilities')).strip()=='' and str(job.get('qualifications')).strip()==''):
-                        job_errCount+=1
-                        job_errorList.append({'job_description':str(job)})
-                        continue
-                if job.get('job_location')==None or  str(job.get('job_location'))=='nan':
-                    job_errCount+=1
-                    job_errorList.append({'job_location':str(job)})
-                    continue
-                if job.get('company_name')==None:
-                    job_errCount+=1
-                    job_errorList.append({'company_name':str(job)})
-                    continue
-                if job.get('company_info_id')==None:
-                    job_errCount+=1
-                    job_errorList.append({'company_info_id':str(job)})
-                    continue
-                if job.get('apply_link')==None:
-                    job_errCount+=1
-                    job_errorList.append({'apply_link':str(job)})
-                    continue
-                info_id=job['company_info_id']
-                for key,value in job.items():
-                    if 'job_description' in key:
-                        if job[key]!=None:
-                            job[key]=HtmlParser(value,info_id,job)
-                        else:
-                            job[key]=value
-                    if 'qualifications' in key:
-                        if job[key]!=None:
-                            job[key]=HtmlParser(value,info_id,job)
-                        else:
-                            job[key]=value
-                    if 'job_roles_responsibilities' in key:
-                        if job[key]!=None:
-                            job[key]=HtmlParser(value,info_id,job)
-                        else:
-                            job[key]=value
-                    if 'job_requirements' in key:
-                        if job[key]!=None:
-                            job[key]=HtmlParser(value,info_id,job)
-                        else:
-                            job[key]=value
-                # detetcting JOB_TYPE
-                job_type_list=['intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime']
-                for typer in job_type_list:
-                  if job.get('job_type','').lower().strip() in typer:
-                        job['job_type']=typer.capitalize()
-                job['scrapped_date']=datetime.now()
-                abborted=None
-
-                job['scrappedBy']=pathname
-                if job.get('posted_date')==None:
-                    abborted="modified"
-                    job['posted_date']=job['scrapped_date']
-                if len(str(BeautifulSoup(str(job.get('job_description')),'html.parser').getText()).strip())==0:
-                    if (str(job.get('job_roles_responsibilities')).strip()=='nan' and str(job.get('qualifications')).strip()=='nan') or (str(job.get('job_roles_responsibilities')).strip()=='None' and str(job.get('qualifications')).strip()=='None') or (str(job.get('job_roles_responsibilities')).strip()=='' and str(job.get('qualifications')).strip()==''):
-                        job_errCount+=1
-                        job_errorList.append({'job_description':str(job)})
-                        continue
-                for item in [ 'This job posting is only available in the language of the country where the position is located. Please refer to the corresponding language to initiate your application.','This job posting is only available in German language','Sorry, this position has been filled.']:
-                    if item.lower() in str(job.get('job_description')).lower():
-                        job_errorList.append({"job_description":str(job)})
-                        continue
-                try:
-                    for x in ['job_description','job_roles_responsibilities','qualifications']:
-                        if str(job.get(x))!="None":
-                            job[x]=re.sub('\s+',' ',str(job.get(x)))
-                            language_detector=detect_langs(str(BeautifulSoup(job[x],'html.parser').get_text()))
-                            break
-
-                except:
-                    anotherLanguagesJobs+=1
-                    anotherLanguagesJobs_data.append({str(language_detector):str(job)})
-                    continue
-                if len(language_detector)>1:
-                    anotherLanguagesJobs_data.append({str(language_detector):str(job)})
-                    anotherLanguagesJobs+=1
-                    continue
+            responses=[]
+            for job in joblist:
+                job['scrappedby']=pathname
+                job['tested_status']='False'
+                request_data=storeJob_request(job)
+                if request_data.get('error')==None and request_data.get('detail')==None:
+                    if request_data.get('status')=='succses':
+                        inserted_database_rows_count+=1
+                    elif request_data.get('duplicateEntry')!=None:
+                        duplicate_job_rows+=1
                 else:
-                    content_spliter=str(language_detector[0]).split(':')
-                    if content_spliter[0]=='en':
-                        if '0.9999' not in content_spliter[1]:
-                            anotherLanguagesJobs+=1
-                            anotherLanguagesJobs_data.append({str(language_detector):str(job)})
-                            continue
-                    else:
-                        anotherLanguagesJobs+=1
-                        anotherLanguagesJobs_data.append({str(language_detector):str(job)})
-                        continue
-                if pin==None:
-                    if 'remote'!=job['job_location'].lower().strip():
-                        job.update(locationIdentifier(job['job_location'].replace('Headquarters','').replace('Various Locations','').replace('Airport','').replace('school','')))
+                    error_rows_count+=1
+                    error_rows.append(request_data)
+        return JsonResponse({'companies':companies,'duplicate_job_rows_count':duplicate_job_rows,'error_count':error_rows_count,"inserted_database_rows_count":inserted_database_rows_count,'error_rows':str(error_rows).replace("'",' ')})
+def storeJob_request(job):
+    try:
+        job_post_request=requests.post("http://"+str(socket.gethostbyname(socket.gethostname()))+':3000/get_data/',data=json.dumps(job))
+    except:
+        print_log_msg("StoreJobsRestservice Got connection Exception",Log.INFO.value)
+        print_log_msg("trying after 2 minute.......",Log.INFO.value)
+        time.sleep(120)
+        try:
+            return storeJob_request(job)
+        except:
+            print_log_msg("trying after 2 minute.......",Log.INFO.value)
+            time.sleep(120)
+            return  storeJob_request(job)
+    if job_post_request.status_code>=400 and job_post_request.status_code<500:
+        time.sleep(120)
+        print_log_msg("StoreJob_request got 400 trying after 2 minutes",Log.INFO.value)
+        return storeJob_request(job)
+    if  job_post_request.status_code>=500 and job_post_request.status_code<600:
+        print_log_msg("StoreJobsRestservice Got exception",Log.INFO.value)
+        return job_post_request.json()
+    if job_post_request.status_code==201:
+        return job_post_request.json()
+    elif job_post_request.status_code==205:
+        return {'error':job_post_request.json()}
+    else:
+        return job_post_request.json()
 
-                job['company_info_id']=int(float(job['company_info_id']))
-                if job.get('other_locations')!=None:
-                    job['other_locations']=job.get('other_locations').replace(job.get('job_location'),'')
-                if job.get('job_id')!=None:
-                    try:
-                        job['job_id']=int(float(job.get('job_id')))
-                    except:
-                        pass
-                if job.get('job_location')!=None and job.get('other_locations')!=None:
-                    job['other_locations']=job.get('other_locations').replace(job.get('job_location'),'')
-                if 'taleo' in job.get('apply_link'):
-                    if '?' not in job.get('apply_link'):
-                        job['apply_link']=job.get('apply_link')+"?job="+str(job.get('job_id'))
-                    else:
-                        job['apply_link']=job.get('apply_link')+"&job="+str(job.get('job_id'))
-                if type=='ini' or type=='INI':
-                    if abborted==None:
-                        dup=web_internship_jobs.objects.filter(company_name=job['company_name'],job_title=job['job_title'],job_location=job['job_location'],posted_date=job.get('posted_date'),job_id=job.get('job_id'))
-                    else:
-                        dup=web_internship_jobs.objects.filter(company_name=job['company_name'],job_title=job['job_title'],job_location=job['job_location'],job_id=job.get('job_id'))
-                    if len(dup)!=0:
-                        internsdupli+=1
-                        print("requirment already satisfied",job.get('job_title'),"---",sheet,"----Interhsips")
-                    else:
-                        try:
-                            com=web_internship_jobs(**job)
-                            com.save()
-                            print("---------sucesses-----",job.get('job_title'),"---",sheet,"----Interhsips")
-                            interns+=1
-                        except:
-                            ExceptionList.append({'error':str(job)})
-                            continue
 
-                if type=='COM' or type=='com':
-                    if abborted==None:
-                        dup=company_jobs.objects.filter(company_name=job['company_name'],job_title=job['job_title'],job_location=job['job_location'],posted_date=job.get('posted_date'),job_id=job.get('job_id'))
-                    else:
-                        dup=company_jobs.objects.filter(company_name=job['company_name'],job_title=job['job_title'],job_location=job['job_location'],job_id=job.get('job_id'))
-                    if len(dup)!=0:
-                        jobsdupli+=1
-                        print("requirment already satisfied",job.get('job_title'),"---",sheet,"----jobs")
-                    else:
-                        try:
-                            com=company_jobs(**job)
-                            com.save()
-                            print("---------sucesses-----",job.get('job_title'),"---",sheet,"----jobs")
-                            jobs+=1
-                        except:
-                            ExceptionList.append({'error':str(job)})
-                            continue
-
-        return JsonResponse({"jobs":str(jobs),'Interns':str(interns),"Jobsduplicates":str(jobsdupli),"internship Duplicates":str(internsdupli),"companies":str(companies),"dates":datesList,'Exception':job_errorList,'columnnameError':columnnameError,'updatedParentchildCount':str(updated),"Non-English_language_jobs_count":str(anotherLanguagesJobs),'ExceptionList':ExceptionList,'anotherLanguagesJobs_data':anotherLanguagesJobs_data,'closed_jobs_count':closed_jobs_count,'closed_jobs':closed_jobs})
 def refineColumns(job):
     new_jobData={}
     for key,value in job.items():
@@ -530,7 +322,7 @@ def HtmlParser(data,info_id,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :']:
+        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship']:
            if item.lower().strip() in x.getText().strip().lower():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
                     removed_elements.append(str(x.parent))
