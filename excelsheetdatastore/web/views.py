@@ -159,10 +159,15 @@ class ExcelSheetData(View):
                         dic1[k.lower()]=v[i]
                     joblist.append(dic1)
             responses=[]
+            dic={}
             for job in joblist:
                 job['scrappedby']=pathname
                 job['tested_status']='False'
                 job['company_info_id']=int(job.get('company_info_id'))
+                for key,value in job.items():
+                    if str(value).lower().strip()!='nan':
+                        dic[key]=value
+                job=dic        
                 try:
                     if job.get('job_id')!=None:
                         job['job_id']=int(job.get('job_id'))
