@@ -254,10 +254,10 @@ def replacer(data):
     return data
 def HtmlParser(data,job):
     soup=BeautifulSoup(data,"html.parser")
-    datarefineer=['primary_location',
+    datarefineer=('primary_location',
                 'recruiter_name',
-                'job_id']
-    datarefineer_identifier=['class','id','name']
+                'job_id')
+    datarefineer_identifier=('class','id','name')
     for x in datarefineer_identifier:
         for y in datarefineer:
             for refine in soup.findAll({x:y}):
@@ -267,11 +267,11 @@ def HtmlParser(data,job):
             x.decompose()
             continue
         x.attrs=None
-    RemovableTags=['button','submit','img','script','path','svg','input','hr','select','iframe','textarea']
+    RemovableTags=('button','submit','img','script','path','svg','input','hr','select','iframe','textarea')
     for tag in RemovableTags:
         for x in soup.findAll(tag):
             x.decompose()
-    for x in [soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})]:
+    for x in (soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})):
         if x!=None:
             x.decompose()
     # REMOVE_ATTRIBUTES = [
@@ -329,7 +329,7 @@ def HtmlParser(data,job):
             else:
                 if len(x.get_text().strip())<=50:
                     x.decompose()
-        for item in ['Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type']:
+        for item in ('Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','POSITION:','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type'):
            if item.strip() in x.getText().strip():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
                     removed_elements.append(str(x.parent))
@@ -425,7 +425,7 @@ def refining_job(job):
     job['posted_date']=str(validatos(job.get('posted_date')))
 
     # detetcting JOB_TYPE
-    job_type_list=['intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime']
+    job_type_list=('intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime')
     for type in job_type_list:
         if job.get('job_type','@a1>2<').lower().strip() in type:
             job['job_type']=type.capitalize()
@@ -443,9 +443,9 @@ def refining_job(job):
 
     #identifying the internship or jobs
     type=None
-    for value in [job['job_title'],job.get('job_type'),job.get('functional_area')]:
+    for value in (job['job_title'],job.get('job_type'),job.get('functional_area')):
         value=str(value).strip()
-        for identifiers in ['intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ']:
+        for identifiers in ('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship '):
             if identifiers in [str(x).lower().strip() for x in value.split()]:
                 type="INI"
     if type==None:
@@ -456,7 +456,7 @@ def refining_job(job):
         if str(item).lower().strip() in str(job.get('job_description')).lower().strip():
             return {'error':{'another_language_job':'This job posting is only available in the language of the country where the position is located. Please refer to the corresponding language to initiate your application.'}}
     try:
-        for x in ['job_description','job_roles_responsibilities','qualifications']:
+        for x in ('job_description','job_roles_responsibilities','qualifications'):
             if str(job.get(x))!="None":
                 job[x]=re.sub('\s+',' ',str(job.get(x)))
                 language_detector=detect_langs(str(BeautifulSoup(job[x],'html.parser').get_text()))
@@ -476,7 +476,7 @@ def refining_job(job):
     if pin==None:
         if 'remote'!=job['job_location'].lower().strip():
             job.update(locationIdentifier(job['job_location'].replace('Headquarters','').replace('Various Locations','').replace('Airport','').replace('school','')))
-    for column_name in ['job_description','job_roles_responsibilities','qualifications','job_requirements']:
+    for column_name in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
         if job.get(column_name)!=None:
             job[column_name]=HtmlParser(job.get(column_name),job)
     if 'taleo' in job.get('apply_link'):
