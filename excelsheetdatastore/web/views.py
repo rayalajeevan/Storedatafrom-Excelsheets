@@ -26,6 +26,7 @@ from threading import Thread
 from fuzzywuzzy import fuzz
 import webbrowser
 import re
+import threading as th
 #developed By Jeevan Rayala
 # dic=""""""
 # job={'job_description':dic,'job_id':"CL416"}
@@ -41,9 +42,11 @@ for each_sec in Config.sections():
     config=dict((k, v) for k, v in  Config.items(each_sec))
 PATH=config.get('allpath')
 DRIVE=config.get('drive')
-
+thread_count=config.get('thread_count')
 class ExcelSheetData(View):
     def get(self,request,*args,**kwrgs):
+        global request_responses
+        request_responses=[]
         pathname=request.GET.get('fname')
         if pathname==None:
             return HttpResponse("Please provide Folder name")
@@ -158,7 +161,6 @@ class ExcelSheetData(View):
                     for k,v in list.items():
                         dic1[k.lower()]=v[i]
                     joblist.append(dic1)
-            responses=[]
             dic={}
             for job in joblist:
                 job['scrappedby']=pathname
@@ -172,16 +174,24 @@ class ExcelSheetData(View):
                         job[key]=int(value)
                     except:
                         job[key]=str(value)
-                request_data=storeJob_request(job)
-                if request_data.get('error')==None and request_data.get('detail')==None:
-                    if request_data.get('status')=='succses':
-                        inserted_database_rows_count+=1
-                    elif request_data.get('duplicateEntry')!=None:
-                        duplicate_job_rows+=1
-                else:
-                    error_rows_count+=1
-                    error_rows.append(request_data)
+                t1=th.Thread(target=thread_function,args=(job,))
+                t1.start()
+                print("HEllo",th.active_count())
+                if th.active_count()>=int(thread_count):
+                    t1.join()
+        for request_data in request_responses:
+            if request_data.get('error')==None and request_data.get('detail')==None:
+                if request_data.get('status')=='succses':
+                    inserted_database_rows_count+=1
+                elif request_data.get('duplicateEntry')!=None:
+                    duplicate_job_rows+=1
+            else:
+                error_rows_count+=1
+                error_rows.append(request_data)
         return JsonResponse({'companies':companies,'duplicate_job_rows_count':duplicate_job_rows,'error_count':error_rows_count,"inserted_database_rows_count":inserted_database_rows_count,'error_rows':str(error_rows).replace("'",' ')})
+def thread_function(job):
+    request_responses.append(storeJob_request(job))
+
 def storeJob_request(job):
     try:
         job_post_request=requests.post("http://"+str(socket.gethostbyname(socket.gethostname()))+':3000/get_data/',data=json.dumps(job))

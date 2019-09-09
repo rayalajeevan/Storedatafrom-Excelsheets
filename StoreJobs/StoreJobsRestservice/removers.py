@@ -273,7 +273,7 @@ def HtmlParser(data,job):
             x.decompose()
     for x in [soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})]:
         if x!=None:
-            x.decompose()        
+            x.decompose()
     # REMOVE_ATTRIBUTES = [
     # 'lang','language','onmouseover','onmouseout','script','font',
     # 'dir','face','color','hspace',
@@ -400,15 +400,6 @@ def refining_job(job):
             job['country_type']=data[0].country_code
             pin="modified"
             del job['pin']
-    #validateing column names
-
-    for column_name in ['job_title','company_info_id','company_name','job_location','apply_link']:
-        if job.get(column_name)==None:
-            return {'error':{'column_name_error':'{} column name is missing'.format(column_name)}}
-        elif job.get(column_name)=='':
-            return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}
-    if job.get('job_description')==None and job.get('job_roles_responsibilities')==None and job.get('qualifications')==None and job.get('job_requirements')==None:
-        return {'error':{'column_name_error':"['job_description','job_roles_responsibilities','qualifications','job_requirements'] atleast one of the column must exist "}}
 
     #setting up city and state into location
 
@@ -420,17 +411,24 @@ def refining_job(job):
                 else:
                     job['job_location']=job['job_location']+" "+job.get(column_name)
                 del job[column_name]
+    #validateing column names
+
+    for column_name in ['job_title','company_info_id','company_name','job_location','apply_link']:
+        if job.get(column_name)==None:
+            return {'error':{'column_name_error':'{} column name is missing'.format(column_name)}}
+        elif job.get(column_name)=='':
+            return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}
+    if job.get('job_description')==None and job.get('job_roles_responsibilities')==None and job.get('qualifications')==None and job.get('job_requirements')==None:
+        return {'error':{'column_name_error':"['job_description','job_roles_responsibilities','qualifications','job_requirements'] atleast one of the column must exist "}}
     #setting the posted date in database information
 
     job['posted_date']=str(validatos(job.get('posted_date')))
 
     # detetcting JOB_TYPE
-    print('prev',job.get('job_type'))
     job_type_list=['intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime']
     for type in job_type_list:
         if job.get('job_type','@a1>2<').lower().strip() in type:
             job['job_type']=type.capitalize()
-    print('now',job.get('job_type'))
     #error throughing when postion was closed
 
     if 'position has been closed' in str(job.get('job_description')).lower():
