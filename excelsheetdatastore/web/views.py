@@ -163,16 +163,15 @@ class ExcelSheetData(View):
             for job in joblist:
                 job['scrappedby']=pathname
                 job['tested_status']='False'
-                job['company_info_id']=int(job.get('company_info_id'))
                 for key,value in job.items():
                     if str(value).lower().strip()!='nan':
                         dic[key]=value
                 job=dic
-                try:
-                    if job.get('job_id')!=None:
-                        job['job_id']=int(job.get('job_id'))
-                except:
-                    pass
+                for key,value in job.items():
+                    try:
+                        job[key]=int(value)
+                    except:
+                        job[key]=str(value)
                 request_data=storeJob_request(job)
                 if request_data.get('error')==None and request_data.get('detail')==None:
                     if request_data.get('status')=='succses':

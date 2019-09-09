@@ -271,15 +271,15 @@ def HtmlParser(data,job):
     for tag in RemovableTags:
         for x in soup.findAll(tag):
             x.decompose()
-    REMOVE_ATTRIBUTES = [
-    'lang','language','onmouseover','onmouseout','script','font',
-    'dir','face','color','hspace',
-    'border','valign','align','background','bgcolor','link','vlink',
-    'alink','href','id','src','type','border','align']
-    soup = BeautifulSoup(str(soup),"html.parser")
-    for attr in REMOVE_ATTRIBUTES:
-        for tag in soup.findAll():
-            	del tag[attr]
+    # REMOVE_ATTRIBUTES = [
+    # 'lang','language','onmouseover','onmouseout','script','font',
+    # 'dir','face','color','hspace',
+    # 'border','valign','align','background','bgcolor','link','vlink',
+    # 'alink','href','id','src','type','border','align']
+    # soup = BeautifulSoup(str(soup),"html.parser")
+    # for attr in REMOVE_ATTRIBUTES:
+    for tag in soup.findAll(True):
+        tag.attrs=None
     for x in [soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})]:
         if x!=None:
             x.decompose()
@@ -425,10 +425,12 @@ def refining_job(job):
     job['posted_date']=str(validatos(job.get('posted_date')))
 
     # detetcting JOB_TYPE
+    print('prev',job.get('job_type'))
     job_type_list=['intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime']
     for type in job_type_list:
         if job.get('job_type','@a1>2<').lower().strip() in type:
             job['job_type']=type.capitalize()
+    print('now',job.get('job_type'))
     #error throughing when postion was closed
 
     if 'position has been closed' in str(job.get('job_description')).lower():
