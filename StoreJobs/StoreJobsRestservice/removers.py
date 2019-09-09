@@ -271,6 +271,9 @@ def HtmlParser(data,job):
     for tag in RemovableTags:
         for x in soup.findAll(tag):
             x.decompose()
+    for x in [soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})]:
+        if x!=None:
+            x.decompose()        
     # REMOVE_ATTRIBUTES = [
     # 'lang','language','onmouseover','onmouseout','script','font',
     # 'dir','face','color','hspace',
@@ -280,9 +283,6 @@ def HtmlParser(data,job):
     # for attr in REMOVE_ATTRIBUTES:
     for tag in soup.findAll(True):
         tag.attrs=None
-    for x in [soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})]:
-        if x!=None:
-            x.decompose()
     for x in soup.findAll():
          if len(x.findChildren())==0:
             if '#' in x.getText().strip() and len(x.getText().strip())<=20:

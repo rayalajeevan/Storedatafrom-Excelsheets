@@ -40,7 +40,7 @@ class StoreJobsdata(APIView):
         try:
             data=refining_job(scrapped_data)
         except Exception as exc:
-            print(exc)
+            print('1st',exc)
             return   JsonResponse({'detail':str(exc)},status=status.HTTP_200_OK)
         try:
             if data.get('error')==None:
@@ -62,7 +62,7 @@ class StoreJobsdata(APIView):
             else:
                 return JsonResponse(serializer.errors,status=status.HTTP_205_RESET_CONTENT)
         except Exception as exception:
-            print(str(exception))
+            print('2nd',str(exception))
             return JsonResponse({'detail':str(exception)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 def checking_duplicates(scrapped_data,job,type='INI'):
     if type=="INI":
