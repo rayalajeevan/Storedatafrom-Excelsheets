@@ -181,8 +181,6 @@ def get_postalCode_from_googleApi(location):
         print("get_postalCode_from_googleApi not got 200 status So Sleeping for 20 secs")
         time.sleep(20)
         return get_postalCode_from_googleApi(location)
-
-print(locationIdentifier('Middle East & Africa'))
 def checking_mateched_location(scrapped_location,google_location):
     """
     checking_mateched_location
