@@ -176,7 +176,6 @@ class ExcelSheetData(View):
                         job[key]=str(value)
                 t1=th.Thread(target=thread_function,args=(job,))
                 t1.start()
-                print("HEllo",th.active_count())
                 if th.active_count()>=int(thread_count):
                     t1.join()
         for request_data in request_responses:

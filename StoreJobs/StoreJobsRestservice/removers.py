@@ -234,7 +234,7 @@ def regulardate(date=None):
         elif 'weeks' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(weeks=int(value))
         elif 'months' in date.lower():
-            value=int(value)*30
+            value=int(value)*31
             date=datetime.datetime.now()-datetime.timedelta(days=value)
         elif 'years' in date.lower():
             value=int(value)*365
@@ -246,8 +246,10 @@ def regulardate(date=None):
         elif 'week ' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(weeks=int(value))
         elif 'month ' in date.lower():
+            value=31
             date=datetime.datetime.now()-datetime.timedelta(days=int(value))
         elif 'year ' in date.lower():
+            value=365
             date=datetime.datetime.now()-datetime.timedelta(days=int(value))
         elif 'minute ' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(minutes=int(value))
@@ -284,9 +286,6 @@ def validatos(date,*args,**kwrgs):
             return str(datetime.datetime.now())
     else:
         return str(datetime.datetime.now())
-
-
-
 def string_error(data,*args,**kwrgs):
     if data!='' or data!='NULL' or data!='null' or data!=None or data!="None":
         try:
