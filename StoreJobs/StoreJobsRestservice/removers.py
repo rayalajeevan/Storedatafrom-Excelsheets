@@ -19,14 +19,18 @@ def locationIdentifier(org_location):
     if len(locationSpliter)!=1:
         orginal_location=get_location_from_database(locationSpliter)
         if orginal_location.get('location')==0:
-            orginal_location=get_postalCode_from_googleApi(org_location)
+            orginal_location=get_postalCode_from_googleApi(org_location.replace('#','').replace('&',' '))
+            print(orginal_location)
             if orginal_location.get('location')==0:
-                orginal_location=get_location_from_googleApi(org_location)
+                orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
+
     else:
-        orginal_location=get_postalCode_from_googleApi(org_location)
+        orginal_location=get_postalCode_from_googleApi(org_location.replace('#','').replace('&',' '))
+        print(orginal_location)
         if orginal_location.get('location')==0:
-            orginal_location=get_location_from_googleApi(org_location)
+            orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
     if orginal_location.get('location')!=0:
+
         city=orginal_location.get('location').get('city')
         state=orginal_location.get('location').get('state_code')
         country_type=orginal_location.get('location').get('country_type')
@@ -103,7 +107,7 @@ def get_location_from_googleApi(location):
     state_code=None
     country_type=None
     try:
-        location_request=requests.get('http://api.geonames.org/searchJSON?q={location}&maxRows=20&username=optncpt'.format(location=location.replace('#','')))
+        location_request=requests.get('http://api.geonames.org/searchJSON?q={location}&maxRows=1&username=optncpt'.format(location=location.replace('#','')))
     except Exception as e:
         print("get_location_from_googleApi got Error So Sleeping for 20 secs")
         time.sleep(20)
@@ -146,7 +150,7 @@ def get_postalCode_from_googleApi(location):
     state_code=None
     country_type=None
     try:
-        location_request=requests.get('http://api.geonames.org/postalCodeSearchJSON?placename={location}&maxRows=25&username=optncpt'.format(location=location.replace('#','')))
+        location_request=requests.get('http://api.geonames.org/postalCodeSearchJSON?placename={location}&maxRows=3&username=optncpt'.format(location=location.replace('#','')))
     except Exception as e:
         print(" get_postalCode_from_googleApi got Error So Sleeping for 20 secs")
         time.sleep(20)
@@ -178,6 +182,7 @@ def get_postalCode_from_googleApi(location):
         time.sleep(20)
         return get_postalCode_from_googleApi(location)
 
+print(locationIdentifier('Middle East & Africa'))
 def checking_mateched_location(scrapped_location,google_location):
     """
     checking_mateched_location
