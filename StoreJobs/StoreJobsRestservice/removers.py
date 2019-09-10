@@ -19,9 +19,13 @@ def locationIdentifier(org_location):
     if len(locationSpliter)!=1:
         orginal_location=get_location_from_database(locationSpliter)
         if orginal_location.get('location')==0:
-            orginal_location=get_location_from_googleApi(org_location)
+            orginal_location=get_postalCode_from_googleApi(org_location)
+            if orginal_location.get('location')==0:
+                orginal_location=get_location_from_googleApi(org_location)
     else:
-        orginal_location=get_location_from_googleApi(org_location)
+        orginal_location=get_postalCode_from_googleApi(org_location)
+        if orginal_location.get('location')==0:
+            orginal_location=get_location_from_googleApi(org_location)
     if orginal_location.get('location')!=0:
         city=orginal_location.get('location').get('city')
         state=orginal_location.get('location').get('state_code')
@@ -115,13 +119,7 @@ def get_location_from_googleApi(location):
                     if city=='Bengaluru':
                         city='Bangalore'
                     country_type=location_data['geonames'][0].get('countryCode')
-                    print("scrapped",location)
-                    if fuzz.ratio(city.lower(), location.lower())>=55:
-                        print('goog',{"location":{'city':city,'state_code':state_code,'country_type':country_type}})
-                        return {"location":{'city':city,'state_code':state_code,'country_type':country_type}}
-                    else:
-                        print(checking_mateched_location(location,location_data))
-                        return checking_mateched_location(location,location_data)
+                    return {"location":{'city':city,'state_code':state_code,'country_type':country_type}}
                 else:
                     return {'location':0}
             else:
@@ -134,6 +132,52 @@ def get_location_from_googleApi(location):
         print("get_location_from_googleApi not got 200 status So Sleeping for 20 secs")
         time.sleep(20)
         return get_location_from_googleApi(location)
+def get_postalCode_from_googleApi(location):
+    """
+     get_postalCode_from_googleApi
+     this function get the matched postal_code from google api
+        it will get 1 st loction from google API and checks with scrapped location
+        if its matched
+            returns city and state_code
+        if not
+            its calls the function checking_mateched_location
+    """
+    city=None
+    state_code=None
+    country_type=None
+    try:
+        location_request=requests.get('http://api.geonames.org/postalCodeSearchJSON?placename={location}&maxRows=25&username=optncpt'.format(location=location.replace('#','')))
+    except Exception as e:
+        print(" get_postalCode_from_googleApi got Error So Sleeping for 20 secs")
+        time.sleep(20)
+        print(str(e))
+        return get_postalCode_from_googleApi(location)
+    if location_request.status_code==200:
+        location_data=location_request.json()
+        try:
+            if len(location_data.get('postalCodes'))!=0 or location_data.get('postalCodes')!=None:
+                for postal_code in location_data.get('postalCodes'):
+                    if postal_code.get('countryCode')=="US" or postal_code.get('countryCode')=="IN":
+                        postalCode_data=Locations.objects.filter(postal_code=postal_code.get('postalCode'),country_code=postal_code.get('countryCode'))
+                        if len(postalCode_data)!=0:
+                            city=postalCode_data[0].city
+                            state_code=postalCode_data[0].state_code
+                            country_type=postal_code.get('countryCode')
+                            return {"location":{'city':city,'state_code':state_code,'country_type':country_type}}
+            else:
+                return {'location':0}
+            if city==None and state_code==None and country_type==None:
+                return {'location':0}
+        except Exception as e:
+            print("get_postalCode_from_googleApi got error so sleeping 20 secs")
+            time.sleep(20)
+            print(str(e))
+            return get_postalCode_from_googleApi(location)
+    else:
+        print("get_postalCode_from_googleApi not got 200 status So Sleeping for 20 secs")
+        time.sleep(20)
+        return get_postalCode_from_googleApi(location)
+
 def checking_mateched_location(scrapped_location,google_location):
     """
     checking_mateched_location

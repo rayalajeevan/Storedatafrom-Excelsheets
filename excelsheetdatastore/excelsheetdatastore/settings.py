@@ -80,8 +80,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gradsirenv2.0_int_comp',
-        'USER': 'GS4Intern',
-        'PASSWORD': '#LHCCYtHBkkEjUg4m@',
+        'USER': 'Jeevan',
+        'PASSWORD': '@FC6Uczrc38mAzsLt$',
         'HOST': '10.80.0.21',
         'PORT': '3306',
         'OPTIONS': {'charset':'utf8mb4'}
@@ -89,8 +89,8 @@ DATABASES = {
     'scrap':{
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'web_scrapping_testdb_python',
-        'USER': 'GS4Intern',
-        'PASSWORD': '#LHCCYtHBkkEjUg4m@',
+        'USER': 'Jeevan',
+        'PASSWORD': '@FC6Uczrc38mAzsLt$',
         'HOST': '10.80.0.21',
         'PORT': '3306',
         'OPTIONS': {'charset':'utf8mb4'}
