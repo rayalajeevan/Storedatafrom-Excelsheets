@@ -77,10 +77,10 @@ class ExcelSheetData(View):
         inserted_database_rows_count=0
         error_rows_count=0
         duplicate_job_rows=0
+        joblist=[]
         for sheet in excelSheetList:
             parentlistDataframe=None
             childListDataFrame=None
-            joblist=[]
             parentList=[]
             childList=[]
             path=PATH+pathname+"/{0}".format(sheet)
@@ -181,7 +181,7 @@ class ExcelSheetData(View):
                 t1.start()
                 if th.active_count()>=int(thread_count):
                     t1.join()
-        while  th.active_count()>2:
+        while len(joblist)!=len(request_responses):
             continue
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
