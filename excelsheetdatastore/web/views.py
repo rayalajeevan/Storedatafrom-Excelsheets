@@ -159,7 +159,10 @@ class ExcelSheetData(View):
                 for i in range(len(list)):
                     dic1={}
                     for k,v in list.items():
-                        dic1[k.lower()]=v[i]
+                        if str(v[i]).lower().strip()=='nan':
+                            dic1[k.lower()]=None
+                        else:
+                            dic1[k.lower()]=v[i]
                     joblist.append(dic1)
             dic={}
             for job in joblist:

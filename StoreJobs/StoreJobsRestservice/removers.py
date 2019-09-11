@@ -338,26 +338,34 @@ def HtmlParser(data,job):
                  x.decompose()
                  break
     removed_elements=[]
+    removed_tags=[]
     for x in soup.findAll():
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+            removed_tags.append('Job title')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+            removed_tags.append('job location')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+            removed_tags.append('functional area')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_id','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+            removed_tags.append('job id')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_type','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             x.decompose()
+            removed_tags.append('job type')
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('work_shift','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             x.decompose()
+            removed_tags.append('work_shift')
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+
             x.decompose()
             continue
             if x.parent!=None and len(x.parent.get_text().strip())<=200:
@@ -386,6 +394,16 @@ def HtmlParser(data,job):
                         x.decompose()
     for ele in removed_elements:
         soup=str(soup)+str(ele)
+    soup=BeautifulSoup(str(soup),'html.parser')
+    for tag in soup.findAll():
+        for item in removed_tags:
+            if item.lower() in tag.getText().lower() or fuzz.ratio(item.lower(),tag.getText().lower())>60:
+                try:
+                    tag.replace_with('')
+                    print('replace')
+                except:
+                    tag.decompose()
+
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
     return replacer(str(soup))
 def refineColumns(job):
