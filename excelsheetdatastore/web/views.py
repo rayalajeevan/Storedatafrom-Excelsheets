@@ -182,7 +182,7 @@ class ExcelSheetData(View):
                 if th.active_count()>=int(thread_count):
                     t1.join()
         while  th.active_count()>2:
-            continue         
+            continue
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
                 if request_data.get('status')=='succses':
