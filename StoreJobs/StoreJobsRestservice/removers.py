@@ -300,7 +300,7 @@ def replacer(data):
     return data
 def HtmlParser(data,job):
     items=  ('Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position')
-    items_starts_with=('POSITION:')
+    items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)')
     soup=BeautifulSoup(data,"html.parser")
     datarefineer=('primary_location',
                 'recruiter_name',
@@ -397,24 +397,27 @@ def HtmlParser(data,job):
     soup=BeautifulSoup(str(soup),'html.parser')
     for tag in soup.findAll():
         for item in removed_tags:
-            if item.lower() in tag.getText().lower() or fuzz.ratio(item.lower(),tag.getText().lower())>60:
+            if item in tag.getText() or fuzz.ratio(item,tag.getText())>60:
                 try:
                     tag.replace_with('')
+                    removed_elements.append(str(tag))
                 except:
                     tag.decompose()
+                    removed_elements.append(str(tag))
     for tag in soup.findAll():
-	    for item in items:
-		    if item in tag.getText() and len(tag.getText())<=100:
-			    tag.decompose()
+        for item in items:
+            if item in tag.getText() and len(tag.getText())<=100:
+                removed_elements.append(str(tag))
+                tag.decompose()
     for tag in soup.findAll():
         for item in items_starts_with:
-            if tag.getText().strip().startswith(item):
-                removed_elements.append(tag)
+            if tag.getText().strip().startswith(item) and len(tag.getText())<100:
+                removed_elements.append(str(tag))
                 tag.decompose()
     for ele in removed_elements:
         soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
-    return replacer(str(soup))
+    return str(soup)
 def refineColumns(job):
     new_jobData={}
     for key,value in job.items():
