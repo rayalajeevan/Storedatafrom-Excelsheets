@@ -181,6 +181,8 @@ class ExcelSheetData(View):
                 t1.start()
                 if th.active_count()>=int(thread_count):
                     t1.join()
+        while  th.active_count()>2:
+            continue         
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
                 if request_data.get('status')=='succses':
@@ -197,6 +199,7 @@ def thread_function(job):
 def storeJob_request(job):
     try:
         job_post_request=requests.post("http://"+str(socket.gethostbyname(socket.gethostname()))+':3000/get_data/',data=json.dumps(job))
+        print(job_post_request.json())
     except requests.exceptions.ConnectionError as exc:
         print("StoreJobsRestservice Got connection Exception",str(exc))
         print("trying after 2 minute.......")
