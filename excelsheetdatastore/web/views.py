@@ -178,7 +178,8 @@ class ExcelSheetData(View):
                         job[key]=int(value)
                     except:
                         job[key]=str(value)
-                request_responses.append(storeJob_request(job))
+                    print(job['job_location'])
+                # request_responses.append(storeJob_request(job))
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
                 if request_data.get('status')=='succses':

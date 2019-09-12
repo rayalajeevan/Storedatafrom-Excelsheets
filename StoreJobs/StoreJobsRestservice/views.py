@@ -9,6 +9,7 @@ import io
 from rest_framework import status
 from StoreJobsRestservice.removers import refining_job
 from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
+
 # Create your views here.
 class StoreJobsdata(APIView):
     # def get(self,request):

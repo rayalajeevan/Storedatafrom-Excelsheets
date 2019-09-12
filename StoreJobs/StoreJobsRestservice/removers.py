@@ -20,13 +20,11 @@ def locationIdentifier(org_location):
         orginal_location=get_location_from_database(locationSpliter)
         if orginal_location.get('location')==0:
             orginal_location=get_postalCode_from_googleApi(org_location.replace('#','').replace('&',' '))
-            print(orginal_location)
             if orginal_location.get('location')==0:
                 orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
 
     else:
         orginal_location=get_postalCode_from_googleApi(org_location.replace('#','').replace('&',' '))
-        print(orginal_location)
         if orginal_location.get('location')==0:
             orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
     if orginal_location.get('location')!=0:
@@ -160,7 +158,7 @@ def get_postalCode_from_googleApi(location):
         location_data=location_request.json()
         try:
             if len(location_data.get('postalCodes'))!=0 or location_data.get('postalCodes')!=None:
-                for postal_code in location_data.get('postalCodes'):
+                for postal_code in location_data.get('postalCodes')[0:1]:
                     if postal_code.get('countryCode')=="US" or postal_code.get('countryCode')=="IN":
                         postalCode_data=Locations.objects.filter(postal_code=postal_code.get('postalCode'),country_code=postal_code.get('countryCode'))
                         if len(postalCode_data)!=0:
