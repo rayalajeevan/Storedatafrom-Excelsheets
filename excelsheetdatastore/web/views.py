@@ -12,6 +12,7 @@ from web.textfromHtml import text_from_html
 from django.db.utils import DataError
 from datetime import datetime
 from langdetect import detect,detect_langs
+import time
 import socket
 import time
 import requests
@@ -177,12 +178,7 @@ class ExcelSheetData(View):
                         job[key]=int(value)
                     except:
                         job[key]=str(value)
-                t1=th.Thread(target=thread_function,args=(job,))
-                t1.start()
-                if th.active_count()>=int(thread_count):
-                    t1.join()
-        while len(joblist)!=len(request_responses):
-            continue
+                request_responses.append(storeJob_request(job))
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
                 if request_data.get('status')=='succses':
@@ -193,8 +189,7 @@ class ExcelSheetData(View):
                 error_rows_count+=1
                 error_rows.append(request_data)
         return JsonResponse({'companies':companies,'duplicate_job_rows_count':duplicate_job_rows,'error_count':error_rows_count,"inserted_database_rows_count":inserted_database_rows_count,'error_rows':str(error_rows).replace("'",' ')})
-def thread_function(job):
-    request_responses.append(storeJob_request(job))
+
 
 def storeJob_request(job):
     try:
