@@ -165,21 +165,20 @@ class ExcelSheetData(View):
                         else:
                             dic1[k.lower()]=v[i]
                     joblist.append(dic1)
-            dic={}
+
             for job in joblist:
                 job['scrappedby']=pathname
                 job['tested_status']='False'
                 for key,value in job.items():
-                    if str(value).lower().strip()!='nan':
-                        dic[key]=value
-                job=dic
+                    if str(value).strip().lower()=='nan':
+                        job[key]=None
                 for key,value in job.items():
                     try:
                         job[key]=int(value)
                     except:
                         job[key]=str(value)
-                    print(job['job_location'])
-                # request_responses.append(storeJob_request(job))
+                print(job.get('job_location'))
+                request_responses.append(storeJob_request(job))
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
                 if request_data.get('status')=='succses':
