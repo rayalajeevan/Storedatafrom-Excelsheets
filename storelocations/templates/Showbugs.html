@@ -46,10 +46,7 @@ select{
     if (ipr!=""){
       localStorage.setItem('ip',ipr)
     }
-    var objAgent = navigator.userAgent
-    if ((objOffsetVersion=objAgent.indexOf("Firefox"))==-1) {
- alert("Please use Mozilla")
-}
+  
     var status="{{ status }}"
     if (status!=""){
       location.href='http://'+localStorage.getItem('ip') +':7000/showbugs/'
