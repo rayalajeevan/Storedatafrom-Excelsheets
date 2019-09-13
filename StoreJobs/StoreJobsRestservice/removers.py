@@ -488,7 +488,7 @@ def refining_job(job):
     #validateing column names
 
     for column_name in ['job_title','company_info_id','company_name','job_location','apply_link']:
-        if job.get(column_name)==None:
+        if job.get(column_name)==None or str(job.get(column_name))=='None':
             return {'error':{'column_name_error':'{} column name is missing'.format(column_name)}}
         elif job.get(column_name)=='':
             return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}

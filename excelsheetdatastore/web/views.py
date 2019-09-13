@@ -126,7 +126,7 @@ class ExcelSheetData(View):
                             del dic
                     for cdata in childList:
                         for pdata in parentList:
-                            if fuzz.ratio(str(pdata.get('apply_link')).replace('s:',':').lower(),str(cdata.get('apply_link')).replace('s:',':').lower())>100:
+                            if str(pdata.get('apply_link')).replace('s:',':').lower()==str(cdata.get('apply_link')).replace('s:',':').lower():
                                 for key in ['job_type','job_location','posted_date','functional_area','job_id']:
                                     if pdata.get(key)!=None and cdata.get(key)==None:
                                         cdata[key]=pdata.get(key)
