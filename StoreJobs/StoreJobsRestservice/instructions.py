@@ -5,6 +5,7 @@ import re
 class Instructions():
     def __init__(self,instruction_id,html_data):
         self.instructions_dictionary={
+        36:self.rule_no_36,
         35:self.rule_no_35,
         30:self.rule_no_30,
         28:self.rule_no_28,
@@ -862,3 +863,22 @@ class Instructions():
                 soup=str(soup)+str(x)
             self.html_data[key]=str(soup).replace('APPLY NOW','')
         return self.html_data
+    def rule_no_36(self):
+        """
+        Timber
+        """
+        for key in ['job_location']:
+            location=self.html_data[key]
+            modified_location=None
+            location=location.split('>')
+            if len(location)>1 and len(location)>2:
+                modified_location=location[2]
+            else:
+                modified_location=self.html_data[key]
+            self.html_data[key]=modified_location
+
+        return self.html_data
+if __name__=="__main__":
+    job={'job_location':'ASIA > VNM > Ho Chi Minh City > ASO Office'}
+    incobj=Instructions(36,job)
+    print(incobj.method_caller())
