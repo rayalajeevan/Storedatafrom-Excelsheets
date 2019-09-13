@@ -61,18 +61,16 @@ class Instructions():
                     for val in values:
                         if strong.name=="strong":
                             if val.lower() in  strong.getText().lower():
-                                if strong.parent!=None:
+                                if strong.parent!=None and len(strong.parent.getText())<=100:
                                     strong.parent.decompose()
                                 else:
                                     strong.decompose()
-                        else:
-                            strong.decompose()
-                for em in soup.findAll('em'):
-                    if em.parent!=None:
-                        em.parent.decompose()
-                    else:
-                        em.decompose()
-            self.html_data[key]=soup
+                # for em in soup.findAll('em'):
+                #     if em.parent!=None:
+                #         em.parent.decompose()
+                #     else:
+                #         em.decompose()
+            self.html_data[key]=str(soup)
         return self.html_data
     def rule_no_2(self):
         """

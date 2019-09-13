@@ -4,10 +4,11 @@ from StoreJobsRestservice.serializers import WebCompanyJobsSerilizer,WebInternsh
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse,HttpResponse
-from .models import WebCompanyJobs,WebInternshipJobs,TopCities
+from .models import WebCompanyJobs,WebInternshipJobs,TopCities,BeautifyCompanyJobs
 import io
 from django.shortcuts import render
 from rest_framework import status
+from StoreJobsRestservice.instructions import Instructions
 from StoreJobsRestservice.removers import refining_job,HtmlParser,validatos,locationIdentifier
 from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
 
@@ -91,15 +92,24 @@ def checking_duplicates(scrapped_data,job,type='INI'):
                 return 1
 def showjob(request,*args,**kwrgs):
     job={}
+    print(request.POST)
     if request.method=='GET':
         return render(request,'checkjob.html')
     for k,v in request.POST.items():
         if k!='csrfmiddlewaretoken':
             if  v.strip()!='':
                 job[k]=v
+    beautyfyObject=[]
+    if job.get('company_info_id')!=None and job.get('company_info_id').strip()!='':
+        beautyfyObject=BeautifyCompanyJobs.objects.filter(company_info_id=job.get('company_info_id'))
+    if len(beautyfyObject)!=0:
+        Incobj=Instructions(beautyfyObject[0].instruction_id,job)
+        job=Incobj.method_caller()
     optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
+    print(job.keys())
     for k,v in job.items():
-        if k!='job_title':
+        if k!='job_title' and k!='company_info_id':
+            print(k)
             job[k]=optimizer.get(k)(v)
     data="<html>"
     for k,v in job.items():
