@@ -1,0 +1,8 @@
+<html><body>
+    <form method='post' url='/show_job/'>{% csrf_token %}
+    <span>Job Title</span><input type='text' name='job_title' ><br><br>
+    <span>Job Location</span><input type='text' name='job_location' ><br><br>
+    <span>Job Posted Date</span><input type='text' name='posted_date' ><br><br>
+    <span>Job Description</span><textarea name='job_description'></textarea><br><br>
+    <input type='submit' value="check">
+    </form></body></html>

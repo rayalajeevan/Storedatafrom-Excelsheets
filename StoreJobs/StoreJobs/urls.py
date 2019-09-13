@@ -20,5 +20,6 @@ from StoreJobsRestservice import views
 # from rest_framework_jwt.views import refresh_jwt_token
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('get_data/',views.StoreJobsdata.as_view())
+    path('get_data/',views.StoreJobsdata.as_view()),
+    path('show_job/',views.showjob),
 ]

@@ -3,11 +3,12 @@ from rest_framework.views import APIView
 from StoreJobsRestservice.serializers import WebCompanyJobsSerilizer,WebInternshipJobsSerilizer
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from .models import WebCompanyJobs,WebInternshipJobs,TopCities
 import io
+from django.shortcuts import render
 from rest_framework import status
-from StoreJobsRestservice.removers import refining_job
+from StoreJobsRestservice.removers import refining_job,HtmlParser,validatos,locationIdentifier
 from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
 
 # Create your views here.
@@ -88,3 +89,20 @@ def checking_duplicates(scrapped_data,job,type='INI'):
                 return 0
             else:
                 return 1
+def showjob(request,*args,**kwrgs):
+    job={}
+    if request.method=='GET':
+        return render(request,'checkjob.html')
+    for k,v in request.POST.items():
+        if k!='csrfmiddlewaretoken':
+            if  v.strip()!='':
+                job[k]=v
+    optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
+    for k,v in job.items():
+        if k!='job_title':
+            job[k]=optimizer.get(k)(v)
+    data="<html>"
+    for k,v in job.items():
+        data=data+"<h5>{k}</h5><p>{v}</p>".format(k=k,v=v)
+    data=data+"</html>"
+    return HttpResponse(data)
