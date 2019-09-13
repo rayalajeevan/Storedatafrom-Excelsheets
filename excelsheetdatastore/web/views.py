@@ -105,12 +105,18 @@ class ExcelSheetData(View):
                     for i in range(len(parentlistDataframe)):
                         dic1={}
                         for k,v in parentlistDataframe.items():
-                            dic1[k.lower()]=v[i]
+                            if str(v[i]).lower().strip()=='nan':
+                                dic1[k.lower()]=None
+                            else:
+                                dic1[k.lower()]=v[i]
                         parentList.append(dic1)
                     for i in range(len(childListDataFrame)):
                         dic1={}
                         for k,v in childListDataFrame.items():
-                            dic1[k.lower()]=v[i]
+                            if str(v[i]).lower().strip()=='nan':
+                                dic1[k.lower()]=None
+                            else:
+                                dic1[k.lower()]=v[i]
                         childList.append(dic1)
                     updated=0
                     updatedlist=[]
@@ -120,13 +126,12 @@ class ExcelSheetData(View):
                             del dic
                     for cdata in childList:
                         for pdata in parentList:
-                            if fuzz.ratio(str(pdata.get('apply_link')).replace('s:',':').lower(),str(cdata.get('apply_link')).replace('s:',':').lower())>95:
+                            if fuzz.ratio(str(pdata.get('apply_link')).replace('s:',':').lower(),str(cdata.get('apply_link')).replace('s:',':').lower())>99:
                                 for key in ['job_type','job_location','posted_date','functional_area','job_id']:
                                     if pdata.get(key)!=None and cdata.get(key)==None:
                                         cdata[key]=pdata.get(key)
                                 if cdata.get('job_location')==None:
                                     for key in ['city','state','country']:
-                                        print(cdata.get('job_location'),'  ',key)
                                         if pdata.get(key)!=None and str(pdata.get(key)).strip()!='' and str(pdata.get(key)).strip()!='nan' and str(pdata.get(key)).lower()!='null':
                                             if cdata.get('job_location')==None and cdata.get('pin')==None :
                                                 cdata['job_location']=pdata.get(key)
@@ -177,7 +182,6 @@ class ExcelSheetData(View):
                         job[key]=int(value)
                     except:
                         job[key]=str(value)
-                print(job.get('job_location'))
                 request_responses.append(storeJob_request(job))
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
