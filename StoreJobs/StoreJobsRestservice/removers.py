@@ -297,7 +297,7 @@ def string_error(data,*args,**kwrgs):
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
-    items=  ('Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position')
+    items=  ('Date Posted:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position')
     items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)')
     soup=BeautifulSoup(data,"html.parser")
     datarefineer=('primary_location',
@@ -386,6 +386,7 @@ def HtmlParser(data,job={}):
         for item in items:
             if item.strip() in x.getText().strip():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
+                    print('true',item)
                     removed_elements.append(str(x.parent))
                     x.parent.decompose()
                 else:
