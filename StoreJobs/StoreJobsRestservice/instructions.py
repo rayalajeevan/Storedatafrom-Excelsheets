@@ -41,6 +41,7 @@ class Instructions():
         32:self.rule_no_32,
         33:self.rule_no_33,
         34:self.rule_no_34,
+        37:self.rule_no_37,
         }
         self.instruction_id=instruction_id
         self.html_data=html_data
@@ -805,9 +806,9 @@ class Instructions():
         """
         for key in ['apply_link']:
             if '? ' in self.html_data[key]:
-                self.html_data[key]=self.html_data[key]+"&JobOpeningId="+str(self.html_data.get('job_id'))
+                self.html_data[key]=self.html_data[key]+"&JobOpeningId="+str(self.html_data['job_id'])
             else:
-                self.html_data[key]=self.html_data[key]+"?JobOpeningId="+str(self.html_data.get('job_id'))
+                self.html_data[key]=self.html_data[key]+"?JobOpeningId="+str(self.html_data['job_id'])
         return self.html_data
     def rule_no_33(self):
         """
@@ -873,6 +874,21 @@ class Instructions():
                 modified_location=location[2]
             else:
                 modified_location=self.html_data[key]
+            self.html_data[key]=modified_location
+
+        return self.html_data
+    def rule_no_37(self):
+        """
+        Avis Budget Froup
+        """
+        for key in ['job_location']:
+            location=self.html_data[key]
+            modified_location=None
+            location=location.split('-')
+            if len(location)>1 and len(location)>2:
+                modified_location=' ,'.join(location[0:2])
+            else:
+                modified_location=location[0]
             self.html_data[key]=modified_location
 
         return self.html_data
