@@ -92,7 +92,6 @@ def checking_duplicates(scrapped_data,job,type='INI'):
                 return 1
 def showjob(request,*args,**kwrgs):
     job={}
-    print(request.POST)
     if request.method=='GET':
         return render(request,'checkjob.html')
     for k,v in request.POST.items():
@@ -106,10 +105,8 @@ def showjob(request,*args,**kwrgs):
         Incobj=Instructions(beautyfyObject[0].instruction_id,job)
         job=Incobj.method_caller()
     optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
-    print(job.keys())
     for k,v in job.items():
         if k!='job_title' and k!='company_info_id':
-            print(k)
             job[k]=optimizer.get(k)(v)
     data="<html>"
     for k,v in job.items():
