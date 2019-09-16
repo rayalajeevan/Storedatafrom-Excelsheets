@@ -805,9 +805,9 @@ class Instructions():
         """
         for key in ['apply_link']:
             if '? ' in self.html_data[key]:
-                self.html_data[key]=self.html_data[key]+"&JobOpeningId="+str(self.html_data['job_id'])
+                self.html_data[key]=self.html_data[key]+"&JobOpeningId="+str(self.html_data.get('job_id'))
             else:
-                self.html_data[key]=self.html_data[key]+"?JobOpeningId="+str(self.html_data['job_id'])
+                self.html_data[key]=self.html_data[key]+"?JobOpeningId="+str(self.html_data.get('job_id'))
         return self.html_data
     def rule_no_33(self):
         """
