@@ -148,9 +148,10 @@ def get_postalCode_from_googleApi(location):
     state_code=None
     country_type=None
     try:
+        print(location)
         location_request=requests.get('http://api.geonames.org/postalCodeSearchJSON?placename={location}&maxRows=3&username=optncpt'.format(location=location.replace('#','')))
     except Exception as e:
-        print(" get_postalCode_from_googleApi got Error So Sleeping for 20 secs")
+        print(" get_postalCode_from_googleApi got Error So Sleeping for 20")
         time.sleep(20)
         print(str(e))
         return get_postalCode_from_googleApi(location)
@@ -297,7 +298,7 @@ def string_error(data,*args,**kwrgs):
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
-    items=  ('Date Posted:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position')
+    items=  ('Date Posted:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:')
     items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)')
     soup=BeautifulSoup(data,"html.parser")
     datarefineer=('primary_location',
@@ -317,7 +318,7 @@ def HtmlParser(data,job={}):
     for tag in RemovableTags:
         for x in soup.findAll(tag):
             x.decompose()
-    for x in (soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'})):
+    for x in (soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'}),soup.find('span',{'class':'LimelightEmbeddedPlayer'})):
         if x!=None:
             x.decompose()
     # REMOVE_ATTRIBUTES = [
@@ -550,7 +551,7 @@ def refining_job(job):
     #identifying correct locations
     if pin==None:
         if 'remote'!=job['job_location'].lower().strip():
-            job.update(locationIdentifier(job['job_location'].replace('Headquarters','').replace('Various Locations','').replace('Airport','').replace('school','')))
+            job.update(locationIdentifier(job['job_location'].replace('Headquarters','').replace('Various Locations','multiple locations').replace('Airport','').replace('school','')))
     for column_name in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
         if job.get(column_name)!=None:
             job[column_name]=HtmlParser(job.get(column_name),job)
