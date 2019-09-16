@@ -864,7 +864,8 @@ class Instructions():
         return self.html_data
     def rule_no_36(self):
         """
-        Timber
+        Timber,
+        Williamson-Dickie Mfg Co
         """
         for key in ['job_location']:
             location=self.html_data[key]
