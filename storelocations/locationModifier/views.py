@@ -516,7 +516,7 @@ def pushcompayInfo(request):
     else:
         dic={}
         for x in request.POST:
-            if request.POST.get(x)!='' or request.POST.get(x)!=None:
+            if request.POST.get(x)!='' and request.POST.get(x)!=None and str(request.POST.get(x)).lower()!='null' :
                 dic[x]=request.POST.get(x)
         del dic['csrfmiddlewaretoken']
         if dic.get('company_unique_id')!=None:

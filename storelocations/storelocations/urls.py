@@ -35,8 +35,8 @@ urlpatterns = [
     path('getcred',views.GetCred),
     # path('bugnotification/',views.BugNotification),
     path('deleteindividualsheet/',views.deleteindividualsheet),
-    path('pushcompany/',views.pushcompayInfo),
-    path('deleteautomate/',views.thread_call),
+    # path('pushcompany/',views.pushcompayInfo),
+    # path('deleteautomate/',views.thread_call),
     path('change_tested_status/',views.change_tested_status),
     path('getlocationid/',views.location_checker)
 ]

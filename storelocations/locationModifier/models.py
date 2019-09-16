@@ -141,17 +141,17 @@ class company_info(models.Model):
         db_table='company_info'
     company_info_id=models.IntegerField(primary_key=True,)
     company_name=models.CharField(max_length=255)
-    company_size=models.CharField(max_length=45)
-    company_website=models.TextField()
-    company_logo_path=models.TextField()
-    company_contact=models.CharField(max_length=20)
-    company_profile_description=models.TextField()
-    image_purity=models.CharField(max_length=45)
-    estd_year=models.CharField(max_length=20)
-    other_locations=models.TextField()
-    hq_company_address_line1=models.TextField()
-    hq_company_address_line2=models.CharField(max_length=255)
-    company_unique_id=models.CharField(max_length=50)
+    company_size=models.CharField(max_length=45,default=None)
+    company_website=models.TextField(default=None)
+    company_logo_path=models.TextField(default=None)
+    company_contact=models.CharField(max_length=20,default=None)
+    company_profile_description=models.TextField(default=None)
+    image_purity=models.CharField(max_length=45,default=None)
+    estd_year=models.CharField(max_length=20,default=None)
+    other_locations=models.TextField(default=None)
+    hq_company_address_line1=models.TextField(default=None)
+    hq_company_address_line2=models.CharField(max_length=255,default=None)
+    company_unique_id=models.CharField(max_length=50,default=None)
 class companies_internship(models.Model):
     class Meta:
         db_table='companies_internship'
