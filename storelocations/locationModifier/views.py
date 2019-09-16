@@ -46,14 +46,16 @@ class GetCompanyName(View):
                 if len(INterndata)!=0:
                     for jobsdata in INterndata[0:250:]:
                         jobs_idsAndInternNames.append({'type':"INI",'job_title':str(jobsdata.job_title)+"-------"+str(jobsdata.web_internship_jobs_id),'job_id':jobsdata.web_internship_jobs_id})
-                list.append({'company_info_id':x.company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndInternNames})
+                shuffle(jobs_idsAndInternNames)
+                list.append({'company_info_id':x.company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndInternNames[0:30:]})
                 return JsonResponse({'status':'success','data':list,'page':page,"pageNation":"page","showmin":page+"1",'showmax':int(page+"1")+len(list)-1,"max":len(data)})
             elif val==2:
                 CompanyJObsdata=Web_company_jobs.objects.filter(company_info_id=x.company_info_id)
                 if len(CompanyJObsdata)!=0:
                     for jobsdata in CompanyJObsdata[0:250:]:
                         jobs_idsAndCompanyNames.append({'type':"COM",'job_title':str(jobsdata.job_title)+"-------"+str(jobsdata.web_company_jobs_id),'job_id':jobsdata.web_company_jobs_id})
-                list.append({'company_info_id':x.company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndCompanyNames})
+                shuffle(jobs_idsAndCompanyNames)
+                list.append({'company_info_id':x.company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndCompanyNames[0:30:]})
                 return JsonResponse({'status':'success','data':list,'page':page,"pageNation":"page","showmin":page+"1",'showmax':int(page+"1")+len(list)-1,"max":len(data)})
         except ValueError:
             data=None
@@ -83,7 +85,8 @@ class GetCompanyName(View):
                         if len(CompanyJObsdata)!=0:
                             for jobsdata in CompanyJObsdata[0:250:]:
                                 jobs_idsAndCompanyNames.append({'type':"COM",'job_title':str(jobsdata.job_title)+"-------"+str(jobsdata.web_company_jobs_id),'job_id':jobsdata.web_company_jobs_id})
-                    list.append({'company_info_id':x.company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndCompanyNames})
+                    shuffle(jobs_idsAndCompanyNames)
+                    list.append({'company_info_id':x.company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndCompanyNames[0:30:]})
             if val==1:
                 for x in data:
                     jobs_idsAndCompanyNames=[]
@@ -96,7 +99,8 @@ class GetCompanyName(View):
                         if len(CompanyJObsdata)!=0:
                             for jobsdata in CompanyJObsdata[0:250:]:
                                 jobs_idsAndCompanyNames.append({'type':"COM",'job_title':str(jobsdata.job_title)+"-------"+str(jobsdata.web_company_jobs_id),'job_id':jobsdata.web_company_jobs_id})
-                    list.append({'company_info_id':x.company_info_company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndCompanyNames})
+                    shuffle(jobs_idsAndCompanyNames)
+                    list.append({'company_info_id':x.company_info_company_info_id,'company_name':x.company_name,"jobsdata":jobs_idsAndCompanyNames[0:30:]})
             return JsonResponse({'status':'success','data':list,"pageNation":"pageNation","showmin":0,"showmax":len(list),"max":len(data)})
         if len(data)>10:
             max=int(page+"1")+10
@@ -115,7 +119,8 @@ class GetCompanyName(View):
                         if len(CompanyJObsdata)!=0:
                             for jobsdata in CompanyJObsdata[0:250:]:
                                 jobs_idsAndCompanyNames.append({'type':"COM",'job_title':str(jobsdata.job_title)+"-------"+str(jobsdata.web_company_jobs_id),'job_id':jobsdata.web_company_jobs_id})
-                    list.append({'company_info_id':data[x].company_info_id,'company_name':data[x].company_name,"jobsdata":jobs_idsAndCompanyNames})
+                    shuffle(jobs_idsAndCompanyNames)
+                    list.append({'company_info_id':data[x].company_info_id,'company_name':data[x].company_name,"jobsdata":jobs_idsAndCompanyNames[0:30:]})
 
             if val==1:
                 for x in range(min,max):
@@ -129,7 +134,8 @@ class GetCompanyName(View):
                         if len(CompanyJObsdata)!=0:
                             for jobsdata in CompanyJObsdata[0:250:]:
                                 jobs_idsAndCompanyNames.append({'type':"COM",'job_title':str(jobsdata.job_title)+"-------"+str(jobsdata.web_company_jobs_id),'job_id':jobsdata.web_company_jobs_id})
-                    list.append({'company_info_id':data[x].company_info_company_info_id,'company_name':data[x].company_name,"jobsdata":jobs_idsAndCompanyNames})
+                    shuffle(jobs_idsAndCompanyNames)
+                    list.append({'company_info_id':data[x].company_info_company_info_id,'company_name':data[x].company_name,"jobsdata":jobs_idsAndCompanyNames[0:30:]})
 
 
         return JsonResponse({'status':'success','data':list,'page':page,"pageNation":"page","showmin":page+"1",'showmax':int(page+"1")+len(list)-1,"max":len(data)})
@@ -190,11 +196,11 @@ def send_mail_to_interns(ip):
         'doolamravali432@gmail.com',])
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
-try:
-    jeevan()
-except Exception as e:
-    print(e)
-    print("Internet Is not available Please send Manually.....!",str(e))
+# try:
+#     jeevan()
+# except Exception as e:
+#     print(e)
+#     print("Internet Is not available Please send Manually.....!",str(e))
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')
