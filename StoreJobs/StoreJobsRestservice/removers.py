@@ -297,8 +297,8 @@ def string_error(data,*args,**kwrgs):
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
-    items=  ('Date Posted:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:','Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','Closing date:')
-    items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:','Role:','Role')
+    items=  ('Date Posted:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:')
+    items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:')
     soup=BeautifulSoup(data,"html.parser")
     datarefineer=('primary_location',
                 'recruiter_name',
@@ -341,9 +341,11 @@ def HtmlParser(data,job={}):
     removed_tags=[]
     for x in soup.findAll():
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+            removed_tags.append('job_location')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+            removed_tags.append('job_location')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
@@ -383,6 +385,7 @@ def HtmlParser(data,job={}):
         for item in items:
             if item.strip() in x.getText().strip():
                 if x.parent!=None and len(x.parent.get_text().strip())<=70:
+                    print('true',item)
                     removed_elements.append(str(x.parent))
                     x.parent.decompose()
                 else:
@@ -408,9 +411,7 @@ def HtmlParser(data,job={}):
         for item in items_starts_with:
             if tag.getText().strip().startswith(item) and len(tag.getText())<100:
                 removed_elements.append(str(tag))
-                print(removed_elements,'skjc')
                 tag.decompose()
-        break
     for ele in removed_elements:
         soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
