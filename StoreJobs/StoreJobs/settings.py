@@ -12,6 +12,19 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import datetime
 import os
 import socket
+import configparser
+import importlib.util
+Config = configparser.RawConfigParser()
+data='configuration.ini'
+Config.read(data)
+config={}
+for each_sec in Config.sections():
+    config=dict((k, v) for k, v in  Config.items(each_sec))
+PATH=config.get('encryptpath')
+spec = importlib.util.spec_from_file_location("cryption",PATH)
+foo = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(foo)
+CRYPTPASSWORD=foo.decrypt('<!_y4ljFleiv8jC^GQ')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'web_scrapping_testdb_python',
         'USER': 'Jeevan',
-        'PASSWORD': '@FC6Uczrc38mAzsLt$',
+        'PASSWORD': CRYPTPASSWORD,
         'HOST': '10.80.0.21',
         'PORT': '3306',
         'OPTIONS': {'charset':'utf8mb4'}

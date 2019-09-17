@@ -13,6 +13,20 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from os import path
 import socket
+import importlib.util
+import configparser
+Config = configparser.RawConfigParser()
+data='configuration.ini'
+Config.read(data)
+config={}
+for each_sec in Config.sections():
+    config=dict((k, v) for k, v in  Config.items(each_sec))
+PATH=config.get('encryptpath')
+spec = importlib.util.spec_from_file_location("cryption",PATH)
+foo = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(foo)
+CRYPTPASSWORD=foo.decrypt('<!_y4ljFleiv8jC^GQ')
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -84,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gradsirenv2.0_int_comp',
         'USER': 'Jeevan',
-        'PASSWORD': '@FC6Uczrc38mAzsLt$',
+        'PASSWORD': CRYPTPASSWORD,
         'HOST': '10.80.0.21',
         'PORT': '3306',
     },
@@ -92,7 +106,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'web_scrapping_testdb_python',
         'USER': 'Jeevan',
-        'PASSWORD': '@FC6Uczrc38mAzsLt$',
+        'PASSWORD': CRYPTPASSWORD,
         'HOST': '10.80.0.21',
         'PORT': '3306',
     }
@@ -139,7 +153,7 @@ STATIC_URL = '/static/'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'rayalajeevan@gmail.com'
-EMAIL_HOST_PASSWORD = 'chows.shivaram998'
+EMAIL_HOST_PASSWORD = foo.decrypt('lMLsCACMKzXFXvooi')
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 STATICFILES_DIRS = [
