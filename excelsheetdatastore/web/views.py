@@ -196,19 +196,8 @@ class ExcelSheetData(View):
 
 
 def storeJob_request(job):
-    try:
-        job_post_request=requests.post("http://"+str(socket.gethostbyname(socket.gethostname()))+':3000/get_data/',data=json.dumps(job))
-        print(job_post_request.json())
-    except requests.exceptions.ConnectionError as exc:
-        print("StoreJobsRestservice Got connection Exception",str(exc))
-        print("trying after 2 minute.......")
-        time.sleep(120)
-        try:
-            return storeJob_request(job)
-        except requests.exceptions.ConnectionError as exc:
-            print("trying after 2 minuste.......")
-            time.sleep(120)
-            return  storeJob_request(job)
+    job_post_request=requests.post("http://"+str(socket.gethostbyname(socket.gethostname()))+':3000/get_data/',data=json.dumps(job))
+    print(job_post_request.json())
     if job_post_request.status_code>=400 and job_post_request.status_code<500:
         time.sleep(120)
         print("StoreJob_request got 400 trying after 2 minutes")
