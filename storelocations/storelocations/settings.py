@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'locationModifier',
+    'companyapp',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -92,7 +94,7 @@ WSGI_APPLICATION = 'storelocations.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DATABASE_ROUTERS=['storelocations.routers.Router']
-DATABASE_APPS_MAPPING={'web_scrapping':'scrap'}
+DATABASE_APPS_MAPPING={'web_scrapping':'scrap','pushcompany':'developers'}
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -108,6 +110,14 @@ DATABASES = {
         'USER': 'Jeevan',
         'PASSWORD': CRYPTPASSWORD,
         'HOST': '10.80.0.21',
+        'PORT': '3306',
+    },
+    'developers':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'gradsirenv2.0_beeta001',
+        'USER': 'GradSiren_Social',
+        'PASSWORD': foo.decrypt('3y<xKGjj2rzt*6bd*17$926govcXy4qC1/5C-sfQH<7>'),
+        'HOST': '10.80.0.37',
         'PORT': '3306',
     }
 }

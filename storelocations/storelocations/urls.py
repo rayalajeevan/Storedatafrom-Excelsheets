@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from locationModifier.views import GetCompanyName,gethtml,getCompanyData,renderHtml,Fileuploader,deleteExcelSheets,viewfiles,ViewJobsCount,BugsDashBoardRender,raiseBug
 from locationModifier import views
+from companyapp.views import PushUpdateCompany,GetIndustry
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('getCompanyInfoID',GetCompanyName.as_view()),
@@ -35,8 +36,9 @@ urlpatterns = [
     path('getcred',views.GetCred),
     # path('bugnotification/',views.BugNotification),
     path('deleteindividualsheet/',views.deleteindividualsheet),
-    # path('pushcompany/',views.pushcompayInfo),
+    path('pushcompany/',PushUpdateCompany.as_view()),
     # path('deleteautomate/',views.thread_call),
     path('change_tested_status/',views.change_tested_status),
-    path('getlocationid/',views.location_checker)
+    path('getlocationid/',views.location_checker),
+    path('getIndustries/',GetIndustry.as_view())
 ]

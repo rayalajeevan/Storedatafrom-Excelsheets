@@ -5,6 +5,8 @@ class Router:
         """
         if model._meta.app_label == 'web_scrapping':
             return 'scrap'
+        if model._meta.app_label=='pushcompany':
+            return 'developers'
         return None
 
     def db_for_write(self, model, **hints):
@@ -13,4 +15,6 @@ class Router:
         """
         if model._meta.app_label == 'web_scrapping':
             return 'scrap'
+        if model._meta.app_label=='pushcompany':
+            return 'developers'
         return None
