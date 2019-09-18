@@ -413,8 +413,7 @@ def HtmlParser(data,job={}):
                 removed_elements.append(str(tag))
                 tag.decompose()
     for ele in removed_elements:
-        soup=str(soup)+str(ele)
-    print(removed_tags,removed_elemnts)    
+        soup=str(soup)+str(ele)   
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
     return str(soup)
 def refineColumns(job):
