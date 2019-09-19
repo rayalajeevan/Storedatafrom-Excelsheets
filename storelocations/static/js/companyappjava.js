@@ -184,7 +184,7 @@ function validtions(data){
   return 1
 }
   else{
-    var ids=["id_company_name",'id_company_size','id_company_contact','id_hq_locations_location','id_industry','id_estd_year','id_company_unique_id','id_hq_company_address_line1','id_hq_company_address_line2','id_company_website','id_company_profile_description'];
+    var ids=["id_company_name",'id_company_size','id_company_contact','id_hq_locations_location','id_industry','id_estd_year','id_company_unique_id','id_hq_company_address_line1','id_hq_company_address_line2','id_company_website','id_company_profile_description','show_id_industry'];
     for(let i=0;i<=ids.length-1;i++){
       if (document.getElementById(ids[i]).value==''){
         return 0
@@ -195,7 +195,7 @@ function validtions(data){
   return 1
 }
 function clearElements(){
-var ids=["id_company_name",'id_company_size','id_company_contact','id_hq_locations_location','id_industry','id_estd_year','id_company_unique_id','id_hq_company_address_line1','id_hq_company_address_line2','id_company_website','id_company_profile_description']
+var ids=["id_company_name",'id_company_size','id_company_contact','id_hq_locations_location','id_industry','id_estd_year','id_company_unique_id','id_hq_company_address_line1','id_hq_company_address_line2','id_company_website','id_company_profile_description','show_id_industry','txt']
 for(let x=0;x<=ids.length-1;x++){
   document.getElementById(ids[x]).value=''
 }
