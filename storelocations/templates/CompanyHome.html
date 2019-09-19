@@ -79,6 +79,10 @@
   width: 45%;
   float: left;
 }
+#loader {
+  width: 45%;
+  float: left;
+}
 .mainDiv {
   width: 900px;
 margin-left: auto;
@@ -87,6 +91,26 @@ margin-right: auto;
 #left {
   width: 45%;
   float: left;
+}
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 1ms linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
     </style>
 <script>
@@ -98,7 +122,7 @@ if (ip!='')
 }
 </script>
 {% load staticfiles %}
-<script src="{% static 'companyapp.js' %}"></script>
+<script src="{% static '/js/companyappjava.js' %}"></script>
 </head>
 
 <body>
@@ -109,14 +133,14 @@ if (ip!='')
       <option value='save'>Save</option>
       <option value='update'>Update</option>
     </select>
-<form action="" >
-<p><label for="id_company_info_id">Company Info ID:</label> <input type="text"   name="company_info_id" required="" id="id_company_info_id">&nbsp;&nbsp;&nbsp;<input type='button' value='GET Company data' id='GetCompanyData' onclick="return searchCompanyId()"></p>
-<p><label for="id_company_name">Company name:</label> <input type="text" name="company_name" required="" id="id_company_name"></p>
-<p><label for="id_company_size">Company size:</label> <input type="text" name="company_size" required="" id="id_company_size"></p>
-<p><label for="id_company_website">Company website:</label> <input type="text" name="company_website" required="" id="id_company_website"></p>
-<p><label for="id_company_contact">Company contact:</label> <input type="text" name="company_contact" required="" id="id_company_contact"></p>
-<label for="locationId">Hq locations location id:</label> <input type="text" name="hq_locations_location_id" id="id_hq_locations_location" required="">
-<p><label for="id_company_profile_description">Company profile description:</label> <input type="text" name="company_profile_description" required="" id="id_company_profile_description"></p>
+<form >
+<p><label for="id_company_info_id">Company Info ID:</label> <input type="text"   name="company_info_id" jeevan="" id="id_company_info_id">&nbsp;&nbsp;&nbsp;<input type='button' value='GET Company data' id='GetCompanyData' onclick="return searchCompanyId()"></p>
+<p><label for="id_company_name">Company name:</label> <input type="text" name="company_name" jeevan="" id="id_company_name"></p>
+<p><label for="id_company_size">Company size:</label> <input type="text" name="company_size" jeevan="" id="id_company_size"></p>
+<p><label for="id_company_website">Company website:</label> <input type="text" name="company_website" jeevan="" id="id_company_website"></p>
+<p><label for="id_company_contact">Company contact:</label> <input type="text" name="company_contact" jeevan="" id="id_company_contact"></p>
+<label for="locationId">Hq locations location id:</label> <input type="text" name="hq_locations_location_id" id="id_hq_locations_location" jeevan="">
+<p><label for="id_company_profile_description">Company profile description:</label> <input type="text" name="company_profile_description" jeevan="" id="id_company_profile_description"></p>
 <span for="serach_id_industry">industry</span> <span id="myDropdown" class="dropdown-content">
   <input type='hidden' value='' id='id_industry'>
     <input type="text" placeholder="industrySearch.." id="serach_id_industry" onkeyup="filterFunction()" ><input type='text' id='show_id_industry' ><br>
@@ -126,10 +150,10 @@ if (ip!='')
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' value='clear Fields'  onclick="return clearFields()">
 </span>
 <p style="">&nbsp;</p>
-<p><label for="id_estd_year">Estd year:</label> <input type="text" name="estd_year" required="" id="id_estd_year"></p>
-<p><label for="id_company_unique_id">Company unique id:</label> <input type="text" name="company_unique_id" value="" required="" id="id_company_unique_id"></p>
-<p><label for="id_hq_company_address_line1">Hq company address line1:</label> <input type="text" name="hq_company_address_line1" required="" id="id_hq_company_address_line1"></p>
-<p><label for="id_hq_company_address_line2">Hq company address line2:</label> <input type="text" name="hq_company_address_line2" required="" id="id_hq_company_address_line2"></p>
+<p><label for="id_estd_year">Estd year:</label> <input type="text" name="estd_year" jeevan="" id="id_estd_year"></p>
+<p><label for="id_company_unique_id">Company unique id:</label> <input type="text" name="company_unique_id" value="" jeevan="" id="id_company_unique_id"></p>
+<p><label for="id_hq_company_address_line1">Hq company address line1:</label> <input type="text" name="hq_company_address_line1" jeevan="" id="id_hq_company_address_line1"></p>
+<p><label for="id_hq_company_address_line2">Hq company address line2:</label> <input type="text" name="hq_company_address_line2" jeevan="" id="id_hq_company_address_line2"></p>
     <input type="submit" value="Save Company" onclick="return updateCompanyID()" id='submitbtn'>
 </form>
 </div>
@@ -137,6 +161,7 @@ if (ip!='')
 <input type="text" id="txt"><br>
 <input type="button" value="Search" onclick="return searchLocationId()" >
 <table id="companydata">
+
   <tbody><tr>
     <th>LocationId</th>
     <th>City</th>
@@ -148,6 +173,10 @@ if (ip!='')
     <td><span id="state"></span></td>
   </tr>
 </tbody></table>
+</div>
+<div >&nbsp;</div>
+<div id='loader' style="display:none"> <div class="loader"></div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Loading....</span>
 </div>
 </div>
 <script>
@@ -171,7 +200,7 @@ function searchLocationId(){
   request.send()
 }
 function applyId(val){
-  document.getElementById('locationId').value=val.innerText
+  document.getElementById('id_hq_locations_location').value=val.innerText
 
 }
 </script>

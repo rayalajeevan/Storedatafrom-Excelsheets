@@ -10,5 +10,5 @@ class WebInternshipJobsSerilizer(serializers.ModelSerializer):
     class Meta:
         model=WebInternshipJobs
         fields='__all__'
-    def create(self, validated_data):
-        return WebInternshipJobs.objects.create(**validated_data)        
+    def create(self,validated_data):
+        return WebInternshipJobs.objects.create(**validated_data)
