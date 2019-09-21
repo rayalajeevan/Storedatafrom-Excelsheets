@@ -19,14 +19,9 @@ def locationIdentifier(org_location):
     if len(locationSpliter)!=1:
         orginal_location=get_location_from_database(locationSpliter)
         if orginal_location.get('location')==0:
-            orginal_location=get_postalCode_from_googleApi(org_location.replace('#','').replace('&',' '))
-            if orginal_location.get('location')==0:
-                orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
-
-    else:
-        orginal_location=get_postalCode_from_googleApi(org_location.replace('#','').replace('&',' '))
-        if orginal_location.get('location')==0:
             orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
+    else:
+        orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
     if orginal_location.get('location')!=0:
 
         city=orginal_location.get('location').get('city')
@@ -46,6 +41,10 @@ def locationIdentifier(org_location):
         job_location=org_location
         country_type=None
     return {'job_location':job_location,'country_type':country_type,'scrapped_location':org_location}
+def locationReplacer(data):
+    data=data.replace('Clearwater',' ')
+    data=data.replace('Airport',' ')
+    return data
 def get_location_from_database(location):
     """
     get_location_from_database
@@ -121,7 +120,7 @@ def get_location_from_googleApi(location):
                     if city=='Bengaluru':
                         city='Bangalore'
                     country_type=location_data['geonames'][0].get('countryCode')
-                    return {"location":{'city':city,'state_code':state_code,'country_type':country_type}}
+                    return {"location":{'city':locationReplacer(city),'state_code':state_code,'country_type':country_type}}
                 else:
                     return {'location':0}
             else:
@@ -413,7 +412,7 @@ def HtmlParser(data,job={}):
                 removed_elements.append(str(tag))
                 tag.decompose()
     for ele in removed_elements:
-        soup=str(soup)+str(ele)   
+        soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
     return str(soup)
 def refineColumns(job):
