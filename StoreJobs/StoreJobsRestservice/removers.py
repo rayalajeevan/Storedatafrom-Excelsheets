@@ -13,33 +13,38 @@ from StoreJobsRestservice.instructions import Instructions
 def locationIdentifier(org_location):
     job_location=None
     country_type=None
-    location=deepcopy(org_location.strip().replace('#','').replace('&',''))
-    location=location.replace(',','>').replace(';','>')
-    locationSpliter=[x.strip() for x in location.split('>') if x.strip() !='']
-    if len(locationSpliter)!=1:
-        orginal_location=get_location_from_database(locationSpliter)
-        if orginal_location.get('location')==0:
-            orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
-    else:
-        orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
-    if orginal_location.get('location')!=0:
+    if 'remote' not  in str(org_location).lower():
 
-        city=orginal_location.get('location').get('city')
-        state=orginal_location.get('location').get('state_code')
-        country_type=orginal_location.get('location').get('country_type')
-        if city==None or state==None or country_type==None:
+        location=deepcopy(org_location.strip().replace('#','').replace('&',''))
+        location=location.replace(',','>').replace(';','>')
+        locationSpliter=[x.strip() for x in location.split('>') if x.strip() !='']
+        if len(locationSpliter)!=1:
+            orginal_location=get_location_from_database(locationSpliter)
+            if orginal_location.get('location')==0:
+                orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
+        else:
+            orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
+        if orginal_location.get('location')!=0:
+
+            city=orginal_location.get('location').get('city')
+            state=orginal_location.get('location').get('state_code')
+            country_type=orginal_location.get('location').get('country_type')
+            if city==None or state==None or country_type==None:
+                job_location=org_location
+                country_type=None
+            else:
+                try:
+                    state=int(state)
+                    state=country_type
+                    job_location=city+", "+state
+                except:
+                    job_location=city+", "+state
+        else:
             job_location=org_location
             country_type=None
-        else:
-            try:
-                state=int(state)
-                state=country_type
-                job_location=city+", "+state
-            except:
-                job_location=city+", "+state
     else:
-        job_location=org_location
-        country_type=None
+        job_location="Remote"
+        country_type="Remote"
     return {'job_location':job_location,'country_type':country_type,'scrapped_location':org_location}
 def locationReplacer(data):
     data=data.replace('Clearwater',' ')
