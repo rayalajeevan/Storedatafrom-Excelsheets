@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
 from copy import copy,deepcopy
+from .models import BeautifyCompanyJobs
 from fuzzywuzzy import fuzz
 import re
+import json
 class Instructions():
     def __init__(self,instruction_id,html_data):
         self.instructions_dictionary={
@@ -893,7 +895,38 @@ class Instructions():
             self.html_data[key]=modified_location
 
         return self.html_data
-if __name__=="__main__":
-    job={'job_location':'ASIA > VNM > Ho Chi Minh City > ASO Office'}
-    incobj=Instructions(36,job)
-    print(incobj.method_caller())
+class InstructionsForAll():
+    def __init__(self,job):
+        self.html_data=job
+    def rule_for_all(self,html_tags=None,keywords=None,attrs=None):
+        """
+        removing elements
+        """
+        removed_elemnts=[]
+        for key in ['job_description']:
+            data=self.html_data[key]
+            data=re.sub('\s+',' ',str(data))
+            soup=BeautifulSoup(str(data),"html.parser")
+            for tag in soup.findAll([html_tags.split(',')]):
+                for item in keywords.split(','):
+                    if item.lower() in tag.getText().lower():
+                        tag.decompose()
+                        removed_elemnts.append(str(tag))
+            if attrs!=None:
+                for key,value in attrs.items():
+                    if soup.find({key:value})!=None:
+                        removed_elemnts.append(str(tag))
+                        soup.find({key:value}).decompose()
+        for tag in removed_elemnts:
+            soup=str(soup)+str(tag)
+        self.html_data['job_description']=str(soup)
+        return self.html_data
+
+
+
+# data=""""""
+# job={'job_description':data}
+# incobj=Instructions(1000,job)
+# opr=open(r'D:\web.html','w')
+# opr.write(incobj.rule_for_all(tags='tr,',keywords='Division:,Project Location(s):,Minimum Years Experience:,Travel Involved:,Job Type:,Job Classification:,Education:,Job Family:,Compensation:',attrs=None)['job_description'])
+# opr.close()

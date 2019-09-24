@@ -8,7 +8,7 @@ from .models import WebCompanyJobs,WebInternshipJobs,TopCities,BeautifyCompanyJo
 import io
 from django.shortcuts import render
 from rest_framework import status
-from StoreJobsRestservice.instructions import Instructions
+from StoreJobsRestservice.instructions import Instructions,InstructionsForAll
 from StoreJobsRestservice.removers import refining_job,HtmlParser,validatos,locationIdentifier
 from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
 
@@ -82,8 +82,17 @@ def showjob(request,*args,**kwrgs):
     if job.get('company_info_id')!=None and job.get('company_info_id').strip()!='':
         beautyfyObject=BeautifyCompanyJobs.objects.filter(company_info_id=job.get('company_info_id'))
     if len(beautyfyObject)!=0:
-        Incobj=Instructions(beautyfyObject[0].instruction_id,job)
-        job=Incobj.method_caller()
+        for obj in beautyfyObject:
+            if obj.attrs==None and obj.keywords==None and obj.html_tags==None:
+                job =Instructions(obj.instruction_id,job).method_caller()
+            else:
+                query={}
+                for column_name in ('html_tags','attrs','keywords'):
+                    if obj.__dict__.get(column_name)!=None:
+                        query[column_name]=obj.__dict__.get(column_name)
+                print(query)
+                incobj=InstructionsForAll(job)
+                job=incobj.rule_for_all(**query)
     optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
     for k,v in job.items():
         if k!='job_title' and k!='company_info_id':
