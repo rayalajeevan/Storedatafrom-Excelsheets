@@ -90,7 +90,6 @@ def showjob(request,*args,**kwrgs):
                 for column_name in ('html_tags','attrs','keywords'):
                     if obj.__dict__.get(column_name)!=None:
                         query[column_name]=obj.__dict__.get(column_name)
-                print(query)
                 incobj=InstructionsForAll(job)
                 job=incobj.rule_for_all(**query)
     optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
