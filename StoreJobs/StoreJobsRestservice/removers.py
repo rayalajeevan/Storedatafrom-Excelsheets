@@ -23,7 +23,7 @@ def locationIdentifier(org_location):
             if orginal_location.get('location')==0:
                 orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
         else:
-            orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))
+            orginal_location=get_location_from_googleApi(org_location.replace('#','').replace('&',' '))   
         if orginal_location.get('location')!=0:
 
             city=orginal_location.get('location').get('city')
@@ -35,8 +35,12 @@ def locationIdentifier(org_location):
             else:
                 try:
                     state=int(state)
-                    state=country_type
-                    job_location=city+", "+state
+                    obj_list=Locations.objects.filter(city=city,country_code=country_type)
+                    if len(obj_list)!=0:
+                        state=obj_list[0].state_code
+                        job_location=city+", "+state
+                    else:
+                        job_location=city+", "+country_type
                 except:
                     job_location=city+", "+state
         else:
