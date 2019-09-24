@@ -20,7 +20,7 @@ class Locations(models.Model):
     class Meta:
         managed = False
         db_table = 'locations'
-        app_label='pushcompany'
+        app_label='web_scrapping'
 class CompanyInfo(models.Model):
     company_info_id = models.BigAutoField(primary_key=True)
     company_size = models.CharField(max_length=45, blank=True, null=True)
@@ -34,7 +34,7 @@ class CompanyInfo(models.Model):
     hq_locations_location = models.ForeignKey('Locations', models.DO_NOTHING, blank=True, null=True)
     hq_company_address_line1 = models.TextField(blank=True, null=True)
     hq_company_address_line2 = models.CharField(max_length=255, blank=True, null=True)
-    industries_industry = models.ForeignKey('Industries', models.DO_NOTHING, blank=True, null=True)
+    # industries_industry = models.ForeignKey('Industries', models.DO_NOTHING, blank=True, null=True)
     is_e_verify = models.CharField(max_length=45, blank=True, null=True)
     is_claimed = models.IntegerField(blank=True, null=True)
     fortune_rank = models.IntegerField(blank=True, null=True)
@@ -80,19 +80,19 @@ class CompanyInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'company_info'
-        app_label='pushcompany'
+        app_label='web_scrapping'
 
 
-class CompanyIndustries(models.Model):
-    company_industries_id = models.BigAutoField(primary_key=True)
-    company_info = models.ForeignKey('CompanyInfo', models.DO_NOTHING, blank=True, null=True)
-    industry = models.ForeignKey('Industries', models.DO_NOTHING, blank=True, null=True)
-    industry_type = models.CharField(max_length=10)
-
-    class Meta:
-        managed = False
-        db_table = 'company_industries'
-        app_label='pushcompany'
+# class CompanyIndustries(models.Model):
+#     company_industries_id = models.BigAutoField(primary_key=True)
+#     company_info = models.ForeignKey('CompanyInfo', models.DO_NOTHING, blank=True, null=True)
+#     industry = models.ForeignKey('Industries', models.DO_NOTHING, blank=True, null=True)
+#     industry_type = models.CharField(max_length=10)
+#
+#     class Meta:
+#         managed = False
+#         db_table = 'company_industries'
+#         app_label='pushcompany'
 class Industries(models.Model):
     industry_id = models.AutoField(primary_key=True)
     industry = models.CharField(max_length=255, blank=True, null=True)

@@ -14,26 +14,6 @@ from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
 
 # Create your views here.
 class StoreJobsdata(APIView):
-    # def get(self,request):
-    #     path=r"C:\Users\Emphyd12146rjee1\Downloads\TopCity.xlsx"
-    #     import pandas as pd
-    #     titles=pd.read_excel(path)
-    #     titles=dict(dict(titles)['City'])
-    #     print("started.....")
-    #     s=0
-    #     d=0
-    #     for x in titles.values():
-    #         if len(x)>2:
-    #             city=x.strip().split(',')[0]
-    #             state=x.strip().split(',')[1]
-    #             if len(TopCities.objects.filter(city_name=city.strip(),state_code=state.strip()))==0:
-    #                 sav=TopCities(city_name=city.strip(),state_code=state.strip(),country_type="US",top_cities_type='default')
-    #                 sav.save()
-    #                 s+=1
-    #             else:
-    #                 d+=1
-    #
-    #     return JsonResponse({'s':s,'d':d})
     @csrf_exempt
     def post(self,request):
         try:

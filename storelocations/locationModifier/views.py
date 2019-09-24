@@ -16,9 +16,12 @@ import json
 from django.http import HttpResponse
 from django.shortcuts import render
 from bs4 import BeautifulSoup
+from rest_framework import generics
+from locationModifier.serializers import WebCompanyJobsserializer,WebInternshipsJobsserializer
 import threading
 import time
 import configparser
+from django.db.models import Q
 Config = configparser.RawConfigParser()
 data='configuration.ini'
 Config.read(data)
@@ -27,6 +30,17 @@ for each_sec in Config.sections():
     config=dict((k, v) for k, v in  Config.items(each_sec))
 PATH=config.get('allpath')
 DRIVE=config.get('drive')
+class GetJobs(generics.ListAPIView):
+    serializer_class=WebCompanyJobsserializer
+    def get_queryset(self):
+        query = {}
+        data = self.request.GET
+        if data.get('skill')!=None:
+            return Web_company_jobs.objects.filter(Q(company_name=data.get('skill')) |  Q(job_title__icontains=data.get('skill')) | Q(job_description=data.get('skill'))| Q(posted_date__range=[str(datetime.datetime.now()-datetime.timedelta(days=30)),str(datetime.datetime.now())]))[0:10]
+        else:
+            return []
+    def get(self,request):
+        return self.list(request)
 
 
 class GetCompanyName(View):
@@ -196,11 +210,11 @@ def send_mail_to_interns(ip):
         'doolamravali432@gmail.com',])
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
-# try:
-#     jeevan()
-# except Exception as e:
-#     print(e)
-#     print("Internet Is not available Please send Manually.....!",str(e))
+try:
+    jeevan()
+except Exception as e:
+    print(e)
+    print("Internet Is not available Please send Manually.....!",str(e))
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')

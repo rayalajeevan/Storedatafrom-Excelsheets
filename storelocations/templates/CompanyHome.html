@@ -122,7 +122,7 @@ if (ip!='')
 }
 </script>
 {% load staticfiles %}
-<script src="{% static '/js/companyappjava.js' %}"></script>
+<script src="{% static '/js/company.js' %}"></script>
 </head>
 
 <body>
@@ -139,7 +139,7 @@ if (ip!='')
 <p><label for="id_company_size">Company size:</label> <input type="text" name="company_size" jeevan="" id="id_company_size"></p>
 <p><label for="id_company_website">Company website:</label> <input type="text" name="company_website" jeevan="" id="id_company_website"></p>
 <p><label for="id_company_contact">Company contact:</label> <input type="text" name="company_contact" jeevan="" id="id_company_contact"></p>
-<label for="locationId">Hq locations location id:</label> <input type="text" name="hq_locations_location_id" id="id_hq_locations_location" jeevan="">
+<label for="locationId">Hq locations location id:</label> <input type="text" name="hq_locations_location_id" id="id_hq_locations_location_id" jeevan="">
 <p><label for="id_company_profile_description">Company profile description:</label> <input type="text" name="company_profile_description" jeevan="" id="id_company_profile_description"></p>
 <span for="serach_id_industry">industry</span> <span id="myDropdown" class="dropdown-content">
   <input type='hidden' value='' id='id_industry'>
@@ -200,7 +200,7 @@ function searchLocationId(){
   request.send()
 }
 function applyId(val){
-  document.getElementById('id_hq_locations_location').value=val.innerText
+  document.getElementById('id_hq_locations_location_id').value=val.innerText
 
 }
 </script>
