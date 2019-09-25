@@ -6,6 +6,7 @@ from dateutil import parser
 from copy import deepcopy
 from fuzzywuzzy import fuzz
 import time
+import json
 import requests
 from StoreJobsRestservice.models import Locations,BeautifyCompanyJobs
 from langdetect import detect,detect_langs
@@ -541,6 +542,9 @@ def refining_job(job):
             else:
                 query={}
                 for column_name in ('html_tags','attrs','keywords'):
+                    if column_name=='attrs':
+                        query[column_name]=json.loads(obj.__dict__.get(column_name))
+                        continue
                     if obj.__dict__.get(column_name)!=None:
                         query[column_name]=obj.__dict__.get(column_name)
                 incobj=InstructionsForAll(job)

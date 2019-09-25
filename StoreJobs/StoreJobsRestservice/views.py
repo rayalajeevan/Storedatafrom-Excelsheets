@@ -7,6 +7,7 @@ from django.http import JsonResponse,HttpResponse
 from .models import WebCompanyJobs,WebInternshipJobs,TopCities,BeautifyCompanyJobs
 import io
 from django.shortcuts import render
+import json
 from rest_framework import status
 from StoreJobsRestservice.instructions import Instructions,InstructionsForAll
 from StoreJobsRestservice.removers import refining_job,HtmlParser,validatos,locationIdentifier
@@ -88,6 +89,9 @@ def showjob(request,*args,**kwrgs):
             else:
                 query={}
                 for column_name in ('html_tags','attrs','keywords'):
+                    if column_name=='attrs':
+                        query[column_name]=json.loads(obj.__dict__.get(column_name))
+                        continue
                     if obj.__dict__.get(column_name)!=None:
                         query[column_name]=obj.__dict__.get(column_name)
                 incobj=InstructionsForAll(job)

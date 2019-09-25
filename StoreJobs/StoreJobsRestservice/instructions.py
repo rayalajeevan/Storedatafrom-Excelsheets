@@ -907,16 +907,17 @@ class InstructionsForAll():
             data=self.html_data[key]
             data=re.sub('\s+',' ',str(data))
             soup=BeautifulSoup(str(data),"html.parser")
-            for tag in soup.findAll([html_tags.split(',')]):
-                for item in keywords.split(','):
-                    if item.lower() in tag.getText().lower():
-                        tag.decompose()
-                        removed_elemnts.append(str(tag))
+            if html_tags!=None and keywords!=None:
+                for tag in soup.findAll([html_tags.split(',')]):
+                    for item in keywords.split(','):
+                        if item.lower() in tag.getText().lower():
+                            tag.decompose()
+                            removed_elemnts.append(str(tag))
             if attrs!=None:
-                for key,value in attrs.items():
-                    if soup.find({key:value})!=None:
-                        removed_elemnts.append(str(tag))
-                        soup.find({key:value}).decompose()
+                for tag,attr in attrs.items():
+                    if soup.find(tag,attr)!=None:
+                        removed_elemnts.append(soup.find(tag,attr))
+                        soup.find(tag,attr).decompose()
         for tag in removed_elemnts:
             soup=str(soup)+str(tag)
         self.html_data['job_description']=str(soup)
