@@ -273,6 +273,7 @@ font-family: "Segoe UI", sans-serif !important;
                             continue
                         elif key=='job_description':
                             htmlcode=htmlcode+"<div class='job_description'>"+value+"</div>"
+                            continue
                         htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+value
             htmlcode=htmlcode+"</body></html>"
     else:
@@ -285,6 +286,9 @@ font-family: "Segoe UI", sans-serif !important;
                     if key!='web_internship_jobs_id' and key!='company_info_id' and key!='country_type' and key!='scrapped_date':
                         if key=='apply_link':
                             htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(value)
+                            continue
+                        elif key=='job_description':
+                            htmlcode=htmlcode+"<div class='job_description'>"+value+"</div>"
                             continue
                         htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+value
             htmlcode=htmlcode+"</body></html>"
