@@ -271,6 +271,8 @@ font-family: "Segoe UI", sans-serif !important;
                         if key=='apply_link':
                             htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(value)
                             continue
+                        elif key=='job_description':
+                            htmlcode=htmlcode+"<div class='job_description'>"+value+"</div>"
                         htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+value
             htmlcode=htmlcode+"</body></html>"
     else:

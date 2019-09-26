@@ -77,6 +77,7 @@ class Web_internships_jobs(models.Model):
     important_notes=models.TextField()
     country_type=models.CharField(max_length=50)
     scrapped_date=models.DateTimeField()
+    scrapped_location=models.TextField()
     other_locations=models.TextField()
 
 class Web_company_jobs(models.Model):
@@ -134,6 +135,7 @@ class Web_company_jobs(models.Model):
     enquiry_details=models.CharField(max_length=200)
     important_notes=models.TextField()
     country_type=models.CharField(max_length=50)
+    scrapped_location=models.TextField()
     scrapped_date=models.DateTimeField()
 class company_info(models.Model):
     class Meta:
