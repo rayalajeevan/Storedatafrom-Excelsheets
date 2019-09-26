@@ -302,7 +302,38 @@ def string_error(data,*args,**kwrgs):
            return unicode
     else:
         return None
+def remving_extraSpacesHtmlContent(data):
+    """
+    removing unwanted extra spaces in Html Content
+    """
+    inline_elements=('a','abbr','acronym','audio','b','bdo','big','bdi','canvas','cite','code','data','datalist','del','dfn','em','embed','i','iframe','img','input','ins',
+                     'kbd','label','map','mark','meter','noscript','object','output','picture','progress','q','ruby','s','samp','script','select','slot','small','span','strong','sub','sup','t'
+                     'template','svg','textarea','time','u','tt','var','video','wbr',)
+    soup=BeautifulSoup(data,'html.parser')
+    for x in soup.findAll():
+        if len(x.getText().strip())==0:
+            if x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None:
+                if len(x.find_next_sibling(x.nextSibling.name).getText().strip())==0:
+                    x.find_next_sibling(x.nextSibling.name).decompose()
+            if  x.previous_element!=None   and x.find_previous_sibling(x.previous_element.name)!=None :
+                if len(x.find_previous_sibling(x.previous_element.name).get_text().strip())==0:
+                    x.find_previous_sibling(x.previous_element.name).decompose()
+    for x in soup.findAll('br'):
+        if x.nextSibling!=None and x.nextSibling.name=='br':
+            x.find_next_sibling(x.nextSibling.name).decompose()
+        if x.previous_element!=None and x.previous_element.name=='br':
+            x.find_previous_sibling(x.previous_element.name).decompose()
+        if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
+            x.find_parent('p').decompose()
+    for x in soup.findAll():
+        enabled=True
+        if x.name in inline_elements:
+            enabled=False
+        if enabled==True:
+            if (x.nextSibling!=None and x.nextSibling.name=='br') or (x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None and len(x.find_next_sibling(x.nextSibling.name).get_text().strip())==0):
+                 x.find_next_sibling(x.nextSibling.name).decompose()
 
+    return str(soup)
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
@@ -330,13 +361,10 @@ def HtmlParser(data,job={}):
     for x in (soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'}),soup.find('span',{'class':'LimelightEmbeddedPlayer'}),soup.find('div',{'style':'display: none;'})):
         if x!=None:
             x.decompose()
-    # REMOVE_ATTRIBUTES = [
-    # 'lang','language','onmouseover','onmouseout','script','font',
-    # 'dir','face','color','hspace',
-    # 'border','valign','align','background','bgcolor','link','vlink',
-    # 'alink','href','id','src','type','border','align']
-    # soup = BeautifulSoup(str(soup),"html.parser")
-    # for attr in REMOVE_ATTRIBUTES:
+    REMOVE_ATTRIBUTES = ('lang','language','onmouseover','onmouseout','script','font','dir','face','color','hspace','border','valign','align','background','bgcolor','link','vlink','alink','href','id','src','type','border','align')
+    for attr in REMOVE_ATTRIBUTES:
+        for tag in soup.findAll(attribute=True):
+            del(tag[attribute])
     for tag in soup.findAll(True):
         tag.attrs=None
     for x in soup.findAll():
@@ -441,7 +469,7 @@ def HtmlParser(data,job={}):
     for ele in removed_elements:
         soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','')
-    return str(soup)
+    return remving_extraSpacesHtmlContent(str(soup))
 def refineColumns(job):
     new_jobData={}
     for key,value in job.items():
