@@ -346,7 +346,7 @@ def HtmlParser(data,job={}):
             if tag.get('style')=='display: none;':
                 tag.decompose()
         except AttributeError:
-            continue        
+            continue
     datarefineer=('primary_location',
                 'recruiter_name',
                 'job_id')
@@ -374,8 +374,8 @@ def HtmlParser(data,job={}):
             for tag in soup.findAll(attribute=True):
                 if tag!=None:
                     del(tag[attribute])
-        except:
-            pass
+        except AttributeError:
+            continue
     for tag in soup.findAll(True):
         tag.attrs=None
     for x in soup.findAll():
