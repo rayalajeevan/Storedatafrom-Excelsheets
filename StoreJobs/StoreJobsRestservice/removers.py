@@ -400,8 +400,9 @@ def HtmlParser(data,job={}):
                         if item.strip() in x.parent.getText().strip():
                             true=False
                     if true==True:
-                        removed_elements.append(str(x.parent))
-                        x.parent.decompose()
+                        if len(x.parent.get_text())!=len(x.getText().strip()):
+                            removed_elements.append(str(x.parent))
+                            x.parent.decompose()
                 else:
                     if len(x.get_text().strip())<=100:
                         true=True
