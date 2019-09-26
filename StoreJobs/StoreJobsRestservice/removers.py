@@ -351,11 +351,12 @@ def HtmlParser(data,job={}):
     removed_tags=[]
     for x in soup.findAll():
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            removed_tags.append('job_location')
+            removed_tags.append('job Title:')
+            removed_tags.append('Title:')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            removed_tags.append('job_location')
+            removed_tags.append('job location')
             x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
