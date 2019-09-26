@@ -337,10 +337,16 @@ def remving_extraSpacesHtmlContent(data):
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
-    items=  ('OPENING DATE:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:')
+    items=  ('Role opening date:','OPENING DATE:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:')
     items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:')
     itemsNotEqual=('POSITION SUMMARY')
     soup=BeautifulSoup(data,"html.parser")
+    for tag in soup.findAll():
+        try:
+            if tag.get('style')=='display: none;':
+                tag.decompose()
+        except AttributeError:
+            continue        
     datarefineer=('primary_location',
                 'recruiter_name',
                 'job_id')
@@ -357,14 +363,19 @@ def HtmlParser(data,job={}):
     RemovableTags=('button','submit','img','script','path','svg','input','hr','select','iframe','textarea')
     for tag in RemovableTags:
         for x in soup.findAll(tag):
-            x.decompose()
-    for x in (soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'}),soup.find('span',{'class':'LimelightEmbeddedPlayer'}),soup.find('div',{'style':'display: none;'})):
+            if x!=None:
+                x.decompose()
+    for x in (soup.find('div',{'video-container small-video centerOrient':'true'}),soup.find('div',{'class':'iCIMS_JobOptions'}),soup.find('div',{'class':'iCIMS_JobHeaderGroup'}),soup.find('span',{'class':'LimelightEmbeddedPlayer'})):
         if x!=None:
             x.decompose()
     REMOVE_ATTRIBUTES = ('lang','language','onmouseover','onmouseout','script','font','dir','face','color','hspace','border','valign','align','background','bgcolor','link','vlink','alink','href','id','src','type','border','align')
     for attr in REMOVE_ATTRIBUTES:
-        for tag in soup.findAll(attribute=True):
-            del(tag[attribute])
+        try:
+            for tag in soup.findAll(attribute=True):
+                if tag!=None:
+                    del(tag[attribute])
+        except:
+            pass
     for tag in soup.findAll(True):
         tag.attrs=None
     for x in soup.findAll():
@@ -422,25 +433,27 @@ def HtmlParser(data,job={}):
                 if len(x.get_text().strip())<=50:
                     x.decompose()
         for item in items:
-            if item.strip() in x.getText().strip():
-                if x.parent!=None and len(x.parent.get_text().strip())<=70:
-                    true=True
-                    for item in itemsNotEqual:
-                        if item.strip() in x.parent.getText().strip():
-                            true=False
-                    if true==True:
-                        if len(x.parent.get_text())!=len(x.getText().strip()):
-                            removed_elements.append(str(x.parent))
-                            x.parent.decompose()
-                else:
-                    if len(x.get_text().strip())<=100:
+            if item=='Role opening date:':
+                if item.strip() in x.getText().strip():
+                    if x.parent!=None and len(x.parent.get_text().strip())<=70:
                         true=True
-                        for item in itemsNotEqual:
-                            if item.strip() in x.getText().strip():
+                        for item1 in itemsNotEqual:
+                            if item1.strip() in x.parent.getText().strip():
                                 true=False
                         if true==True:
-                            removed_elements.append(str(x))
-                            x.decompose()
+                            print("True2")
+                            if len(x.parent.get_text())!=len(x.getText().strip()):
+                                removed_elements.append(str(x.parent))
+                                x.parent.decompose()
+                    else:
+                        if len(x.get_text().strip())<=100:
+                            true=True
+                            for item in itemsNotEqual:
+                                if item.strip() in x.getText().strip():
+                                    true=False
+                            if true==True:
+                                removed_elements.append(str(x))
+                                x.decompose()
     soup=BeautifulSoup(str(soup),'html.parser')
     for tag in soup.findAll():
         for item in removed_tags:
