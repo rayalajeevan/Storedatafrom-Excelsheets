@@ -221,7 +221,7 @@ def BeautifyJobs(data):
             x.name='div'
         if x.name=='td':
             x.name='p'
-    return str(data)
+    return str(soup)
 def regulardate(date=None):
     date=date.strip()
     try:
