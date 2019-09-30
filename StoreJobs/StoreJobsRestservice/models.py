@@ -21,7 +21,7 @@ class WebCompanyJobs(models.Model):
     job_expired_date = models.CharField(max_length=300, blank=True, null=True)
     functional_area = models.CharField(max_length=800, blank=True, null=True)
     salary_compensation = models.CharField(max_length=500, blank=True, null=True)
-    travel_requirement = models.CharField(max_length=100, blank=True, null=True)
+    travel_requirement = models.CharField(max_length=1000, blank=True, null=True)
     employer = models.CharField(max_length=100, blank=True, null=True)
     organization_type = models.CharField(max_length=1000, blank=True, null=True)
     company_type_relation = models.CharField(max_length=100, blank=True, null=True)
@@ -90,7 +90,7 @@ class BeautifyCompanyJobs(models.Model):
     html_tags=models.CharField(max_length=250)
     keywords=models.CharField(max_length=250)
     attrs=models.CharField(max_length=250)
-    
+
     class Meta:
         managed = False
         db_table = 'beautify_company_jobs'
@@ -115,7 +115,7 @@ class WebInternshipJobs(models.Model):
     job_expired_date = models.CharField(max_length=300, blank=True, null=True)
     functional_area = models.CharField(max_length=500, blank=True, null=True)
     salary_compensation = models.CharField(max_length=500, blank=True, null=True)
-    travel_requirement = models.CharField(max_length=100, blank=True, null=True)
+    travel_requirement = models.CharField(max_length=1000, blank=True, null=True)
     employer = models.CharField(max_length=100, blank=True, null=True)
     organization_type = models.CharField(max_length=1000, blank=True, null=True)
     company_type_relation = models.CharField(max_length=100, blank=True, null=True)
