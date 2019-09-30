@@ -212,6 +212,16 @@ def checking_mateched_location(scrapped_location,google_location):
                     country_type= g_loc.get('countryCode')
                     return {"location":{'city':city,'state_code':state_code,'country_type':country_type}}
     return  {'location':0}
+def BeautifyJobs(data):
+    soup=BeautifulSoup(data,'html.parser')
+    for x in soup.findAll():
+        if x.name=='table':
+            x.name='div'
+        if x.name=='tr':
+            x.name='div'
+        if x.name=='td':
+            x.name='p'
+    return str(data)
 def regulardate(date=None):
     date=date.strip()
     try:
@@ -333,7 +343,7 @@ def remving_extraSpacesHtmlContent(data):
             if (x.nextSibling!=None and x.nextSibling.name=='br') or (x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None and len(x.find_next_sibling(x.nextSibling.name).get_text().strip())==0):
                  x.find_next_sibling(x.nextSibling.name).decompose()
 
-    return str(soup)
+    return BeautifyJobs(str(soup))
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
