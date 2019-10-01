@@ -19,6 +19,7 @@ class StoreJobsdata(APIView):
     def post(self,request):
         try:
             scrapped_data = JSONParser().parse(request)
+            print(scrapped_data.get('posted_date'))
         except:
             return JsonResponse({'detail':'Please send json format'},status=status.HTTP_200_OK)
         try:
