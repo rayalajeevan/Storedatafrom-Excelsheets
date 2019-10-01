@@ -594,7 +594,7 @@ def refining_job(job):
                 job =Instructions(obj.instruction_id,job).method_caller()
             else:
                 query={}
-                for column_name in ('html_tags','attrs','keywords'):
+                for column_name in ('html_tags','attrs','keywords','apply_link'):
                     if column_name=='attrs':
                         query[column_name]=json.loads(obj.__dict__.get(column_name))
                         continue

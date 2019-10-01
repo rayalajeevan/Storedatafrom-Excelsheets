@@ -90,6 +90,7 @@ class BeautifyCompanyJobs(models.Model):
     html_tags=models.CharField(max_length=250)
     keywords=models.CharField(max_length=250)
     attrs=models.CharField(max_length=250)
+    apply_link=models.CharField(max_length=250)
 
     class Meta:
         managed = False
