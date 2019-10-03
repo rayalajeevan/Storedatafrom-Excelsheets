@@ -918,11 +918,11 @@ class InstructionsForAll():
                     if soup.find(tag,attr)!=None:
                         removed_elemnts.append(soup.find(tag,attr))
                         soup.find(tag,attr).decompose()
-        if apply_link!=None and job.get('job_id')!=None:
-            if '?' in job.get('apply_link'):
-                job['apply_link']=job.get('apply_link')+"&"+apply_link+"="+str(job.get('job_id'))
+        if apply_link!=None and self.html_data.get('job_id')!=None:
+            if '?' in self.html_data.get('apply_link'):
+                self.html_data['apply_link']=self.html_data.get('apply_link')+"&"+apply_link+"="+str(self.html_data.get('job_id'))
             else:
-                job['apply_link']=job.get('apply_link')+"?"+apply_link+"="+str(job.get('job_id'))
+                self.html_data['apply_link']=self.html_data.get('apply_link')+"?"+apply_link+"="+str(self.html_data.get('job_id'))
         for tag in removed_elemnts:
             soup=str(soup)+str(tag)
         self.html_data['job_description']=str(soup)

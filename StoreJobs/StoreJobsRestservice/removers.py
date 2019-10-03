@@ -590,12 +590,12 @@ def refining_job(job):
     Beautify_objects=BeautifyCompanyJobs.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
         for obj in Beautify_objects:
-            if obj.attrs==None and obj.keywords==None and obj.html_tags==None:
+            if obj.attrs==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None:
                 job =Instructions(obj.instruction_id,job).method_caller()
             else:
                 query={}
                 for column_name in ('html_tags','attrs','keywords','apply_link'):
-                    if column_name=='attrs':
+                    if column_name=='attrs' and obj.__dict__.get(column_name)!=None:
                         query[column_name]=json.loads(obj.__dict__.get(column_name))
                         continue
                     if obj.__dict__.get(column_name)!=None:
