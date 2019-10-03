@@ -353,7 +353,7 @@ def HtmlParser(data,job={}):
     soup=BeautifulSoup(data,"html.parser")
     for tag in soup.findAll():
         try:
-            if tag.get('style')=='display: none;':
+            if tag.get('style')=='display:none;' or tag.get('style')=='display: none;':
                 tag.decompose()
         except AttributeError:
             continue
