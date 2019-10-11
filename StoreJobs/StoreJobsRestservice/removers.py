@@ -281,7 +281,7 @@ def detect_job_type(job_type):
     if job_type!=None and str(job_type).strip()!='':
         detected_job_type=None
         job_type_items=({'Full Time':
-        ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME'.'permanent')},
+        ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME','permanent')},
         {'Part Time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
         {'Entry Level':('graduate','Tech Grad','fresher','entry level','College Grad')},
         {'Internship':('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
@@ -376,6 +376,9 @@ def remving_extraSpacesHtmlContent(data):
                  x.find_next_sibling(x.nextSibling.name).decompose()
 
     return BeautifyJobs(str(soup))
+# def detect_experince_level(job):   
+#     items=('senior','manager','fresher',)
+
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
