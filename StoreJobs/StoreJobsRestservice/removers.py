@@ -300,7 +300,7 @@ def detect_job_type(job_type):
                     break
         if detected_job_type==None:
             detected_job_type='Full Time'
-        return detected_job_type  
+        return detected_job_type
     else:
         return 'Full Time'
 
@@ -375,16 +375,16 @@ def remving_extraSpacesHtmlContent(data):
             if (x.nextSibling!=None and x.nextSibling.name=='br') or (x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None and len(x.find_next_sibling(x.nextSibling.name).get_text().strip())==0):
                  x.find_next_sibling(x.nextSibling.name).decompose()
     return BeautifyJobs(str(soup))
-# def detect_experince_level(job):   
+# def detect_experince_level(job):
 #     items=('senior','manager','fresher',)
 
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
     items=  ('Role opening date:','OPENING DATE:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Company:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:','Job Title:','Req. ID:','Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Contract Type','HOURS:','WAGE:','Role Location:','Role opening date',
-    'Closing date for applications:')    
+    'Closing date for applications:')
     items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:')
-    itemsNotEqual=('POSITION SUMMARY','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:')
+    itemsNotEqual=('POSITION SUMMARY','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:')
     soup=BeautifulSoup(data,"html.parser")
     for tag in soup.findAll():
         try:
@@ -618,11 +618,11 @@ def refining_job(job):
                 job['job_type']=type.capitalize()
                 break
         else:
-            if  job.get('job_type','@a1>2<').lower().strip()=='college grad':      
+            if  job.get('job_type','@a1>2<').lower().strip()=='college grad':
                 job['job_type']=type.capitalize()
                 break
             if job.get('job_type','@a1>2<').lower().strip() in type:
-                job['job_type']=type.capitalize()   
+                job['job_type']=type.capitalize()
                 break
     if job.get('job_type')==None:
         job['job_type']='Full Time'
