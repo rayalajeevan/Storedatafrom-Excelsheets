@@ -277,6 +277,37 @@ def regulardate(date=None):
         elif 'seconds' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(seconds=int(value))
     return date
+def detect_job_type(job_type):
+    if job_type!=None and str(job_type).strip()!='':
+        detected_job_type=None
+        job_type_items=({'Full Time':
+        ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME'.'permanent')},
+        {'Part Time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
+        {'Entry Level':('graduate','Tech Grad','fresher','entry level','College Grad')},
+        {'Internship':('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
+        {'Contract':('contract',)},
+        {'Third Party':('third party',)}
+        )
+        for item in job_type_items:
+            for key,value in item.items():
+                for type_item in value:
+                    if type_item.lower() in job_type.lower().strip():
+                        detected_job_type=key
+                        break
+                if detected_job_type!=None:
+                    break
+            if detected_job_type!=None:
+                    break
+        if detected_job_type==None:
+            detected_job_type='Full Time'
+        return detected_job_type  
+    else:
+        return 'Full Time'
+
+
+
+
+
 
 def validatos(date,*args,**kwrgs):
     datestr=None
@@ -426,8 +457,6 @@ def HtmlParser(data,job={}):
             removed_tags.append('work_shift')
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            x.decompose()
-            continue
             if x.parent!=None and len(x.parent.get_text().strip())<=200:
                 x.parent.decompose()
             else:
@@ -543,6 +572,8 @@ def refining_job(job):
 
     #refineColumns
     job=refineColumns(job)
+    #detect Job type
+    job['job_type']=detect_job_type(job.get('job_type'))
     #get location with postal_code
     pin=None
     if job.get('pin')!=None:
@@ -577,10 +608,21 @@ def refining_job(job):
     job['posted_date']=str(validatos(job.get('posted_date')))
 
     # detetcting JOB_TYPE
-    job_type_list=('intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime')
+    job_type_list=('intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime','entry level')
     for type in job_type_list:
-        if job.get('job_type','@a1>2<').lower().strip() in type:
-            job['job_type']=type.capitalize()
+        if type!='entry level':
+            if job.get('job_type','@a1>2<').lower().strip() in type:
+                job['job_type']=type.capitalize()
+                break
+        else:
+            if  job.get('job_type','@a1>2<').lower().strip()=='college grad':      
+                job['job_type']=type.capitalize()
+                break
+            if job.get('job_type','@a1>2<').lower().strip() in type:
+                job['job_type']=type.capitalize()   
+                break
+    if job.get('job_type')==None:
+        job['job_type']='Full Time'
     #error throughing when postion was closed
 
     if 'position has been closed' in str(job.get('job_description')).lower():
