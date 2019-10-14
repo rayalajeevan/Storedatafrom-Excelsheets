@@ -911,8 +911,12 @@ class InstructionsForAll():
                 for tag in soup.findAll([html_tags.split(',')]):
                     for item in keywords.split(','):
                         if item.lower() in tag.getText().lower():
-                            tag.decompose()
-                            removed_elemnts.append(str(tag))
+                            if len(tag.parent.getText().strip())<=150:
+                                tag.parent.decompose()
+                                removed_elemnts.append(str(tag))
+                            else:
+                                tag.decompose()
+                                removed_elemnts.append(str(tag))
             if attrs!=None:
                 for tag,attr in attrs.items():
                     if soup.find(tag,attr)!=None:

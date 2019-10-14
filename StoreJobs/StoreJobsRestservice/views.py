@@ -89,7 +89,7 @@ def showjob(request,*args,**kwrgs):
             else:
                 query={}
                 for column_name in ('html_tags','attrs','keywords'):
-                    if column_name=='attrs':
+                    if column_name=='attrs' and obj.__dict__.get(column_name)!=None:
                         query[column_name]=json.loads(obj.__dict__.get(column_name))
                         continue
                     if obj.__dict__.get(column_name)!=None:
