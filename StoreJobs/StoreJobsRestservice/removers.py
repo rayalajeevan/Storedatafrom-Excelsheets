@@ -386,7 +386,7 @@ def HtmlParser(data,job={}):
     'Closing date for applications:','Req. ID:','Hiring Manager:','Relocation Level:')
     items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:')
     itemsNotEqual=('POSITION SUMMARY','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
-    'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:')
+    'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:','Our Company:')
     soup=BeautifulSoup(data,"html.parser")
     for tag in soup.findAll():
         try:
