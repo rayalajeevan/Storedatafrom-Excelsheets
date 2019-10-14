@@ -269,12 +269,12 @@ font-family: "Segoe UI", sans-serif !important;
                 if value!=None:
                     if key!='web_internship_jobs_id' :
                         if key=='apply_link':
-                            htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(value)
+                            htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(str(value))
                             continue
                         elif key=='job_description':
-                            htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5><div class='job_description'>"+value+"</div>"
+                            htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5><div class='job_description'>"+str(value)+"</div>"
                             continue
-                        htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+value
+                        htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+str(value)
             htmlcode=htmlcode+"</body></html>"
     else:
         interndata=Web_company_jobs.objects.filter(web_company_jobs_id=int(jobid))
@@ -285,12 +285,12 @@ font-family: "Segoe UI", sans-serif !important;
                 if value!=None:
                     if key!='web_internship_jobs_id':
                         if key=='apply_link':
-                            htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(value)
+                            htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(str(value))
                             continue
                         elif key=='job_description':
-                            htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5><div class='job_description'>"+value+"</div>"
+                            htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5><div class='job_description'>"+str(value)+"</div>"
                             continue
-                        htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+value
+                        htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5>"+str(value)
             htmlcode=htmlcode+"</body></html>"
     return HttpResponse(htmlcode)
 def Fileuploader(request):
