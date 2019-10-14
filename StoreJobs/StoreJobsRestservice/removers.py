@@ -361,12 +361,13 @@ def remving_extraSpacesHtmlContent(data):
                     if len(x.find_previous_sibling(x.previous_element.name).get_text().strip())==0:
                         x.find_previous_sibling(x.previous_element.name).decompose()
     for x in soup.findAll('br'):
-        if x.nextSibling!=None and x.nextSibling.name=='br':
-            x.find_next_sibling(x.nextSibling.name).decompose()
-        if x.previous_element!=None and x.previous_element.name=='br':
-            x.find_previous_sibling(x.previous_element.name).decompose()
-        if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
-            x.find_parent('p').decompose()
+        if x.parent!=None and x.parent.name=='p' and len(x.parent.getText())!=0:
+            if x.nextSibling!=None and x.nextSibling.name=='br':
+                x.find_next_sibling(x.nextSibling.name).decompose()
+            if x.previous_element!=None and x.previous_element.name=='br':
+                x.find_previous_sibling(x.previous_element.name).decompose()
+            if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
+                x.find_parent('p').decompose()
     for x in soup.findAll():
         enabled=True
         if x.name in inline_elements:
@@ -385,7 +386,7 @@ def HtmlParser(data,job={}):
     'Closing date for applications:','Req. ID:','Hiring Manager:','Relocation Level:')
     items_starts_with=('POSITION:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:')
     itemsNotEqual=('POSITION SUMMARY','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
-    'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:')
+    'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:')
     soup=BeautifulSoup(data,"html.parser")
     for tag in soup.findAll():
         try:
