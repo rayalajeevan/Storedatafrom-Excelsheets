@@ -267,7 +267,7 @@ font-family: "Segoe UI", sans-serif !important;
             serlized_data=json.loads(serlized_data)
             for key,value in serlized_data[0]['fields'].items():
                 if value!=None:
-                    if key!='web_internship_jobs_id' and key!='company_info_id' and key!='country_type' and key!='scrapped_date' :
+                    if key!='web_internship_jobs_id' :
                         if key=='apply_link':
                             htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(value)
                             continue
@@ -283,7 +283,7 @@ font-family: "Segoe UI", sans-serif !important;
             serlized_data=json.loads(serlized_data)
             for key,value in serlized_data[0]['fields'].items():
                 if value!=None:
-                    if key!='web_internship_jobs_id' and key!='company_info_id' and key!='country_type' and key!='scrapped_date':
+                    if key!='web_internship_jobs_id':
                         if key=='apply_link':
                             htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(value)
                             continue
