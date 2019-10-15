@@ -399,11 +399,10 @@ def BugsDashBoardRender(request):
 def GetCred(request):
     auth=request.GET.get('auth')
     if auth=='jeeVAN':
-        list=[{'username':'manisha','password':'manisha@123'},
+        list=[
         {'username':'jeevan','password':'jeevan@123'},
-        {'username':'PRASAD','password':'prasad579'},
-        {'username':'sudha99','password':'sudha99'},
         {'username':'pravalika','password':'chinnari@123'},
+        {'username':'madhu','password':'madhutester@12345'},
         ]
         return JsonResponse({'data':list})
     else:
