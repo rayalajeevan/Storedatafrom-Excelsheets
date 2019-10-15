@@ -358,6 +358,8 @@ def remving_extraSpacesHtmlContent(data):
                     if len(x.find_next_sibling(x.nextSibling.name).getText().strip())==0:
                         x.find_next_sibling(x.nextSibling.name).decompose()
                 if  x.previous_element!=None   and x.find_previous_sibling(x.previous_element.name)!=None :
+                    if  x.find_previous_sibling(x.previous_element.name).name=='br' and x.find_previous_sibling(x.previous_element.name).parent.name=='p':
+                        continue
                     if len(x.find_previous_sibling(x.previous_element.name).get_text().strip())==0:
                         x.find_previous_sibling(x.previous_element.name).decompose()
     for x in soup.findAll('br'):
@@ -370,14 +372,15 @@ def remving_extraSpacesHtmlContent(data):
                 x.find_parent('p').decompose()
     for x in soup.findAll():
         enabled=True
-        if x.name in inline_elements or x.name=='br' :
+        if x.name in inline_elements or x.name=='br':
             enabled=False
         if enabled==True:
             if (x.nextSibling!=None and x.nextSibling.name=='br') or (x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None and len(x.find_next_sibling(x.nextSibling.name).get_text().strip())==0):
                  x.find_next_sibling(x.nextSibling.name).decompose()
     return BeautifyJobs(str(soup))
 # def detect_experince_level(job):
-#     items=('senior','manager','fresher',)
+    items=({'Senior':['sr.','senior','manager']})
+
 
 def replacer(data):
     return data
