@@ -41,5 +41,5 @@ urlpatterns = [
     path('change_tested_status/',views.change_tested_status),
     path('getlocationid/',views.location_checker),
     path('getIndustries/',GetIndustry.as_view()),
-    path('keywordjobs/',views.GetJobs.as_view())
+    path('keywordjobs/',views.detecter)
 ]

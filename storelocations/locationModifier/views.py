@@ -7,6 +7,7 @@ from django.core import serializers
 from random import shuffle
 import json
 import os
+import re
 from .forms import UploadFiles
 from django.db.models import  Count
 from datetime import  datetime
@@ -210,11 +211,11 @@ def send_mail_to_interns(ip):
         'doolamravali432@gmail.com',])
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
-try:
-    jeevan()
-except Exception as e:
-    print(e)
-    print("Internet Is not available Please send Manually.....!",str(e))
+# try:
+#     # jeevan()
+# except Exception as e:
+#     print(e)
+#     print("Internet Is not available Please send Manually.....!",str(e))
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')
@@ -617,3 +618,57 @@ def location_checker(request):
     if len(locations_data)!=0:
         dataList.append({'city':locations_data[0].city,'state':locations_data[0].state,'id':locations_data[0].location_id})
     return JsonResponse({'data':dataList})
+def detecter(request):
+    responser=[]
+    data=Web_company_jobs.objects.filter()[55000:55500]
+    print("started...")
+    for x in data:
+        responser.append({x.web_company_jobs_id:detect_experince(BeautifulSoup(x.job_description,'html.parser').getText())})
+
+    return JsonResponse({'data':responser})        
+
+
+def detect_experince(data):
+    split_data=[x.lower() for x in data.split() if x.strip()!='']
+    keywords=('years','year')
+    notMatchedKeywords=('age','started','ended','salary','we have achieved four straight',
+    'ranking','within the Vault Consulting','Some may think were old')
+    index=list()
+    string=None
+    for x in range(len(split_data)):
+        if ('year' in split_data[x].strip() or 'years' in split_data[x].strip()) and  'experience' in split_data[x:x+7]:
+            index.append(x)
+    exp=None
+    indexer=None
+    for  x in index:
+        if indexer==None:
+            indexer=7
+        try:
+            string=" ".join(y for y in split_data[x-indexer:x+indexer:] if y!='')+" "
+            enabled=True
+            for y in notMatchedKeywords:
+                if y in string:
+                    enabled=False
+            string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "        
+            if enabled==True:
+                expression=re.compile(r'\d+-\d+')
+                search=re.search(expression,string)
+                if search!=None:
+                    exp=search.group()
+                else:
+                    expression=re.compile(r'\d+')
+                    search=re.search(expression,string)
+                    if search!=None:
+                        exp=search.group()
+                        if int(exp)>25:
+                            exp=None
+                            indexer=indexer-1
+                            index.append(x)
+                            continue
+                        elif int(exp)<=2:
+                            exp="0-"+str(exp)
+                    
+        except :pass
+    if exp==None:
+        return None
+    return str(exp)+" year(s)"

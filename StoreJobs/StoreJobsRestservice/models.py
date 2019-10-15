@@ -9,6 +9,7 @@ class WebCompanyJobs(models.Model):
     job_title = models.CharField(max_length=1000, blank=True, null=True)
     job_description = models.TextField(blank=True, null=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
+    
     job_location = models.TextField(blank=True, null=True)
     apply_link = models.TextField(blank=True, null=True)
     posted_date = models.DateTimeField(blank=True, null=True)
@@ -18,6 +19,7 @@ class WebCompanyJobs(models.Model):
     schedule_job_timings = models.CharField(max_length=500, blank=True, null=True)
     industry_type = models.CharField(max_length=500, blank=True, null=True)
     experience = models.CharField(max_length=500, blank=True, null=True)
+    experience_level = models.CharField(max_length=250, blank=True, null=True)
     job_expired_date = models.CharField(max_length=300, blank=True, null=True)
     functional_area = models.CharField(max_length=800, blank=True, null=True)
     salary_compensation = models.CharField(max_length=500, blank=True, null=True)
@@ -113,6 +115,7 @@ class WebInternshipJobs(models.Model):
     schedule_job_timings = models.CharField(max_length=500, blank=True, null=True)
     industry_type = models.CharField(max_length=500, blank=True, null=True)
     experience = models.CharField(max_length=500, blank=True, null=True)
+    experience_level = models.CharField(max_length=250, blank=True, null=True)
     job_expired_date = models.CharField(max_length=300, blank=True, null=True)
     functional_area = models.CharField(max_length=500, blank=True, null=True)
     salary_compensation = models.CharField(max_length=500, blank=True, null=True)
