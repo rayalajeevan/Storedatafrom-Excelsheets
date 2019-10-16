@@ -682,6 +682,8 @@ def refining_job(job):
     soup=BeautifulSoup(string,'html.parser')
     job['job_type']=detect_job_type(job.get('job_type'),soup.getText())
     #detect Experince
+    if job.get('experience')!=None:
+        job['experience']=detect_experince(job.get('experience'))
     if job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
         job['experience']=detect_experince(string)
     #detect Experince Level
