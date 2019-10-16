@@ -384,9 +384,11 @@ def remving_extraSpacesHtmlContent(data):
     for x in soup.findAll('br'):
         if x.parent!=None and x.parent.name!='p' and len(x.parent.getText())!=0:
             if x.nextSibling!=None and x.nextSibling.name=='br':
-                x.find_next_sibling(x.nextSibling.name).decompose()
+                if x.find_next_sibling(x.nextSibling.name)!=None:
+                    x.find_next_sibling(x.nextSibling.name).decompose()
             if x.previous_element!=None and x.previous_element.name=='br':
-                x.find_previous_sibling(x.previous_element.name).decompose()
+                if x.find_previous_sibling(x.previous_element.name)!=None:
+                    x.find_previous_sibling(x.previous_element.name).decompose()
             if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
                 x.find_parent('p').decompose()
     for x in soup.findAll():
