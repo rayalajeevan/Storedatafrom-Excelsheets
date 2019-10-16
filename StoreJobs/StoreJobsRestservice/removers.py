@@ -314,13 +314,13 @@ def detect_job_type(job_type,job):
                     for not_item in NegtiveMatches:
                        if not_item not in split_data[x].split(y)[0][-20::]:
                            matched_list.append(y)
-                           break                           
+                           break
         for x in matched_list:
             for obj in job_type_items[0:5]:
                 for key,values in obj.items():
                     if x in values:
                         detected_job_type=key
-                        break                 
+                        break
         return detected_job_type
 
 
@@ -619,7 +619,7 @@ def detect_experience_level(experience,data):
                 detected_experience_level='Mid Level'
             elif  max(numbers)>=7:
                 detected_experience_level='Senior Level'
-        return  detected_experience_level    
+        return  detected_experience_level
 def detect_experince(data):
     split_data=[x.lower() for x in data.split() if x.strip()!='']
     keywords=('years','year')
@@ -641,7 +641,7 @@ def detect_experince(data):
             for y in notMatchedKeywords:
                 if y in string:
                     enabled=False
-            string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "        
+            string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "
             if enabled==True:
                 expression=re.compile(r'\d+-\d+')
                 search=re.search(expression,string)
@@ -659,11 +659,11 @@ def detect_experince(data):
                             continue
                         elif int(exp)<=2:
                             exp="0-"+str(exp)
-                    
+
         except :pass
     if exp==None:
         return None
-    return str(exp)+" year(s)"    
+    return str(exp)+" year(s)"
 def refining_job(job):
     # removing Null values
     job_data={}
@@ -677,18 +677,22 @@ def refining_job(job):
     #refineColumns
     job=refineColumns(job)
     #detect Job type
-    
-    string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications')and value!=None )                
+
+    string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications')and value!=None )
     soup=BeautifulSoup(string,'html.parser')
     job['job_type']=detect_job_type(job.get('job_type'),soup.getText())
     #detect Experince
     if job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
         job['experience']=detect_experince(string)
     #detect Experince Level
-    job['experience_level']=detect_experience_level(job.get('experience'),soup.getText())    
+    job['experience_level']=detect_experience_level(job.get('experience'),soup.getText())
     #get location with postal_code
     pin=None
     if job.get('pin')!=None:
+        job['pin']=str(job.get('pin'))
+        if len(job.get('pin'))<5:
+            for x in range(5-len(job.get('pin'))):
+                job['pin']='0'+job.get('pin')
         data=Locations.objects.filter(postal_code=job.get('pin'))
         if len(data)!=0:
             job['job_location']=data[0].city+", "+data[0].state_code
