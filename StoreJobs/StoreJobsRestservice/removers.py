@@ -402,7 +402,7 @@ def replacer(data):
     return data
 def HtmlParser(data,job={}):
     items=  ('Role opening date:','OPENING DATE:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Salary','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:','Job Title:','Req. ID:','Contract Type','HOURS:','WAGE:','Role Location:','Role opening date',
-    'Closing date for applications:','Req. ID:','Hiring Manager:','Relocation Level:','Job Number:','Pub Date:')
+    'Closing date for applications:','Req. ID:','Hiring Manager:','Relocation Level:','Job Number:','Pub Date:','Job Reference Code')
     items_starts_with=('POSITION:','Company:','Location:','Department:','Temporary position (1 year)','Bass (1 year appointment)','Position:','Shift:')
     itemsNotEqual=('POSITION SUMMARY','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
     'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:',"""Our Company:""")
@@ -727,16 +727,18 @@ def refining_job(job):
     job_type_list=('intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime','entry level')
     for type in job_type_list:
         if type!='entry level':
-            if job.get('job_type','@a1>2<').lower().strip() in type:
-                job['job_type']=type.capitalize()
-                break
+            if job.get('job_type')!=None:
+                if job.get('job_type','@a1>2<').lower().strip() in type:
+                    job['job_type']=type.capitalize()
+                    break
         else:
-            if  job.get('job_type','@a1>2<').lower().strip()=='college grad':
-                job['job_type']=type.capitalize()
-                break
-            if job.get('job_type','@a1>2<').lower().strip() in type:
-                job['job_type']=type.capitalize()
-                break
+            if job.get('job_type')!=None:
+                if  job.get('job_type','@a1>2<').lower().strip()=='college grad':
+                    job['job_type']=type.capitalize()
+                    break
+                if job.get('job_type','@a1>2<').lower().strip() in type:
+                    job['job_type']=type.capitalize()
+                    break
     if job.get('job_type')==None:
         job['job_type']='Full Time'
     #error throughing when postion was closed
