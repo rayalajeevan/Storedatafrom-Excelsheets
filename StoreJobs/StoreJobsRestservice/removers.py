@@ -525,7 +525,6 @@ def HtmlParser(data,job={}):
                             if item1.strip() in x.parent.getText().strip():
                                 true=False
                         if true==True:
-                            print("True2")
                             if len(x.parent.get_text())!=len(x.getText().strip()):
                                 removed_elements.append(str(x.parent))
                                 x.parent.decompose()
@@ -604,10 +603,14 @@ def refineColumns(job):
                     continue
                 new_jobData[key.lower()]=string_error(value)
     return new_jobData
-def detect_experience_level(experience,data):
+def detect_experience_level(experience,data,job):
     detected_experience_level=None
+    deteted_keywords=('senior','senior developer')
+    for x in deteted_keywords:
+        if x in job.get('job_title').lower():
+            return 'Senior Level'
     if experience==None:
-        experience_level_items=({'Senior Level':('senior','manager','senior developer')},{'Entry Level':('fresher',)})
+        experience_level_items=({'Senior Level':('senior','senior developer')},{'Entry Level':('fresher',)})
         NegtiveMatches=(' no ',' not ',' non '," don't "," aren't "," isn't " ," wasn't "," weren't "," haven't ","hasn't",
         "hadn't","doesn't","didn't","can't","couldn't","mustn't","needn't","won't","wouldn't","shan't","shouldn't",
         "oughtn't ")
@@ -633,7 +636,7 @@ def detect_experience_level(experience,data):
             if x.isdigit():
                 numbers.append(int(x))
         if len(numbers)!=0:
-            if max(numbers)>0 and max(numbers)<3:
+            if max(numbers)>=0 and max(numbers)<3:
                 detected_experience_level='Entry level'
             elif  max(numbers)>=3 and max(numbers)<7:
                 detected_experience_level='Mid Level'
@@ -650,16 +653,19 @@ def detect_experince(data):
     string=None
     
     for x in range(len(split_data)):
+        if 'years' in split_data[x].strip():
+            print(split_data[:x+20])
         for y in keywords:
             if y in split_data[x].strip():
                 for z in split_data[x:x+20]:
-                    if x not in index:
+                    if 'experience' in z and x not in index:
                         index.append(x)
                         break
     exp=None
     indexer=None
-    print(index)
+    # print(index)
     count=0
+    year_dict={1:'one',2:'two',3:'three',4:'four',5:'five',6:'six' ,7:'seven',8:'eight',9:'nine',10:'ten',11:'eleven',12:'twelve',13:'thirteen',14:'fourteen',20:'twenty'}
     for  x in index:
         count+=1
         if count>10:
@@ -671,13 +677,13 @@ def detect_experince(data):
                 string=" ".join(y for y in split_data[0:x+indexer:] if y!='')+" "
                 enabled=True
                 for y in notMatchedKeywords:
-                    if y in string:
+                    if y in string.split():
                         enabled=False                       
             if x>1:
                 string=" ".join(y for y in split_data[x-indexer:x+indexer:] if y!='')+" "
                 enabled=True
                 for y in notMatchedKeywords:
-                    if y in string:
+                    if y in string.split():
                         enabled=False
                 string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "
                 if len(string.strip().split())<3:
@@ -685,6 +691,7 @@ def detect_experince(data):
                     indexer=indexer-1
                     index.append(x)
                     continue
+            # print(enabled)   
             if enabled==True:
                 expression=re.compile(r'\d+-\d+')
                 search=re.search(expression,string)
@@ -702,12 +709,15 @@ def detect_experince(data):
                             continue
                         elif int(exp)<=2:
                             exp="0-"+str(exp)
+                if exp==None:
+                    for key,value in year_dict.items():
+                        if value in string.split():
+                            exp=key
 
         except :pass
     if exp==None:
         return None
-    return str(exp)+" year(s)"             
-                       
+    return str(exp)+" year(s)"
 def refining_job(job):
     # removing Null values
     job_data={}
@@ -731,7 +741,7 @@ def refining_job(job):
     if job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
         job['experience']=detect_experince(string)
     #detect Experince Level
-    job['experience_level']=detect_experience_level(job.get('experience'),soup.getText())
+    job['experience_level']=detect_experience_level(job.get('experience'),soup.getText(),job)
     #get location with postal_code
     pin=None
     if job.get('pin')!=None:
