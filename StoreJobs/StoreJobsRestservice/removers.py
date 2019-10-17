@@ -727,7 +727,7 @@ def refining_job(job):
 
     if job.get('job_location')==None:
         for column_name in ['city','state','country']:
-            if job.get(column_name)!=None:
+            if job.get(column_name)!=None and str(job.get(column_name))!='None'  and str(job.get(column_name)).lower()!='null':
                 if job.get('job_location')==None:
                     job['job_location']=job.get(column_name)
                 else:
