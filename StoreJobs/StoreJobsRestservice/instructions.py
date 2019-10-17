@@ -910,8 +910,8 @@ class InstructionsForAll():
             if html_tags!=None and keywords!=None:
                 for tag in soup.findAll([html_tags.split(',')]):
                     for item in keywords.split(','):
-                        if item.lower() in tag.getText().lower():
-                            if len(tag.parent.getText().strip())<=150:
+                        if tag!=None and  item.lower() in tag.getText().lower():
+                            if tag.parent!=None and len(tag.parent.getText().strip())<=150:
                                 tag.parent.decompose()
                                 removed_elemnts.append(str(tag))
                             else:
