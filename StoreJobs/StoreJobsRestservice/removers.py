@@ -624,26 +624,45 @@ def detect_experience_level(experience,data):
         return  detected_experience_level
 def detect_experince(data):
     split_data=[x.lower() for x in data.split() if x.strip()!='']
-    keywords=('years','year')
+    keywords=('years','year','yrs')
     notMatchedKeywords=('age','started','ended','salary','we have achieved four straight',
     'ranking','within the Vault Consulting','Some may think were old')
     index=list()
     string=None
     for x in range(len(split_data)):
-        if ('year' in split_data[x].strip() or 'years' in split_data[x].strip()) and  'experience' in split_data[x:x+7]:
-            index.append(x)
+        for y in keywords:
+            if y in split_data[x].strip() and  ('experience' in split_data[x:x+7] or 'exp' in split_data[x:x+7]):
+                if x not in index:
+                    index.append(x)
     exp=None
     indexer=None
+    print(index)
+    count=0
     for  x in index:
+        count+=1
+        if count>10:
+            break
         if indexer==None:
             indexer=7
         try:
-            string=" ".join(y for y in split_data[x-indexer:x+indexer:] if y!='')+" "
-            enabled=True
-            for y in notMatchedKeywords:
-                if y in string:
-                    enabled=False
-            string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "
+            if x==1:
+                string=" ".join(y for y in split_data[0:x+indexer:] if y!='')+" "
+                enabled=True
+                for y in notMatchedKeywords:
+                    if y in string:
+                        enabled=False                       
+            if x>1:
+                string=" ".join(y for y in split_data[x-indexer:x+indexer:] if y!='')+" "
+                enabled=True
+                for y in notMatchedKeywords:
+                    if y in string:
+                        enabled=False
+                string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "
+                if len(string.strip().split())<3:
+                    exp=None
+                    indexer=indexer-1
+                    index.append(x)
+                    continue
             if enabled==True:
                 expression=re.compile(r'\d+-\d+')
                 search=re.search(expression,string)
