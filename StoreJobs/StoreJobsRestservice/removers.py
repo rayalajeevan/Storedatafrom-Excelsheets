@@ -460,26 +460,44 @@ def HtmlParser(data,job={}):
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('job Title:')
             removed_tags.append('Title:')
-            x.decompose()
+            if x.parent!=None and len(x.parent.getText().strip())<=40:
+                x.parent.decompose()
+            else:    
+                x.decompose()
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>90:
             removed_tags.append('job location')
-            x.decompose()
+            if x.parent!=None and len(x.parent.getText().strip())<=40:
+                x.parent.decompose()
+            else:    
+                x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('functional area')
-            x.decompose()
+            if x.parent!=None and len(x.parent.getText().strip())<=40:
+                x.parent.decompose()
+            else:    
+                x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_id','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('job id')
-            x.decompose()
+            if x.parent!=None and len(x.parent.getText().strip())<=40:
+                x.parent.decompose()
+            else:    
+                x.decompose()
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_type','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            x.decompose()
+            if x.parent!=None and len(x.parent.getText().strip())<=40:
+                x.parent.decompose()
+            else:    
+                x.decompose()
             removed_tags.append('job type')
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('work_shift','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            x.decompose()
+            if x.parent!=None and len(x.parent.getText().strip())<=40:
+                x.parent.decompose()
+            else:    
+                x.decompose()
             removed_tags.append('work_shift')
             continue
         if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
@@ -623,17 +641,21 @@ def detect_experience_level(experience,data):
                 detected_experience_level='Senior Level'
         return  detected_experience_level
 def detect_experince(data):
-    split_data=[x.lower() for x in data.split() if x.strip()!='']
-    keywords=('years','year','yrs')
+    split_data=[x.lower().replace(',','').replace('.','').replace(':','') for x in data.split() if x.strip()!='']
+    keywords=('years','year')
     notMatchedKeywords=('age','started','ended','salary','we have achieved four straight',
     'ranking','within the Vault Consulting','Some may think were old')
     index=list()
+    replcers=(',','.',':')
     string=None
+    
     for x in range(len(split_data)):
         for y in keywords:
-            if y in split_data[x].strip() and  ('experience' in split_data[x:x+7] or 'exp' in split_data[x:x+7]):
-                if x not in index:
-                    index.append(x)
+            if y in split_data[x].strip():
+                for z in split_data[x:x+20]:
+                    if x not in index:
+                        index.append(x)
+                        break
     exp=None
     indexer=None
     print(index)
@@ -684,7 +706,8 @@ def detect_experince(data):
         except :pass
     if exp==None:
         return None
-    return str(exp)+" year(s)"
+    return str(exp)+" year(s)"             
+                       
 def refining_job(job):
     # removing Null values
     job_data={}
