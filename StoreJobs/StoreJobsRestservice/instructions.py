@@ -915,8 +915,9 @@ class InstructionsForAll():
                                 tag.parent.decompose()
                                 removed_elemnts.append(str(tag))
                             else:
-                                tag.decompose()
-                                removed_elemnts.append(str(tag))
+                                if len(tag.getText())<=50:
+                                    tag.decompose()
+                                    removed_elemnts.append(str(tag))
             if attrs!=None:
                 for tag,attr in attrs.items():
                     if soup.find(tag,attr)!=None:
