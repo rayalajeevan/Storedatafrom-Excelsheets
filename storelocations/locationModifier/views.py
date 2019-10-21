@@ -646,4 +646,9 @@ def detecter(request):
             
     return JsonResponse({'data':responser})        
 
-
+def checkscrped(request,*args, **kwargs):
+    data=request.GET.get('scrappedby')
+    data1=request.GET.get('tested_status')
+    if data!=None:
+        return JsonResponse({data:list(Web_company_jobs.objects.values('scrappedBy','company_name').annotate(dcount=Count('scrappedBy')).filter(tested_status=data1,scrappedBy=data))})
+    return JsonResponse({'status':"Failed...!",'error_':'please provid name'})    
