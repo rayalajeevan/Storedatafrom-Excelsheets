@@ -606,12 +606,12 @@ def refineColumns(job):
     return new_jobData
 def detect_experience_level(experience,data,job):
     detected_experience_level=None
-    deteted_keywords=('senior','senior developer')
+    deteted_keywords=('senior developer','senior manager')
     for x in deteted_keywords:
         if x in job.get('job_title').lower():
             return 'Senior Level'
     if experience==None:
-        experience_level_items=({'Senior Level':('senior','senior developer')},{'Entry Level':('fresher',)})
+        experience_level_items=({'Senior Level':('senior developer','senior manager')},{'Entry Level':('fresher',)})
         NegtiveMatches=(' no ',' not ',' non '," don't "," aren't "," isn't " ," wasn't "," weren't "," haven't ","hasn't",
         "hadn't","doesn't","didn't","can't","couldn't","mustn't","needn't","won't","wouldn't","shan't","shouldn't",
         "oughtn't ")
@@ -781,23 +781,8 @@ def refining_job(job):
     job['posted_date']=str(validatos(job.get('posted_date')))
 
     # detetcting JOB_TYPE
-    job_type_list=('intern','part-time','full-time','part time','full time','regular','permanent','contract','half-time','half time','parttime','fulltime','entry level')
-    for type in job_type_list:
-        if type!='entry level':
-            if job.get('job_type')!=None:
-                if job.get('job_type','@a1>2<').lower().strip() in type:
-                    job['job_type']=type.capitalize()
-                    break
-        else:
-            if job.get('job_type')!=None:
-                if  job.get('job_type','@a1>2<').lower().strip()=='college grad':
-                    job['job_type']=type.capitalize()
-                    break
-                if job.get('job_type','@a1>2<').lower().strip() in type:
-                    job['job_type']=type.capitalize()
-                    break
-    if job.get('job_type')==None:
-        job['job_type']='Full Time'
+    
+    
     #error throughing when postion was closed
 
     if 'position has been closed' in str(job.get('job_description')).lower():
