@@ -820,6 +820,7 @@ def refining_job(job):
     for item in ['Please refer to the corresponding language to initiate your application.','This job posting is only available in German language','This job posting is only available in German language','Sorry, this position has been filled']:
         if str(item).lower().strip() in str(job.get('job_description')).lower().strip():
             return {'error':{'another_language_job':'This job posting is only available in the language of the country where the position is located. Please refer to the corresponding language to initiate your application.'}}
+    language_detector=""        
     try:
         for x in ('job_description','job_roles_responsibilities','qualifications'):
             if str(job.get(x))!="None":
