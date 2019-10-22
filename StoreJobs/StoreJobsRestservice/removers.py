@@ -458,7 +458,7 @@ def HtmlParser(data,job={}):
     removed_elements=[]
     removed_tags=[]
     for x in soup.findAll():
-        if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if job.get('job_title')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('job Title:')
             removed_tags.append('Title:')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
@@ -466,42 +466,42 @@ def HtmlParser(data,job={}):
             else:
                 x.decompose()
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>90:
+        if job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>90:
             removed_tags.append('job location')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
                 x.decompose()
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if job.get('functional_area')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('functional area')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
                 x.decompose()
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('job_id','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if job.get('job_id')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_id','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('job id')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
                 x.decompose()
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('job_type','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if job.get('job_type')!=None and  fuzz.ratio(x.getText().strip().lower(),job.get('job_type','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
                 x.decompose()
             removed_tags.append('job type')
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('work_shift','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if  job.get('work_shift')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('work_shift','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
                 x.decompose()
             removed_tags.append('work_shift')
             continue
-        if fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
+        if job.get('job_title')!=None and job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             if x.parent!=None and len(x.parent.get_text().strip())<=200:
                 x.parent.decompose()
             else:
@@ -781,8 +781,8 @@ def refining_job(job):
     job['posted_date']=str(validatos(job.get('posted_date')))
 
     # detetcting JOB_TYPE
-    
-    
+
+
     #error throughing when postion was closed
 
     if 'position has been closed' in str(job.get('job_description')).lower():
