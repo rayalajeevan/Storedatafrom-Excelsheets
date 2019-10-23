@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from locationModifier.models import StoreLocation,Web_internships_jobs,company_info,companies_internship,Web_company_jobs,Bugs,company_infoCopy,Locations
+from locationModifier.models import *
 from django.views import View
 from django.http import JsonResponse
 import socket
@@ -352,13 +352,13 @@ class ViewJobsCOuntBYFilter(generics.ListAPIView):
         print(data)
         if data:
             if data.get('company_info_id')!=None:
-                datalist=Web_company_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
+                datalist=Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
                 print(datalist)
                 return datalist
-            datalist=Web_company_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)    
+            datalist=Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)    
             print(datalist)
             return datalist
-        return Web_company_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
+        return Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
         
     def get(self,request,*args,**kwrgs):
         return self.list(request)
@@ -369,9 +369,9 @@ class ViewInternsCOuntBYFilter(generics.ListAPIView):
         data=dict((k,v[0]) for k,v in dict(self.request.GET).items() if k!='page')
         if data:
             if data.get('company_info_id')!=None:
-                return Web_internships_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
-            return Web_internships_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)
-        return Web_internships_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
+                return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
+            return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)
+        return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
         return []
     def get(self,request,*args,**kwrgs):
         return self.list(request)            
