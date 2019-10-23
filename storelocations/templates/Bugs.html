@@ -70,7 +70,7 @@ xhttp.send()
 getCred()
 
   if (localStorage.getItem('user')!=null){
-    location.href='http://'+localStorage.getItem('ip')+':7000/viewjobscount/'
+    location.href='http://'+localStorage.getItem('ip')+':7000/viewdashboard/'
   }
 
   function login(){
@@ -81,7 +81,7 @@ getCred()
     if (userid==cred["data"][obj]["username"] && cred["data"][obj]["password"]==passwd){
 
       localStorage.setItem('user',cred["data"][obj]["username"])
-      location.href='http://'+localStorage.getItem('ip')+':7000/viewjobscount/'
+      location.href='http://'+localStorage.getItem('ip')+':7000/viewdashboard/'
       data="login"
       return false
     }

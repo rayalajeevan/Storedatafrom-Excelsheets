@@ -22,7 +22,7 @@ input[type=file]{
   border-radius: 4px;
   box-sizing: border-box;
 }
-input[type=date],select{
+input[type=date],input[type=text],select{
   width: 50%;
   padding: 12px 20px;height: 8px;
   margin: 8px 0;
@@ -31,7 +31,35 @@ input[type=date],select{
   border-radius: 4px;
   box-sizing: border-box;
 }
+input[type=text]{
+  width: 60%;
+  padding: 12px 20px;height: 8px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 50px;
+  height: 50px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
 
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 input[type=submit]{
   width: 100%;
   background-color: #4CAF50;
@@ -42,33 +70,61 @@ input[type=submit]{
   border-radius: 3px;
   cursor: pointer;
 }
+#loadmorecomp{
+ width: 20%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
 
+#loadmoreint{
+  width: 20%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+
+}
 input[type=submit]:hover {
   background-color: #45a049;
 }
-
+#loadmorecomp:hover {
+  background-color: #45a049;
+}
+#loadmoreint:hover {
+  background-color: #45a049;
+}
 div {
   border-radius: 2px;
   background-color: #f2f2f2;
   padding: 10px;
     height: 50px;width: 250px;
 }
-#companydata {
+#companydata,#interndata {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
 
-#companydata td, #companydata th {
+#companydata td, #companydata th,#interndata td,#interndata th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
 #companydata tr:nth-child(even){background-color: #f2f2f2;}
+#interndata tr:nth-child(even){background-color: #f2f2f2;}
 
 #companydata tr:hover {background-color: #ddd;}
+#interndata tr:hover {background-color: #ddd;}
 
-#companydata th {
+#companydata th,#interndata th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align:left;
@@ -88,7 +144,7 @@ div {
   border: 1px solid #ddd;
   padding: 12px;
 }
-#companydata {
+#companydata ,#interndata{
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100%;
@@ -97,7 +153,16 @@ div {
     margin-left:auto;
     margin-right:auto;
   }
-
+#loadmorecomp{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+#loadmoreint{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 </style>
 <script>
 function testedstatuschange(val)
@@ -138,20 +203,22 @@ elm_id.style.backgroundColor="red"
 <input type="submit" value="Total Companies   {{ count }}">
 <a onclick="return showbugs()"><strong>Show Bugs</strong></a>|
   &nbsp;<a  onclick=" return logout()" align='right'><strong>Logout</strong></a>
-<form action="/viewjobscount/" method="GET" >
+
     <table>
         <tr>
             <td>
-                <div style="background-color: white">
+                <div>
+                <span>Search By Company Info Id</span><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text"   id='company_info_id' placeholder="Company Info Id" >
                 </div>
             </td>
             <td>
                 <div>
     <span>Search By date</span><br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="date"  onfocus="(this.type='date')" placeholder="YYYY-DD-MM">
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="scrapped_date__icontains"  onfocus="(this.type='date')" placeholder="YYYY-DD-MM">
                 </div> </td><td><div>
     <span>Search By ScrappedBy</span><br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name='scrappedBy' id='intern'>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name='scrappedBy' id='scrappedBy__icontains'>
     <option value="select">------------------------------Select-----------------------</option>
 
     <option value="anusha">Anusha</option>
@@ -174,14 +241,13 @@ elm_id.style.backgroundColor="red"
         </tr>
     </table>
 
-  <input type="submit" value="Search">
+  <input type="submit" value="Search" onclick="return get_jobs_interns()">
 
-</form>
+
 <table id='cdata'><tr>
   <td style="text-align:left">
 <h5 id="show"></h5></td>
 <td align="right">
-<h5 id='0'  text-align="right"  class="pageNation" ><font size='3px' color="green"> &nbsp;&nbsp;<a href="http://{{ ip }}:7000/viewjobscount/?startrow={{ start }}">         click here</font>   To see another 10</h5>
 </td>
 </tr>
 </table>
@@ -191,26 +257,31 @@ elm_id.style.backgroundColor="red"
     <th>Company_name</th>
     <th>company_info_id</th>
     <th>jobs</th>
-      <th>Interns</th>
+      <th>ScrappedBY</th>
+      <th>Test Status</th>
+      <div class="loader" id="comploader" style="display:none"></div>
+  </tr>
+  
+    
+</table>
+
+<input type="button" id="loadmorecomp" value="Load More Companies" onclick="return Paginate(this)">
+
+<table id="interndata" align="center">
+  <tr>
+    <th>Company_name</th>
+    <th>company_info_id</th>
+    <th>interns</th>
       <th>ScrappedBY</th>
       <th>Test Status</th>
   </tr>
-    {% for dic in data %}
-        <tr>
-            <td>{{  dic.CompanyName}}</td>
-            <td><a id={{ dic.company_info_id }} onclick='return raiseBug(this)'>{{  dic.company_info_id }}</td>
-            <td>{{ dic.jobscount }}</td>
-            <td>{{ dic.internscount }}</td>
-            <td>{{ dic.scrap }}</td>
-            {% ifequal dic.tested_status "False" %}
-            <td><input type="button" value="Click Here If You tested..."  class="{{dic.company_info_id}}"id="{{ dic.company_info_id}}Butt" onclick='testedstatuschange(this)'></td>
-            {% else %}
-            <td><input type="button" value="Test Completed" disabled ></td>
-            {% endifequal %}
-            <input type="text" id="{{dic.company_info_id }}" value="{{ dic.scrap }}" style="display:none">
-        </tr>
-    {% endfor %}
+    <div class="loader" id="intloader" style="display:none"></div>
 </table>
+
+
+<input type="button" id="loadmoreint" value="Load More interns" onclick="return Paginate(this)">
+
+
 <div id='BugRaise' style="display:none">
   <h3 align='center'>Raise Bug</h3>
   <form action="/RaiseBug/" method="POST" enctype="multipart/form-data">
@@ -252,13 +323,14 @@ function raiseBug(the){
     user=" Santhi sudha"
   }
   document.querySelectorAll('input[name=assignby]')[0].value=user
-  document.querySelectorAll('input[name=infoid]')[0].value=infoid
+  document.querySelectorAll('input[name=infoid]')[0].value=infoid.replace("co", "").replace("in","")
   document.getElementById('companydata').style.display = "none";
+  document.getElementById('interndata').style.display = "none";
   document.getElementById('BugRaise').style.display = "block";
   document.querySelectorAll('input[name=infoid]')[0].value
   var select=document.getElementById('assignTo')
-  var assnto=document.getElementById(the.id).value
-  select.options[select.options.length] = new Option("----------"+assnto+"-------",assnto);
+  var assnto=document.getElementsByClassName(the.id)
+  select.options[select.options.length] = new Option("----------"+assnto[0].innerHTML+"-------",assnto[0].innerHTML);
   select.options[select.options.length] = new Option("----------jeevan-------","jeevan");
 }
 function showbugs(){
@@ -277,7 +349,7 @@ if (status!=""){
 }
 if (localStorage.getItem('user')!=null){
   document.getElementById('companydata').style.display = "block";
-
+document.getElementById('interndata').style.display = "block"
   document.getElementById('BugRaise').style.display = "none";
 }
 else{
@@ -356,8 +428,186 @@ xhttp.onreadystatechange = function() {
 
 xhttp.send()
 }
+function get_jobs_interns()
+{
+  document.getElementById('comploader').style.display="block";
+  document.getElementById('intloader').style.display="block";
+   var tablen=document.getElementById("companydata").rows.length;
+    if (tablen>1){
+    for(let i=0;i<=tablen;i++){
+      var intablen=document.getElementById("companydata").rows.length;
+      if (intablen>1){
+      document.getElementById("companydata").deleteRow(1)
+    }
+    }
+  }
+  tablen=document.getElementById("interndata").rows.length;
+    if (tablen>1){
+    for(let i=0;i<=tablen;i++){
+      var intablen=document.getElementById("interndata").rows.length;
+      if (intablen>1){
+      document.getElementById("interndata").deleteRow(1)
+    }
+    }
+  }
+  var url="http://"+localStorage.getItem('ip')+":7000/viewjobscount?"
+  var cars=["scrappedBy__icontains","scrapped_date__icontains","company_info_id"]
+  for(let i=0;i<=cars.length-1;i++){
+    let form_data=document.getElementById(cars[i]).value;
+    if (form_data!="" && form_data!="select"){
+    url=url+"&"+cars[i]+"="+form_data
+    }
+  }
+  console.log(url)
+  let company=document.getElementById("company_info_id").value;
+  var xhttp = new XMLHttpRequest();
+  var req=xhttp.open('GET',url)
+  xhttp.onreadystatechange = function() {
+ if(this.status==200 && this.readyState==4)
+ {
+   let company_Data=JSON.parse(this.responseText)
+   adding_to_tables("com",company_Data)
+   document.getElementById('comploader').style.display="none";
+ }
+  }
+ xhttp.send()
+ var url="http://"+localStorage.getItem('ip')+":7000/viewinternscount?"
+  var cars=["scrappedBy__icontains","scrapped_date__icontains","company_info_id"]
+  for(let i=0;i<=cars.length-1;i++){
+    let form_data=document.getElementById(cars[i]).value;
+    if (form_data!="" && form_data!="select"){
+    url=url+"&"+cars[i]+"="+form_data
+    }
+  }
+  console.log(url)
+  company=document.getElementById("company_info_id").value;
+  xhttp = new XMLHttpRequest();
+  req=xhttp.open('GET',url)
+  xhttp.onreadystatechange = function() {
+ if(this.status==200 && this.readyState==4)
+ {
+   let company_Data=JSON.parse(this.responseText)
+   adding_to_tables("jsdjn",company_Data)
+   document.getElementById('intloader').style.display="none";
+ }
+  }
+ xhttp.send()
+}
+function adding_to_tables(type,data){
+  if(type=='com'){
+    for(let i=0;i<=data["results"].length-1;i++){
+           var tabledata=document.getElementById('companydata').getElementsByTagName('tbody')[0]
+           var olddata=tabledata.innerHTML;
+           var items=["company_name","company_info_id","dcount","scrappedBy"]
+           tdtxt="<tr>"
+           console.log(data['results'][i])
+           for(let y=0;y<=items.length-1;y++){
+              let x=data['results'][i][items[y]]
+              if ([items[y]]=="company_info_id"){
+                  tdtxt=tdtxt+"<td><a id='"+x+"in' onclick='return raiseBug(this)'>"+x+"</a>"
+              }
+              else if([items[y]]=="scrappedBy"){
+                tdtxt=tdtxt+"<td class='"+data['results'][i]["company_info_id"]+"in'>"+x+"</td>"
+              }
+              else{
+                  tdtxt=tdtxt+"<td>"+x+"</td>"
+              }
+           }
+           button=""
+           if (data['results'][i]['tested_status']=="True"){
+              button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"c' value='Test Completed' disabled='true'>"
+           }
+           else{
+            button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"c' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>" 
+           }
+           tdtxt=tdtxt+"<td>"+button+"</td></tr>"
+           tabledata.innerHTML=olddata+tdtxt
+          
+          
+  }
+   var laodmorecmp=document.getElementById('loadmorecomp');
+  
+           if (data['next']!=null){
+             laodmorecmp.className=data['next']
+              laodmorecmp.style.display="block"
+           }
+           else{
+             laodmorecmp.style.display="none";
+            
+           }
+           
 
+}
+else{
+  for(let i=0;i<=data["results"].length-1;i++){
+           var tabledata=document.getElementById('interndata').getElementsByTagName('tbody')[0]
+           var olddata=tabledata.innerHTML;
+           var items=["company_name","company_info_id","dcount","scrappedBy"]
+           tdtxt="<tr>"
+           console.log(data['results'][i])
+           for(let y=0;y<=items.length-1;y++){
+              let x=data['results'][i][items[y]]
+              if ([items[y]]=="company_info_id"){
+                  tdtxt=tdtxt+"<td><a id='"+x+"in' onclick='return raiseBug(this)'>"+x+"</a>"
+              }
+              else if([items[y]]=="scrappedBy"){
+                tdtxt=tdtxt+"<td class='"+data['results'][i]["company_info_id"]+"in'>"+x+"</td>"
+              }
+              else{
+                  tdtxt=tdtxt+"<td>"+x+"</td>"
+              }
+           }
+            button=""
+           if (data['results'][i]['tested_status']=="True"){
+              button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"i' value='Test Completed' disabled='true'>"
+           }
+           else{
+            button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"i' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>" 
+           }
+           tdtxt=tdtxt+"<td>"+button+"</td></tr>"
+           tabledata.innerHTML=olddata+tdtxt
+          
+          
+  }
+   var laodmoreint=document.getElementById('loadmoreint');
+  
+           if (data['next']!=null){
+             laodmoreint.className=data['next']
+             laodmoreint.style.display="block";
+           }
+           else{
+             laodmoreint.style.display="none";
+            
+           }
+           
 
+}
+var cars=["scrappedBy__icontains","scrapped_date__icontains","company_info_id"]
+  for(let i=0;i<=cars.length-1;i++){
+    let form_data=document.getElementById(cars[i]).value="";
+  }
+}
+function Paginate(the){
+  url=the.className
+
+var xhttp = new XMLHttpRequest();
+  var req=xhttp.open('GET',url)
+  xhttp.onreadystatechange = function() {
+ if(this.status==200 && this.readyState==4)
+ {
+   let company_Data=JSON.parse(this.responseText)
+   if(the.value=="Load More Companies"){
+     adding_to_tables("com",company_Data)
+   }
+   else{
+     adding_to_tables("asjdfjhd",company_Data)
+   }
+ }
+  }
+ xhttp.send()
+}
+
+get_jobs_interns()
 // setInterval(function () { getNotification(); }, 15000);;
 </script>
 </html>

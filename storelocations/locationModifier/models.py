@@ -80,11 +80,13 @@ class Web_internships_jobs(models.Model):
     scrapped_date=models.DateTimeField()
     scrapped_location=models.TextField()
     other_locations=models.TextField()
+    dcount=models.CharField(max_length=50) 
 
 class Web_company_jobs(models.Model):
     class Meta:
         db_table='web_company_jobs'
         app_label='web_scrapping'
+    dcount=models.CharField(max_length=50)    
     web_company_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
     company_info_id=models.CharField(max_length=100)

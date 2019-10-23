@@ -14,12 +14,12 @@ from django.db.models import  Count
 from datetime import  datetime
 from dateutil import parser
 import requests
-import json
 from django.http import HttpResponse
 from django.shortcuts import render
 from bs4 import BeautifulSoup
 from rest_framework import generics
-from locationModifier.serializers import WebCompanyJobsserializer,WebInternshipsJobsserializer
+from rest_framework import pagination
+from locationModifier.serializers import *
 import threading
 import time
 import configparser
@@ -44,6 +44,10 @@ class GetJobs(generics.ListAPIView):
     def get(self,request):
         return self.list(request)
 
+class StandardResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 20
 
 class GetCompanyName(View):
     def get(self,request):
@@ -199,13 +203,11 @@ def send_mail_to_interns(ip):
     time=datetime.datetime.today()
     print("ip is changed sending Email......to Interns")
     body="Hello Interns\nIMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n For Getting Company Info id Ip is changed...at {time}\n Use this New url http://{ip}:7000/Home/   \n showing Bugs http://{ip}:7000/showbugs/ \n Please Use this urls in Mozila Browser\n IMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n                             Thank you".format(ip=ip,time=time)
-    send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in','shalu.manisha@gmail.com',
+    send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in',
         'anusha.upputholla@cogentdatasolutions.in',
-        'prasadpamidi579@gmail.com',
         'pbandla8@gmail.com',
         'santhialapati6@gmail.com',
         'ravalim03@gmail.com',
-        'ponnala.aravindz@gmail.com',
         'madhu21897@gmail.com',
         'katkamrohit11@gmail.com',
         'devaki.sowmya@gmail.com',
@@ -341,41 +343,41 @@ def viewfiles(request):
         else:
             dataList.append({x:list})
     return JsonResponse({'data':dataList,'INTERNS':internLIST})
-def ViewJobsCount(request):
-    dataList=[]
-    ip = str(socket.gethostbyname(socket.gethostname()))
-    start=request.GET.get('startrow')
-    date=request.GET.get('date')
-    scrappedBy=request.GET.get('scrappedBy')
-    if scrappedBy=="select":
-        scrappedBy=None
-    if scrappedBy==None:
-        scrappedBy=request.POST.get('scrappedBy')
-    if start==None:
-        start=0
-    start=int(start)
-    if date == None and scrappedBy==None:
-        if scrappedBy==None:
-            data=Web_company_jobs.objects.values('company_info_id').annotate(dcount=Count('company_info_id'))
-        else:
-            data = Web_company_jobs.objects.values('company_info_id').annotate(dcount=Count('company_info_id')).filter(scrappedBy=scrappedBy)
-    if date!=None:
-        data=ViewJobsBydate(date,scrappedBy)
-        for x in data:
-            cdata=Web_company_jobs.objects.filter(company_info_id=x['company_info_id'])
-            cname=cdata[0].company_name
-            scrappedBy=cdata[0].scrappedBy
-            tested_status=cdata[0].tested_status
-            dataList.append({'company_info_id':x['company_info_id'],"jobscount":len(Web_company_jobs.objects.filter(company_info_id=x['company_info_id'])),'internscount':len(Web_internships_jobs.objects.filter(company_info_id=x['company_info_id'])),'CompanyName':cname,'scrap':scrappedBy,'tested_status':tested_status})
-    else:
-        for x in data[start:start+10:]:
-            cdata=Web_company_jobs.objects.filter(company_info_id=x['company_info_id'])
-            cname=cdata[0].company_name
-            scrappedBy=cdata[0].scrappedBy
-            tested_status=cdata[0].tested_status
 
-            dataList.append({'company_info_id':x['company_info_id'],"jobscount":len(Web_company_jobs.objects.filter(company_info_id=x['company_info_id'])),'internscount':len(Web_internships_jobs.objects.filter(company_info_id=x['company_info_id'])),'CompanyName':cname,'scrap':scrappedBy,'tested_status':tested_status})
-    return  render(request,"JobsDashBoard.html",{'data':dataList,'count':len(data),'start':start+10,'ip':ip})
+class ViewJobsCOuntBYFilter(generics.ListAPIView):
+    serializer_class=WebCompanyCOUNTJobsserializer
+    pagination_class=StandardResultsSetPagination
+    def get_queryset(self):
+        data=dict((k,v[0]) for k,v in dict(self.request.GET).items() if k!='page' and str(v).strip()!='')
+        print(data)
+        if data:
+            if data.get('company_info_id')!=None:
+                datalist=Web_company_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
+                print(datalist)
+                return datalist
+            datalist=Web_company_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)    
+            print(datalist)
+            return datalist
+        return Web_company_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
+        
+    def get(self,request,*args,**kwrgs):
+        return self.list(request)
+class ViewInternsCOuntBYFilter(generics.ListAPIView):
+    serializer_class=WebInternshipsCOUNTJobsserializer
+    pagination_class=StandardResultsSetPagination
+    def get_queryset(self):
+        data=dict((k,v[0]) for k,v in dict(self.request.GET).items() if k!='page')
+        if data:
+            if data.get('company_info_id')!=None:
+                return Web_internships_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
+            return Web_internships_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)
+        return Web_internships_jobs.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
+        return []
+    def get(self,request,*args,**kwrgs):
+        return self.list(request)            
+
+def ViewJobsCount(request):
+    return  render(request,"JobsDashBoard.html")
 ip = str(socket.gethostbyname(socket.gethostname()))
 def ViewJobsBydate(getdate,scrappedBy=None):
     dataList = []
