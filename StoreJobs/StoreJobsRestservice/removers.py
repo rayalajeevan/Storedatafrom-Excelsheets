@@ -608,7 +608,7 @@ def detect_experience_level(experience,data,job):
     detected_experience_level=None
     deteted_keywords=('senior developer','senior manager')
     for x in deteted_keywords:
-        if x in job.get('job_title').lower():
+        if job.get('job_title')!=None and x in job.get('job_title').lower():
             return 'Senior Level'
     if experience==None:
         experience_level_items=({'Senior Level':('senior developer','senior manager')},{'Entry Level':('fresher',)})
