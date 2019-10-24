@@ -216,6 +216,7 @@ def send_mail_to_interns(ip):
         orr.write(ip)
 try:
     jeevan()
+
 except Exception as e:
      print(e)
      print("Internet Is not available Please send Manually.....!",str(e))
