@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <title>JOBS COUNT</title>
     <style>
+    .spinner {
+  animation: rotate 2s linear infinite;
+  z-index: 2;
+  position: absolute;
+  
+  margin: -25px 0 0 -25px;
+  width: 50px;
+  height: 50px;
+      stroke: blue;
+      color:blue;
+  }
+  .path {
+    stroke: hsl(210, 70, 75);
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
 input[type=text],select {
   width: 60%;
   padding: 12px 20px;height: 8px;
@@ -168,16 +205,20 @@ div {
 function testedstatuschange(val)
 {let elm_id=document.getElementById(val.id);
   if (elm_id.value=="Change To Test Completed...?"){
+    console.log(val.id)
+    document.getElementById("spinner"+val.id).style.display="block";
   var req_obj=new XMLHttpRequest()
   var req=req_obj.open('GET','http://'+localStorage.getItem('ip')+':7000/change_tested_status?tested_status=True&info_id='+val.className)
   req_obj.onreadystatechange=function(){
     if (this.status==200 & this.readyState==4){
       var json_obj=JSON.parse(this.responseText)
+      console.log(json_obj,)
       let id=val.id
 
       let dater=document.getElementById(id.toString());
-      dater.value="Test Completed"
-      elm_id.style.backgroundColor=""
+      dater.value="Test Completed";
+      document.getElementById("spinner"+val.id).style.display="none";
+      elm_id.style.backgroundColor="";
       dater.disabled=true;
 
     }
@@ -520,7 +561,8 @@ function adding_to_tables(type,data){
            else{
             button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"c' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>" 
            }
-           tdtxt=tdtxt+"<td>"+button+"</td></tr>"
+           let loaderTAG="<svg style='display:none' id='spinner"+data['results'][i]["company_info_id"]+"c' class='spinner' viewBox='0 0 50 50'><circle class='path' cx='25' cy='25' r='12' fill='none' stroke-width='5' ></circle></svg>"
+           tdtxt=tdtxt+"<td>"+button+loaderTAG+"</td></tr>"
            tabledata.innerHTML=olddata+tdtxt
           
           
@@ -564,7 +606,8 @@ else{
            else{
             button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"i' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>" 
            }
-           tdtxt=tdtxt+"<td>"+button+"</td></tr>"
+           let loaderTAG="<svg style='display:none' id='spinner"+data['results'][i]["company_info_id"]+"i' class='spinner' viewBox='0 0 50 50'><circle class='path' cx='25' cy='25' r='12' fill='none' stroke-width='5' ></circle></svg>"
+           tdtxt=tdtxt+"<td>"+button+loaderTAG+"</td></tr>"
            tabledata.innerHTML=olddata+tdtxt
           
           
