@@ -407,7 +407,7 @@ def HtmlParser(data,job={}):
     'Closing date for applications:','Req. ID:','Division:','Unit:','Full Performance level:','Number of Positions Available:','Duration:','Hiring Manager:','Relocation Level:','Job Number:','Pub Date:','Job Reference Code','Job/Requisition ID:','Location Name:','Education Level:','Relevant Experience Level:','Employee Group:','Employee Subgroup:','Primary  Location','Other  Locations','Full-time  /  Part-time')
     items_starts_with=('POSITION:','Company:','Location:','Department:','Temporary position (1 year)',
     'Bass (1 year appointmenLocation Name:t)','Position:','Shift:')
-    itemsNotEqual=('POSITION SUMMARY','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
+    itemsNotEqual=('POSITION SUMMARY','Reporting Relationships:','Core Duties and Responsibilities:','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
     'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:',"""Our Company:""")
     soup=BeautifulSoup(data,"html.parser")
     for tag in soup.findAll():
