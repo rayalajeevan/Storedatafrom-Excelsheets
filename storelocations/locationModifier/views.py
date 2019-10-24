@@ -214,11 +214,11 @@ def send_mail_to_interns(ip):
         'doolamravali432@gmail.com',])
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
-# try:
-#     # jeevan()
-# except Exception as e:
-#     print(e)
-#     print("Internet Is not available Please send Manually.....!",str(e))
+try:
+    jeevan()
+except Exception as e:
+     print(e)
+     print("Internet Is not available Please send Manually.....!",str(e))
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')
