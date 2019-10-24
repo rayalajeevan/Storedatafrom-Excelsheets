@@ -349,17 +349,14 @@ class ViewJobsCOuntBYFilter(generics.ListAPIView):
     pagination_class=StandardResultsSetPagination
     def get_queryset(self):
         data=dict((k,v[0]) for k,v in dict(self.request.GET).items() if k!='page' and str(v).strip()!='')
-        print(data)
         if data:
             if data.get('company_info_id')!=None:
                 datalist=Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
-                print(datalist)
                 return datalist
-            datalist=Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)    
-            print(datalist)
+            datalist=Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)
             return datalist
-        return Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
-        
+        return Web_company_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()
+
     def get(self,request,*args,**kwrgs):
         return self.list(request)
 class ViewInternsCOuntBYFilter(generics.ListAPIView):
@@ -371,10 +368,10 @@ class ViewInternsCOuntBYFilter(generics.ListAPIView):
             if data.get('company_info_id')!=None:
                 return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(company_info_id=data.get('company_info_id'))
             return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter(**data)
-        return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()    
+        return Web_internships_jobs_forSerlize.objects.values('company_info_id','tested_status','scrappedBy','company_name').annotate(dcount=Count('company_info_id')).filter()
         return []
     def get(self,request,*args,**kwrgs):
-        return self.list(request)            
+        return self.list(request)
 
 def ViewJobsCount(request):
     return  render(request,"JobsDashBoard.html")
@@ -636,21 +633,21 @@ def detecter(request):
                     string=string+x.__dict__[y]
         if exp!=None:
             if string!="":
-                detect_exp=detect_experince(exp)            
+                detect_exp=detect_experince(exp)
         if detect_exp==None:
             detect_exp=detect_experince(BeautifulSoup(string,'html.parser').getText())
             print(detect_exp)
-        detect_exp_level=detect_experience_level(detect_exp,string)           
+        detect_exp_level=detect_experience_level(detect_exp,string)
         x.experience=detect_exp
         x.experience_level=detect_exp_level
         x.save()
         responser.append({x.web_company_jobs_id:[detect_exp,detect_exp_level]})
-            
-    return JsonResponse({'data':responser})        
+
+    return JsonResponse({'data':responser})
 
 def checkscrped(request,*args, **kwargs):
     data=request.GET.get('scrappedby')
     data1=request.GET.get('tested_status')
     if data!=None:
         return JsonResponse({data:list(Web_company_jobs.objects.values('scrappedBy','company_name').annotate(dcount=Count('scrappedBy')).filter(tested_status=data1,scrappedBy=data))})
-    return JsonResponse({'status':"Failed...!",'error_':'please provid name'})    
+    return JsonResponse({'status':"Failed...!",'error_':'please provid name'})
