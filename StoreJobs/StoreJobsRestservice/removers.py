@@ -221,6 +221,9 @@ def BeautifyJobs(data):
             x.name='div'
         if x.name=='td':
             x.name='p'
+        for k in ['h1','h2','h3','h4']:
+            if x.name==k:
+                x.name='h5'
     return str(soup)
 def regulardate(date=None):
     date=date.strip()
