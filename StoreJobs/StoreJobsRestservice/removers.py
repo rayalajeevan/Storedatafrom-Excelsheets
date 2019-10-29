@@ -284,9 +284,9 @@ def detect_job_type(job_type,job):
     job_type_items=({'Full Time':
         ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME','permanent')},
         {'Part Time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
-        {'Entry Level':('graduate','Tech Grad','fresher','entry level','College Grad')},
-        {'Internship':('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
-        {'Contract':('contract',)},
+        {'Entry Level':('Tech Grad ','fresher ',' entry level ',' College Grad ')},
+        {'Internship':(' intern ','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
+        {'Contract':(' contract ','contract,','contract.',)},
         {'Third Party':('third party',)}
         )
     NegtiveMatches=(' no ',' not ',' non '," don't "," aren't "," isn't " ," wasn't "," weren't "," haven't ","hasn't",
