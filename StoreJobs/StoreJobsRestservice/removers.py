@@ -284,9 +284,9 @@ def detect_job_type(job_type,job):
     job_type_items=({'Full Time':
         ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME','permanent')},
         {'Part Time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
-        {'Entry Level':('Tech Grad ','fresher ',' entry level ',' College Grad ')},
-        {'Internship':(' intern ','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
-        {'Contract':(' contract ','contract,','contract.',)},
+        {'Entry Level':('graduate','Tech Grad','fresher','entry level','College Grad')},
+        {'Internship':('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
+        {'Contract':('contract',)},
         {'Third Party':('third party',)}
         )
     NegtiveMatches=(' no ',' not ',' non '," don't "," aren't "," isn't " ," wasn't "," weren't "," haven't ","hasn't",
@@ -636,9 +636,20 @@ def detect_experience_level(experience,data,job):
         return    detected_experience_level
     else:
         numbers=[]
-        for x in experience:
-            if x.isdigit():
-                numbers.append(int(x))
+        exp=None
+        if '-' in experience:
+            for x in experience:
+                if x.isdigit():
+                    numbers.append(int(x))
+        else:
+            expression=re.compile(r'\d+')
+            search=re.search(expression,experience)
+            if search!=None:
+                exp=search.group()
+            if exp==None:
+                return None
+            else:
+                numbers.append(int(exp))
         if len(numbers)!=0:
             if max(numbers)>=0 and max(numbers)<3:
                 detected_experience_level='Entry level'
@@ -646,6 +657,8 @@ def detect_experience_level(experience,data,job):
                 detected_experience_level='Mid Level'
             elif  max(numbers)>=7:
                 detected_experience_level='Senior Level'
+        else:
+            return None
         return  detected_experience_level
 def detect_experince(data):
     split_data=[x.lower().replace(',','').replace('.','').replace(':','') for x in data.split() if x.strip()!='']
@@ -657,12 +670,12 @@ def detect_experince(data):
     string=None
 
     for x in range(len(split_data)):
-        if 'years' in split_data[x].strip():
-            print(split_data[:x+20])
+        # if 'years' in split_data[x].strip():
+        #     print(split_data[:x+20])
         for y in keywords:
             if y in split_data[x].strip():
                 for z in split_data[x:x+20]:
-                    if 'experience' in z and x not in index:
+                    if ('experience' in z and x not in index) or ('expertise' in z and x not in index)  :
                         index.append(x)
                         break
     exp=None
@@ -736,14 +749,18 @@ def refining_job(job):
     job=refineColumns(job)
     #detect Job type
 
-    string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications')and value!=None )
+    string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications','job_requirements')and value!=None )
     soup=BeautifulSoup(string,'html.parser')
     job['job_type']=detect_job_type(job.get('job_type'),soup.getText())
     #detect Experince
     if job.get('experience')!=None:
         job['experience']=detect_experince(job.get('experience'))
-    if job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
-        job['experience']=detect_experince(string)
+    elif job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
+        job['experience']=detect_experince(soup.getText())
+    else:
+        job['experience']=detect_experince(soup.getText())
+        print(job.get('experience'))
+
     #detect Experince Level
     job['experience_level']=detect_experience_level(job.get('experience'),soup.getText(),job)
     #get location with postal_code
