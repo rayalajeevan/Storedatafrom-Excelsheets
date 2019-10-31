@@ -215,7 +215,8 @@ def send_mail_to_interns(ip):
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
 try:
-    jeevan()
+    # jeevan()
+    pass
 
 except Exception as e:
      print(e)
