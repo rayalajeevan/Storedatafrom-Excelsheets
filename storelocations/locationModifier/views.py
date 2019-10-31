@@ -215,9 +215,7 @@ def send_mail_to_interns(ip):
     with open(DRIVE+'ip.txt','w') as orr:
         orr.write(ip)
 try:
-    # jeevan()
-    pass
-
+    jeevan()
 except Exception as e:
      print(e)
      print("Internet Is not available Please send Manually.....!",str(e))
