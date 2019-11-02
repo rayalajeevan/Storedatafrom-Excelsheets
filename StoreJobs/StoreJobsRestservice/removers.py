@@ -478,7 +478,7 @@ def HtmlParser(data,job={}):
             continue
         if job.get('functional_area')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('functional area')
-            if x.parent!=None and len(x.parent.getText().strip())<=40:
+            if x.parent!=None and len(x.parent.getText().strip())<=len(job.get('functional_area').strip())+10:
                 x.parent.decompose()
             else:
                 x.decompose()
