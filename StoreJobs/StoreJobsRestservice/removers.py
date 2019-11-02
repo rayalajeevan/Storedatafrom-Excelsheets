@@ -467,14 +467,16 @@ def HtmlParser(data,job={}):
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
-                x.decompose()
+                if len(x.getText().strip())<=len(job.get('job_title').strip())+10:
+                    x.decompose()
             continue
         if job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>90:
             removed_tags.append('job location')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
-                x.decompose()
+                if len(x.getText().strip())<30:
+                    x.decompose()
             continue
         if job.get('functional_area')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             removed_tags.append('functional area')
