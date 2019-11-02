@@ -481,27 +481,32 @@ def HtmlParser(data,job={}):
             if x.parent!=None and len(x.parent.getText().strip())<=len(job.get('functional_area').strip())+10:
                 x.parent.decompose()
             else:
-                x.decompose()
+                if len(x.getText().strip())<30:
+                    x.decompose()
             continue
         if job.get('job_id')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_id','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            removed_tags.append('job id')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
+                removed_tags.append('job id')
             else:
-                x.decompose()
+                if len(x.getText().strip())<30:
+                    x.decompose()
+                    removed_tags.append('job id')
             continue
         if job.get('job_type')!=None and  fuzz.ratio(x.getText().strip().lower(),job.get('job_type','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
-                x.decompose()
+                if len(x.getText().strip())<30:
+                    x.decompose()
             removed_tags.append('job type')
             continue
         if  job.get('work_shift')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('work_shift','qwertyuiopasdfghjklzxcvbnm').lower())>50:
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
             else:
-                x.decompose()
+                if len(x.getText().strip())<30:
+                    x.decompose()
             removed_tags.append('work_shift')
             continue
         if job.get('job_title')!=None and job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>50:
