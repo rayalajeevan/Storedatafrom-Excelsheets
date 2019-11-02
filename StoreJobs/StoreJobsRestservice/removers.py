@@ -462,13 +462,15 @@ def HtmlParser(data,job={}):
     removed_tags=[]
     for x in soup.findAll():
         if job.get('job_title')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>50:
-            removed_tags.append('job Title:')
-            removed_tags.append('Title:')
             if x.parent!=None and len(x.parent.getText().strip())<=40:
                 x.parent.decompose()
+                removed_tags.append('job Title:')
+                removed_tags.append('Title:')
             else:
                 if len(x.getText().strip())<=len(job.get('job_title').strip())+10:
                     x.decompose()
+                    removed_tags.append('job Title:')
+                    removed_tags.append('Title:')
             continue
         if job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>90:
             removed_tags.append('job location')
@@ -551,7 +553,7 @@ def HtmlParser(data,job={}):
     soup=BeautifulSoup(str(soup),'html.parser')
     for tag in soup.findAll():
         for item in removed_tags:
-            if item in tag.getText() or fuzz.ratio(item,tag.getText())>60:
+            if item in tag.getText() and fuzz.ratio(item,tag.getText())>60:
                 try:
                     tag.replace_with('')
                     removed_elements.append(str(tag))
