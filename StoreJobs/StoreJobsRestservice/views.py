@@ -21,10 +21,11 @@ class StoreJobsdata(APIView):
             scrapped_data = JSONParser().parse(request)
         except:
             return JsonResponse({'detail':'Please send json format'},status=status.HTTP_200_OK)
-        data=refining_job(scrapped_data)
-        # except Exception as exc:
-        #     print('1st',exc)
-        #     return   JsonResponse({'detail':str(exc)},status=status.HTTP_200_OK)
+        try:
+            data=refining_job(scrapped_data)
+        except Exception as exc:
+            print('1st',exc)
+            return   JsonResponse({'detail':str(exc)},status=status.HTTP_200_OK)
         try:
             if data.get('error')==None:
                 if data.get('type')=="INI":
