@@ -733,8 +733,6 @@ def detect_experince(data):
                             indexer=indexer-1
                             index.append(x)
                             continue
-                        elif int(exp)<=2:
-                            exp="0-"+str(exp)
                 if exp==None:
                     for key,value in year_dict.items():
                         if value in string.split():
