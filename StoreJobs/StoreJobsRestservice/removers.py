@@ -285,7 +285,6 @@ def detect_job_type(job_type,job):
         ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME','permanent')},
         {'Part Time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
         {'Entry Level':('graduate','Tech Grad','fresher','entry level','College Grad')},
-        {'Internship':('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ')},
         {'Contract':('contract',)},
         {'Third Party':('third party',)}
         )
@@ -766,7 +765,6 @@ def refining_job(job):
         job['experience']=detect_experince(soup.getText())
     else:
         job['experience']=detect_experince(soup.getText())
-        print(job.get('experience'))
 
     #detect Experince Level
     job['experience_level']=detect_experience_level(job.get('experience'),soup.getText(),job)
