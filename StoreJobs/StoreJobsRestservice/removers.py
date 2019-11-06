@@ -617,7 +617,7 @@ def refineColumns(job):
     return new_jobData
 def detect_experience_level(experience,data,job):
     detected_experience_level=None
-    deteted_keywords=('senior developer','senior manager')
+    deteted_keywords=('senior developer','senior manager','technical lead',' lead ')
     for x in deteted_keywords:
         if job.get('job_title')!=None and x in job.get('job_title').lower():
             return 'Senior Level'
