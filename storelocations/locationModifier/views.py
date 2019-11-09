@@ -183,7 +183,7 @@ def getCompanyData(request):
         data=serializers.serialize('json',dataList)
         data=json.loads(data)
         if data.get('hq_locations_location_id')!=None or data.get('hq_locations_location_id')!='NULL':
-            obj=Locations.objects.get(location_id)
+            obj=Locations.objects.get(location_id=data.get('hq_locations_location_id'))
             data['hq_locations_location_id']=" ".join(obj.city,obj.state_code,obj.postal_code)
         return JsonResponse(data[0]["fields"])
 
