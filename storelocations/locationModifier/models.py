@@ -80,7 +80,7 @@ class Web_internships_jobs_forSerlize(models.Model):
     scrapped_date=models.DateTimeField()
     scrapped_location=models.TextField()
     other_locations=models.TextField()
-    dcount=models.CharField(max_length=50)     
+    dcount=models.CharField(max_length=50)
 class Web_internships_jobs(models.Model):
     class Meta:
         db_table='web_internship_jobs'
@@ -140,13 +140,13 @@ class Web_internships_jobs(models.Model):
     scrapped_date=models.DateTimeField()
     scrapped_location=models.TextField()
     other_locations=models.TextField()
-    
+
 
 class Web_company_jobs(models.Model):
     class Meta:
         db_table='web_company_jobs'
         app_label='web_scrapping'
-        
+
     web_company_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
     company_info_id=models.CharField(max_length=100)
@@ -205,7 +205,7 @@ class Web_company_jobs_forSerlize(models.Model):
     class Meta:
         db_table='web_company_jobs'
         app_label='web_scrapping'
-    dcount=models.CharField(max_length=50)    
+    dcount=models.CharField(max_length=50)
     web_company_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
     company_info_id=models.CharField(max_length=100)
@@ -259,7 +259,7 @@ class Web_company_jobs_forSerlize(models.Model):
     important_notes=models.TextField()
     country_type=models.CharField(max_length=50)
     scrapped_location=models.TextField()
-    scrapped_date=models.DateTimeField()    
+    scrapped_date=models.DateTimeField()
 class company_info(models.Model):
     class Meta:
         get_latest_by = 'company_info_id'
@@ -277,7 +277,7 @@ class company_info(models.Model):
     hq_company_address_line1=models.TextField(default=None)
     hq_company_address_line2=models.CharField(max_length=255,default=None)
     company_unique_id=models.CharField(max_length=50,default=None)
-    hq_locations_location_id
+
 class companies_internship(models.Model):
     class Meta:
         db_table='companies_internship'
@@ -316,4 +316,5 @@ class Locations(models.Model):
     postal_code=models.CharField(max_length=20)
     city=models.CharField(max_length=180)
     state=models.CharField(max_length=100)
+    state_code=models.CharField(max_length=20)
     postal_code=models.CharField(max_length=20)

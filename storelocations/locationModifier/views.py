@@ -182,9 +182,9 @@ def getCompanyData(request):
     if len(dataList)!=0 and len(dataList)<=10:
         data=serializers.serialize('json',dataList)
         data=json.loads(data)
-        if data.get('hq_locations_location_id')!=None or data.get('hq_locations_location_id')!='NULL':
-            obj=Locations.objects.get(location_id=data.get('hq_locations_location_id'))
-            data['hq_locations_location_id']=" ".join(obj.city,obj.state_code,obj.postal_code)
+        if data[0]['fields'].get('hq_locations_location_id')!=None or data[0]['fields'].get('hq_locations_location_id')!='NULL':
+            obj=Locations.objects.get(location_id=data[0]['fields'].get('hq_locations_location_id'))
+            data[0]['fields']['hq_locations_location_id']=" ".join( x for x in [obj.city,obj.state_code,obj.postal_code])
         return JsonResponse(data[0]["fields"])
 
     return JsonResponse({"status":"success","error":"sorry doesn't have any data with this id".format(cid)})
