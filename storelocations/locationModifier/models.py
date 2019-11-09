@@ -277,6 +277,7 @@ class company_info(models.Model):
     hq_company_address_line1=models.TextField(default=None)
     hq_company_address_line2=models.CharField(max_length=255,default=None)
     company_unique_id=models.CharField(max_length=50,default=None)
+    hq_locations_location_id
 class companies_internship(models.Model):
     class Meta:
         db_table='companies_internship'
@@ -315,3 +316,4 @@ class Locations(models.Model):
     postal_code=models.CharField(max_length=20)
     city=models.CharField(max_length=180)
     state=models.CharField(max_length=100)
+    postal_code=models.CharField(max_length=20)
