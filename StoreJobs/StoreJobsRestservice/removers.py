@@ -293,6 +293,11 @@ def detect_job_type(job_type,job):
         "oughtn't ")
     if job_type!=None and str(job_type).strip()!='':
         detected_job_type=None
+        for item in ('intern ', 'intern,','intern.','intern!'):
+            if item in job_type.lower().strip():
+                detected_job_type="Intern"
+        if job_type.lower()=="intern":
+            detected_job_type="Intern"   
         for item in job_type_items:
             for key,value in item.items():
                 for type_item in value:
@@ -303,8 +308,7 @@ def detect_job_type(job_type,job):
                     break
             if detected_job_type!=None:
                     break
-        if detected_job_type==None:
-            detected_job_type='Full Time'
+
         return detected_job_type
     else:
         detected_job_type=None
