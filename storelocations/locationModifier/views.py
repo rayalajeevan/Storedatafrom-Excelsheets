@@ -225,7 +225,10 @@ except Exception as e:
 def renderHtml(request):
     jobid=request.GET.get('id')
     type=request.GET.get('type')
-    htmlcode="""<html><style>
+    htmlcode="""<html>
+<link rel="icon" type="image/web-scraping-itsys.png" href="http://blog.website-scraping.com/wp-content/uploads/web-scraping-itsys.png"> 
+<title>View Job</title>
+<style>
     .iCIMS_JobOptions {
   display:none;}
     dl {
