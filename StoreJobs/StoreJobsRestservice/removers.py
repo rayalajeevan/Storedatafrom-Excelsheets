@@ -297,7 +297,7 @@ def detect_job_type(job_type,job):
             if item in job_type.lower().strip():
                 detected_job_type="Intern"
         if job_type.lower()=="intern":
-            detected_job_type="Intern"   
+            detected_job_type="Intern"   l
         for item in job_type_items:
             for key,value in item.items():
                 for type_item in value:
