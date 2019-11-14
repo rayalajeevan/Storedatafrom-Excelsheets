@@ -102,6 +102,9 @@ def showjob(request,*args,**kwrgs):
             job[k]=optimizer.get(k)(v)
     data="<html>"
     for k,v in job.items():
-        data=data+"<h5>{k}</h5><p>{v}</p>".format(k=k,v=v)
+        if k=='job_description':
+            data=data+"<h5>{k}</h5><div class='job_description'>{v}</div>".format(k=k,v=v)
+        else:    
+            data=data+"<h5>{k}</h5><p>{v}</p>".format(k=k,v=v)
     data=data+"</html>"
     return HttpResponse(data)
