@@ -23,7 +23,7 @@ from copy import deepcopy
 from bs4 import BeautifulSoup
 import schedule
 from web.instructions import Instructions
-from threading import Thread
+from threading import Thread,active_count
 from fuzzywuzzy import fuzz
 import webbrowser
 import re
@@ -182,7 +182,15 @@ class ExcelSheetData(View):
                         job[key]=int(value)
                     except:
                         job[key]=str(value)
-                request_responses.append(storeJob_request(job))
+                t1=Thread(target=append_requests,args=(request_responses,job))
+                t1.start()
+                if active_count()>25:
+                    time.sleep(10)
+                    t1.join()
+        while len(request_responses)!=len(joblist):
+            print(len(request_responses),len(joblist))
+            time.sleep(1)
+
         for request_data in request_responses:
             if request_data.get('error')==None and request_data.get('detail')==None:
                 if request_data.get('status')=='succses':
@@ -193,6 +201,9 @@ class ExcelSheetData(View):
                 error_rows_count+=1
                 error_rows.append(request_data)
         return JsonResponse({'companies':companies,'duplicate_job_rows_count':duplicate_job_rows,'error_count':error_rows_count,"inserted_database_rows_count":inserted_database_rows_count,'error_rows':str(error_rows).replace("'",' ')})
+
+def append_requests(responses,job):
+    responses.append(storeJob_request(job))
 
 
 def storeJob_request(job):
