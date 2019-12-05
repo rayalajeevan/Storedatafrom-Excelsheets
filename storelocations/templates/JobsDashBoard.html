@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-   <link rel="icon" type="image/web-scraping-itsys.png" href="http://blog.website-scraping.com/wp-content/uploads/web-scraping-itsys.png"> 
+   <link rel="icon" type="image/web-scraping-itsys.png" href="http://blog.website-scraping.com/wp-content/uploads/web-scraping-itsys.png">
 <title>Scrapped Companies</title>
     <style>
     .spinner {
   animation: rotate 2s linear infinite;
   z-index: 2;
   position: absolute;
-  
+
   margin: -25px 0 0 -25px;
   width: 50px;
   height: 50px;
@@ -278,6 +278,7 @@ elm_id.style.backgroundColor="red"
       <option value="madhu">madhu</option>
       <option value="Himavarshini">Himavarshini</option>
       <option value="Gopichand">Gopichand</option>
+      <option value="Manideep">Manideep</option>
         </select></div>
         </td>
         </tr>
@@ -303,8 +304,8 @@ elm_id.style.backgroundColor="red"
       <th>Test Status</th>
       <div class="loader" id="comploader" style="display:none"></div>
   </tr>
-  
-    
+
+
 </table>
 
 <input type="button" id="loadmorecomp" value="Load More Companies" onclick="return Paginate(this)">
@@ -560,25 +561,25 @@ function adding_to_tables(type,data){
               button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"c' value='Test Completed' disabled='true'>"
            }
            else{
-            button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"c' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>" 
+            button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"c' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>"
            }
            let loaderTAG="<svg style='display:none' id='spinner"+data['results'][i]["company_info_id"]+"c' class='spinner' viewBox='0 0 50 50'><circle class='path' cx='25' cy='25' r='12' fill='none' stroke-width='5' ></circle></svg>"
            tdtxt=tdtxt+"<td>"+button+loaderTAG+"</td></tr>"
            tabledata.innerHTML=olddata+tdtxt
-          
-          
+
+
   }
    var laodmorecmp=document.getElementById('loadmorecomp');
-  
+
            if (data['next']!=null){
              laodmorecmp.className=data['next']
               laodmorecmp.style.display="block"
            }
            else{
              laodmorecmp.style.display="none";
-            
+
            }
-           
+
 
 }
 else{
@@ -605,25 +606,25 @@ else{
               button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"i' value='Test Completed' disabled='true'>"
            }
            else{
-            button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"i' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>" 
+            button="<input type='button' class='"+data['results'][i]['company_info_id']+"' id='"+data['results'][i]['company_info_id']+"i' value='Click Here If You tested...' onclick='return testedstatuschange(this)'>"
            }
            let loaderTAG="<svg style='display:none' id='spinner"+data['results'][i]["company_info_id"]+"i' class='spinner' viewBox='0 0 50 50'><circle class='path' cx='25' cy='25' r='12' fill='none' stroke-width='5' ></circle></svg>"
            tdtxt=tdtxt+"<td>"+button+loaderTAG+"</td></tr>"
            tabledata.innerHTML=olddata+tdtxt
-          
-          
+
+
   }
    var laodmoreint=document.getElementById('loadmoreint');
-  
+
            if (data['next']!=null){
              laodmoreint.className=data['next']
              laodmoreint.style.display="block";
            }
            else{
              laodmoreint.style.display="none";
-            
+
            }
-           
+
 
 }
 var cars=["scrappedBy__icontains","scrapped_date__icontains","company_info_id"]
