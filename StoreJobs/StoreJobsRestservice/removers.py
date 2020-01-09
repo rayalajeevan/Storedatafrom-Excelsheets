@@ -842,9 +842,10 @@ def refining_job(job):
     #identifying the internship or jobs
     type=None
     for value in (job['job_title'],job.get('job_type'),job.get('functional_area')):
-        value=str(value).strip()
-        for identifiers in ('intern','intern.','intern,','intern ','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship '):
-            if identifiers in [str(x).lower().strip() for x in value.split()]:
+        value=str(value).strip().replace('-',' ')
+        value=value.replace(',',' ').replace('/',' ').replace(":",' ').replace(';',' ').replace('(',' ').replace(')',' ')
+        for identifiers in ('intern','intern.','intern,','intern ','internships-','internships','internships.','internships,','internships ','internship-','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','fellowships','fellowships.','fellowships,','fellowships ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ','aperentships','aperentships.','aperentships,','aperentships '):
+            if identifiers in [str(x).lower().strip() for x in value.split()] :
                 type="INI"
     if type==None:
         type='JOB'
