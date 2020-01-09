@@ -408,8 +408,8 @@ def GetCred(request):
     if auth=='jeeVAN':
         list=[
         {'username':'jeevan','password':'jeevan@123'},
-        {'username':'pravalika','password':'chinnari@123'},
-        {'username':'madhu','password':'madhutester@12345'},
+        {'username':'anusha','password':'AnushA@123'},
+       
         ]
         return JsonResponse({'data':list})
     else:

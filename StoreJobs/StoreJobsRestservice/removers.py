@@ -224,6 +224,10 @@ def BeautifyJobs(data):
         for k in ['h1','h2','h3','h4']:
             if x.name==k:
                 x.name='h5'
+        if x.name=='font':
+            x.name='span'
+        if x.getText().strip()=='' and x.name!='br':
+            x.decompose()
     return str(soup)
 def regulardate(date=None):
     date=date.strip()
@@ -362,7 +366,7 @@ def validatos(date,*args,**kwrgs):
 def string_error(data,*args,**kwrgs):
     if data!='' or data!='NULL' or data!='null' or data!=None or data!="None":
         try:
-           unicode=unicodedata.normalize('NFKD', data).encode('ascii', 'ignore').decode("utf-8")
+           unicode=unicodedata.normalize('NFKD', data).encode().decode("utf-8")
            return unicodes
         except:
            return unicode
@@ -409,6 +413,7 @@ def remving_extraSpacesHtmlContent(data):
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
+    data=string_error(data)
     items=('Type:','PRIMARY PURPOSE OF POSITION','Job   Location','Reports Directly To:','Title:','Job  Type','Overtime  Status','Employee  Status','Role opening date:','OPENING DATE:','Primary Location','Other Locations','Full-time / Part-time','Employee Status','Overtime Status','Job Type','Travel:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:','Job Title:','Req. ID:','Contract Type','HOURS:','WAGE:','Role Location:','Role opening date',
     'Closing date for applications:','Posting ID:','City:','Req. ID:','Division:','Unit:','Full Performance level:','Number of Positions Available:','Duration:','Hiring Manager:','Relocation Level:','Job Number:','Pub Date:','Job Reference Code','Job/Requisition ID:','Location Name:','Education Level:','Relevant Experience Level:','Employee Group:','Employee Subgroup:','Primary  Location','Other  Locations','Full-time  /  Part-time')
     items_starts_with=('Job Function:','Level','Job Location','Position Type','Education Level','POSITION:','Department:','Temporary position (1 year)',
@@ -420,6 +425,8 @@ def HtmlParser(data,job={}):
         try:
             if tag.get('style')=='display:none;' or tag.get('style')=='display: none;':
                 tag.decompose()
+            if tag.get('style')=='font-weight: bold':
+                tag.name='b'
         except AttributeError:
             continue
     datarefineer=('primary_location',
@@ -431,9 +438,6 @@ def HtmlParser(data,job={}):
             for refine in soup.findAll({x:y}):
                 refine.decompose()
     for x in soup.findAll('a'):
-        if 'http' in x.get_text().strip().lower() or 'www.' in x.get_text().strip().lower() or '.org' in x.get_text().strip().lower() or '.in' in x.get_text().strip().lower() or '.com' in x.get_text().strip().lower():
-            x.decompose()
-            continue
         x.attrs=None
     RemovableTags=('button','submit','img','script','path','svg','input','hr','select','iframe','textarea')
     for tag in RemovableTags:
@@ -581,7 +585,7 @@ def HtmlParser(data,job={}):
     for ele in removed_elements:
         soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','').replace('CLOSE','').replace('OPEN','')
-    return remving_extraSpacesHtmlContent(str(soup))
+    return BeautifyJobs(str(soup))
 def refineColumns(job):
     new_jobData={}
     for key,value in job.items():
