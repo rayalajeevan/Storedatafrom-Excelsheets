@@ -4,6 +4,7 @@ from .models import BeautifyCompanyJobs
 from fuzzywuzzy import fuzz
 import re
 import json
+from copy import deepcopy
 class Instructions():
     def __init__(self,instruction_id,html_data):
         self.instructions_dictionary={
@@ -921,7 +922,8 @@ class InstructionsForAll():
             if attrs!=None:
                 for tag,attr in attrs.items():
                     if soup.find(tag,attr)!=None:
-                        removed_elemnts.append(soup.find(tag,attr))
+                        if attrs.get("append"):
+                            removed_elemnts.append(deepcopy(str(soup.find(tag,attr))))
                         soup.find(tag,attr).decompose()
         if apply_link!=None and self.html_data.get('job_id')!=None:
             if '?' in self.html_data.get('apply_link'):
