@@ -214,6 +214,7 @@ def checking_mateched_location(scrapped_location,google_location):
     return  {'location':0}
 def BeautifyJobs(data):
     soup=BeautifulSoup(data,'html.parser')
+    span_list=list()
     for x in soup.findAll():
         if x.name=='table':
             x.name='div'
@@ -226,8 +227,12 @@ def BeautifyJobs(data):
                 x.name='h5'
         if x.name=='font':
             x.name='span'
-        if x.getText().strip()=='' and x.name!='br':
-            x.decompose()
+        if x.getText().strip()=='' and x.name!='br' and len(x.findChildren())==0:
+            x.name='br'
+        if len(x.getText().strip())<=30 and ':' in x.getText():
+            span_list.append(str(x))
+    for x in span_list:
+        soup=str(soup).replace(x,"<span class='newLine'><b>{}</b></span>".format(x))
     return str(soup)
 def regulardate(date=None):
     date=date.strip()
@@ -285,10 +290,10 @@ def regulardate(date=None):
             date=datetime.datetime.now()-datetime.timedelta(seconds=int(value))
     return date
 def detect_job_type(job_type,job):
-    job_type_items=({'Full Time':
+    job_type_items=({'Full-time':
         ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME','permanent')},
-        {'Part Time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
-        {'Entry Level':('graduate ','Tech Grad','fresher ','entry level','College Grad')},
+        {'Part-time':('part time','part-time','Temporary','PART_TIME','half-time','half time','parttime')},
+        {'Entry-Level':('graduate ','Tech Grad','fresher ','Entry-Level','College Grad')},
         {'Contract':('contract ',)},
         {'Third Party':('third party ',)}
         )
@@ -299,9 +304,9 @@ def detect_job_type(job_type,job):
         detected_job_type=None
         for item in ('intern ', 'intern,','intern.','intern!'):
             if item in job_type.lower().strip():
-                detected_job_type="Intern"
+                detected_job_type="Internship"
         if job_type.lower()=="intern":
-            detected_job_type="Intern"
+            detected_job_type="Internship"
         for item in job_type_items:
             for key,value in item.items():
                 for type_item in value:
@@ -336,8 +341,6 @@ def detect_job_type(job_type,job):
 
 
 
-
-
 def validatos(date,*args,**kwrgs):
     datestr=None
     if  date!=None and date!=float('nan') and date!="" and date!='NULL' and date !="null" and date.strip()!="Not Specified" :
@@ -363,13 +366,16 @@ def validatos(date,*args,**kwrgs):
             return str(datetime.datetime.now())
     else:
         return str(datetime.datetime.now())
-def string_error(data,*args,**kwrgs):
+def string_error(data,type1="desc",*args,**kwrgs):
     if data!='' or data!='NULL' or data!='null' or data!=None or data!="None":
         try:
-           unicode=unicodedata.normalize('NFKD', data).encode().decode("utf-8")
-           return unicodes
+            if type1=="not_desc":
+                unicode=unicodedata.normalize('NFKD', data).encode('ascii','ignore').decode("utf-8")
+            else:
+                unicode=unicodedata.normalize('NFKD', data).encode().decode("utf-8")
+            return unicode
         except:
-           return unicode
+           return data
     else:
         return None
 def remving_extraSpacesHtmlContent(data):
@@ -452,7 +458,7 @@ def HtmlParser(data,job={}):
         try:
             for tag in soup.findAll(attribute=True):
                 if tag!=None:
-                    del(tag[attribute])
+                    del(tag[attr])
         except AttributeError:
             continue
     for tag in soup.findAll(True):
@@ -581,7 +587,7 @@ def HtmlParser(data,job={}):
         for item in items_starts_with:
             if tag.getText().strip().startswith(item) and len(tag.getText())<50:
                 removed_elements.append(str(tag))
-                tag.decompose()
+                tag.decompose()        
     for ele in removed_elements:
         soup=str(soup)+str(ele)
     soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','').replace('CLOSE','').replace('OPEN','')
@@ -616,21 +622,22 @@ def refineColumns(job):
                         continue
             else:
                 if 'flsa_status'==key:
-                    new_jobData["FLSA_status"]=string_error(value)
+                    new_jobData["FLSA_status"]=string_error(value,'not_desc')
                     continue
                 if 'itar'==key:
-                    new_jobData["ITAR"]=string_error(value)
+                    new_jobData["ITAR"]=string_error(value,'not_desc')
                     continue
-                new_jobData[key.lower()]=string_error(value)
+                new_jobData[key.lower()]=value
     return new_jobData
-def detect_experience_level(experience,data,job):
+ddef detect_experience_level(experience,data,job):
     detected_experience_level=None
+    exp_levels=list()
     deteted_keywords=('senior developer','senior manager','technical lead',' lead ')
     for x in deteted_keywords:
         if job.get('job_title')!=None and x in job.get('job_title').lower():
             return 'Senior Level'
     if experience==None:
-        experience_level_items=({'Senior Level':('senior developer','senior manager')},{'Entry Level':('fresher',)})
+        experience_level_items=({'Senior Level':('senior developer','senior manager',' lead ','lead ','lead.','lead,')},{'Entry-Level':('fresher',)})
         NegtiveMatches=(' no ',' not ',' non '," don't "," aren't "," isn't " ," wasn't "," weren't "," haven't ","hasn't",
         "hadn't","doesn't","didn't","can't","couldn't","mustn't","needn't","won't","wouldn't","shan't","shouldn't",
         "oughtn't ")
@@ -649,14 +656,27 @@ def detect_experience_level(experience,data,job):
                     if x in values:
                         detected_experience_level=key
                         break
-        return    detected_experience_level
+        if detected_experience_level!=None:
+            exp_levels.append(detected_experience_level)
+            return  exp_levels
+        return None
     else:
         numbers=[]
         exp=None
         if '-' in experience:
-            for x in experience:
-                if x.isdigit():
-                    numbers.append(int(x))
+            experience=experience.lower().replace(' ','').replace('year(s)','').replace('year','')
+            minum=int(experience.split('-')[0])
+            maxum=int(experience.split('-')[1])
+            exper_levels={0:'Entry-Level',1:'Entry-Level',2:'Entry-Level',3:"Mid Level",4:"Mid Level",5:"Mid Level",6:"Mid Level"}
+            for i in range(minum,maxum):
+                try:
+                    if exper_levels[i] not in exp_levels:
+                       exp_levels.append(exper_levels[i])
+                except:
+                    if 'Senior Level' not in exp_levels:
+                        exp_levels.append('Senior Level')
+                        break
+            return exp_levels
         else:
             expression=re.compile(r'\d+')
             search=re.search(expression,experience)
@@ -668,24 +688,30 @@ def detect_experience_level(experience,data,job):
                 numbers.append(int(exp))
         if len(numbers)!=0:
             if max(numbers)>=0 and max(numbers)<3:
-                detected_experience_level='Entry level'
+                exp_levels.append('Entry-Level')
             elif  max(numbers)>=3 and max(numbers)<7:
-                detected_experience_level='Mid Level'
+                exp_levels.append('Mid Level')
             elif  max(numbers)>=7:
-                detected_experience_level='Senior Level'
+                exp_levels.append('Senior Level')
+                
+                
         else:
             return None
-        return  detected_experience_level
-def detect_experince(data):
-    split_data=[x.lower().replace(',','').replace('.','').replace(':','') for x in data.split() if x.strip()!='']
+        return  exp_levels
+def detect_experince(data,type="html"):
+    if type=='html':
+        split_data=(x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data)
+        split_data=list((y for x in split_data for y in x.split()))
+    else:
+        split_data=[x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data.split() if x.strip()!='']
     keywords=('years','year')
     notMatchedKeywords=('age','started','ended','we have achieved four straight',
-    'ranking','within the Vault Consulting','Some may think were old')
+    'ranking','within the Vault Consulting','Some may think were old','degree','education',"mba","MBA")
     index=list()
     replcers=(',','.',':')
     string=None
 
-    for x in range(len(split_data)):
+    for x in range(len(list(split_data))):
         # if 'years' in split_data[x].strip():
         #     print(split_data[:x+20])
         for y in keywords:
@@ -695,6 +721,7 @@ def detect_experince(data):
                         index.append(x)
                         break
     exp=None
+    exp_list=list()
     indexer=None
     # print(index)
     count=0
@@ -704,14 +731,18 @@ def detect_experince(data):
         if count>10:
             break
         if indexer==None:
-            indexer=7
+            indexer=4
         try:
             if x==1:
                 string=" ".join(y for y in split_data[0:x+indexer:] if y!='')+" "
                 enabled=True
                 for y in notMatchedKeywords:
-                    if y in string.split():
-                        enabled=False
+                    if '@AUTOMATION' in string:
+                        if y in string.split() and string.index('@AUTOMATION')< string.index(y):
+                            enabled=False
+                    else:
+                        if y in string.split():
+                            enabled=False      
             if x>1:
                 string=" ".join(y for y in split_data[x-indexer:x+indexer:] if y!='')+" "
                 enabled=True
@@ -719,17 +750,25 @@ def detect_experince(data):
                     if y in string.split():
                         enabled=False
                 string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "
+                print(string,exp)
                 if len(string.strip().split())<3:
                     exp=None
                     indexer=indexer-1
                     index.append(x)
-                    continue
-            # print(enabled)
+                    continue    
             if enabled==True:
-                expression=re.compile(r'\d+-\d+')
+                # print("ejnfskj")
+                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
                 search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
+                    exp_list.append(exp)
+                else:    
+                    expression=re.compile(r'\d+ - \d+|\d+ to \d+|\d+to\d+|\d+to \d+')
+                    search=re.search(expression,string)      
+                if search!=None:
+                    exp=search.group()
+                    exp_list.append(exp)
                 else:
                     expression=re.compile(r'\d+')
                     search=re.search(expression,string)
@@ -740,14 +779,33 @@ def detect_experince(data):
                             indexer=indexer-1
                             index.append(x)
                             continue
+                        exp_list.append(exp)
                 if exp==None:
                     for key,value in year_dict.items():
                         if value in string.split():
                             exp=key
-
+                            exp_list.append(exp)                                            
         except :pass
     if exp==None:
-        return None
+        return None 
+    exp=str(exp).lower().replace('to','-').replace('~','-')
+    exp_list=[str(x).lower().replace('to','-').replace('~','-') for x in exp_list if str(x).strip()!='']
+    for x in exp_list:
+        if '-' not in str(exp):
+            if '-' in str(x):
+                if int(exp)<int(x.replace(' ','').split('-')[1]):
+                    exp=x
+            else:
+                if int(exp)<int(x):
+                    exp=int(x)
+        else:
+            if '-' not in str(x):
+                if int(exp.replace(' ','').split('-')[1])< int(x):
+                    exp=int(x)
+            else:
+                if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
+                    exp=x
+
     return str(exp)+" year(s)"
 def refining_job(job):
     # removing Null values
@@ -761,21 +819,34 @@ def refining_job(job):
 
     #refineColumns
     job=refineColumns(job)
+    # removing utf 8
+    for key,value in job.items():
+        if value!=None and key not in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
+            job[key]=string_error(value,'not_desc')
+
     #detect Job type
 
     string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications','job_requirements')and value!=None )
     soup=BeautifulSoup(string,'html.parser')
-    job['job_type']=detect_job_type(job.get('job_type'),soup.getText())
+    type_job=detect_job_type(job.get('job_type'),soup.getText())
+    if type_job!=None:
+        type_job=json.dumps({"jobType":[type_job,]})
+    job['job_type']=type_job
     #detect Experince
-    if job.get('experience')!=None:
-        job['experience']=detect_experince(job.get('experience'))
-    elif job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
-        job['experience']=detect_experince(soup.getText())
+    split_data=list()
+    for tag in soup.find_all():
+        if tag.getText().strip()!='':
+            split_data.append(str(tag.getText())+" @AUTOMATION")
+    if job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
+        job['experience']=detect_experince(soup.getText(),"text")
     else:
-        job['experience']=detect_experince(soup.getText())
+        job['experience']=detect_experince(split_data)
 
     #detect Experince Level
-    job['experience_level']=detect_experience_level(job.get('experience'),soup.getText(),job)
+    exp_level=detect_experience_level(job.get('experience'),soup.getText(),job)
+    if exp_level!=None:
+        exp_level=json.dumps({"experienceLevels":exp_level})
+    job['experience_level']=exp_level
     #get location with postal_code
     pin=None
     if job.get('pin')!=None:
@@ -843,7 +914,7 @@ def refining_job(job):
     type=None
     for value in (job['job_title'],job.get('job_type'),job.get('functional_area')):
         value=str(value).strip().replace('-',' ')
-        value=value.replace(',',' ').replace('/',' ').replace(":",' ').replace(';',' ').replace('(',' ').replace(')',' ')
+        value=value.replace(',',' ').replace('/',' ').replace(":",' ').replace(';',' ').replace('(',' ').replace(')',' ').replace('@',' ')
         for identifiers in ('intern','intern.','intern,','intern ','internships-','internships','internships.','internships,','internships ','internship-','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','fellowships','fellowships.','fellowships,','fellowships ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ','aperentships','aperentships.','aperentships,','aperentships '):
             if identifiers in [str(x).lower().strip() for x in value.split()] :
                 type="INI"
