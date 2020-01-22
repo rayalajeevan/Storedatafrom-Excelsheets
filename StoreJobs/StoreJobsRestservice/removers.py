@@ -750,7 +750,6 @@ def detect_experince(data,type="html"):
                     if y in string.split():
                         enabled=False
                 string=" ".join(y for y in split_data[x-indexer:x+1:] if y!='')+" "
-                print(string,exp)
                 if len(string.strip().split())<3:
                     exp=None
                     indexer=indexer-1
