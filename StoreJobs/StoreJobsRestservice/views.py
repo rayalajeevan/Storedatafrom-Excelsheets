@@ -18,36 +18,59 @@ class StoreJobsdata(APIView):
     @csrf_exempt
     def post(self,request):
         try:
-            scrapped_data = JSONParser().parse(request)
-        except:
-            return JsonResponse({'detail':'Please send json format'},status=status.HTTP_200_OK)
-        try:
-            data=refining_job(scrapped_data)
+            scrapped_data_dict = JSONParser().parse(request)
         except Exception as exc:
-            print('1st',exc)
-            return   JsonResponse({'detail':str(exc)},status=status.HTTP_200_OK)
-        try:
-            if data.get('error')==None:
-                if data.get('type')=="INI":
-                    if checking_duplicates(scrapped_data,data.get('job'))!=1:
-                        serializer=WebInternshipJobsSerilizer(data=data.get('job'))
+            print(exc)
+            return JsonResponse({'detail':'Please send json format'},status=status.HTTP_200_OK)
+        response_list=list() 
+        inserted_jobs_count=0
+        inserted_internship_jobs_count=0
+        duplicated_count=0
+        exception_count=0 
+        scrapped_count=len(scrapped_data_dict.get('data'))  
+        for  scrapped_data in scrapped_data_dict.get('data'):
+            try:
+                data=refining_job(scrapped_data)
+            except Exception as exc:
+                print('1st',exc)
+                exception_count+=1
+                response_list.append({"status":"Failed...","desciption":str(exc)+" from refinig job",'job_title':scrapped_data.get('job_title')})
+            try:
+                if data.get('error')==None:
+                    if data.get('type')=="INI":
+                        if checking_duplicates(scrapped_data,data.get('job'))!=1:
+                            serializer=WebInternshipJobsSerilizer(data=data.get('job'))
+                            inserted_jobs_count+=1
+                            response_list.append({"status":"succses",'job_title':scrapped_data.get('job_title')})
+                        else:
+                            response_list.append({"status":"Failed...","desciption":"duplicated internhip job",'job_title':scrapped_data.get('job_title')})
+                            duplicated_count+=1
+                            continue
                     else:
-                        return JsonResponse({'duplicateEntry':'Duplicated Job Cannot be enter'},status=status.HTTP_200_OK)
+                        if checking_duplicates(scrapped_data,data.get('job'),'JOB')!=1:
+                            serializer=WebCompanyJobsSerilizer(data=data.get('job'))
+                            inserted_internship_jobs_count+=1
+                            response_list.append({"status":"succses",'job_title':scrapped_data.get('job_title')})
+                        else:
+                            response_list.append({"status":"Failed...","desciption":"duplicated  job",'job_title':scrapped_data.get('job_title')})
+                            duplicated_count+=1
+                            continue
                 else:
-                    if checking_duplicates(scrapped_data,data.get('job'),'JOB')!=1:
-                        serializer=WebCompanyJobsSerilizer(data=data.get('job'))
-                    else:
-                        return JsonResponse({'duplicateEntry':'Duplicated Job Cannot be enter'},status=status.HTTP_200_OK)
-            else:
-                return JsonResponse(data,status=status.HTTP_200_OK)
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse({'status':'succses'},status=status.HTTP_201_CREATED)
-            else:
-                return JsonResponse(serializer.errors,status=status.HTTP_205_RESET_CONTENT)
-        except Exception as exception:
-            print('2nd',str(exception))
-            return JsonResponse({'detail':str(exception)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    print("3rd",str(data.get('error')))
+                    exception_count+=1
+                    response_list.append({"status":"Failed...","desciption":str(str(data.get('error')))+" refinig job give error",'job_title':scrapped_data.get('job_title')})
+                    continue
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    print(serializer.errors)
+                    exception_count+=1
+                    response_list.append({"status":"Failed...","desciption":str(serializer.errors)+" serializer error",'job_title':scrapped_data.get('job_title')})
+            except Exception as exception:
+                print("2nd",str(exception))
+                exception_count+=1
+                response_list.append({"status":"Failed...","desciption":str(exception)+" from storig  job",'job_title':scrapped_data.get('job_title')})
+        return JsonResponse({"status":"succses","response":response_list,"inserted_job_count":inserted_jobs_count,"interships_count":inserted_internship_jobs_count,"scrapped_count":scrapped_count,"exception_count":exception_count,"dupliacte_count":duplicated_count})        
 def checking_duplicates(scrapped_data,job,type='INI'):
     if type=="INI":
         if scrapped_data.get('posted_date')==None:
