@@ -629,7 +629,7 @@ def refineColumns(job):
                     continue
                 new_jobData[key.lower()]=value
     return new_jobData
-ddef detect_experience_level(experience,data,job):
+def detect_experience_level(experience,data,job):
     detected_experience_level=None
     exp_levels=list()
     deteted_keywords=('senior developer','senior manager','technical lead',' lead ')
