@@ -181,29 +181,37 @@ class ExcelSheetData(View):
                     try:
                         job[key]=int(value)
                     except:
-                        job[key]=str(value)
-                t1=Thread(target=append_requests,args=(request_responses,job))
-                t1.start()
-                if active_count()>25:
-                    time.sleep(10)
-                    t1.join()
-        while len(request_responses)!=len(joblist):
-            print(len(request_responses),len(joblist))
-            time.sleep(1)
+                        job[key]=str(value)       
+            minum=0
+            maxum=500
+            respone={}
+            count=0
+            while True:
+                count+=1
+                print(count)
+                print(minum,maxum)
+                data=joblist[minum:maxum]
+                job_post_request=requests.post("http://"+"10.80.15.133"+':3000/get_data/',data=json.dumps({"data":data}))
+                if len(respone.keys())==0:
+                    respone=job_post_request.json()
+                else:    
+                    for key,value in job_post_request.json().items():
+                        if key!='status':
+                            respone[key]=respone[key]+value
+                if  maxum > len(joblist):
+                    break
+                else:
+                    minum=maxum
+                    maxum=maxum+maxum  
 
-        for request_data in request_responses:
-            if request_data.get('error')==None and request_data.get('detail')==None:
-                if request_data.get('status')=='succses':
-                    inserted_database_rows_count+=1
-                elif request_data.get('duplicateEntry')!=None:
-                    duplicate_job_rows+=1
-            else:
-                error_rows_count+=1
-                error_rows.append(request_data)
-        return JsonResponse({'companies':companies,'duplicate_job_rows_count':duplicate_job_rows,'error_count':error_rows_count,"inserted_database_rows_count":inserted_database_rows_count,'error_rows':str(error_rows).replace("'",' ')})
+
+
+
+        return JsonResponse({'companies':companies,"response":respone})
 
 def append_requests(responses,job):
     responses.append(storeJob_request(job))
+    
 
 
 def storeJob_request(job):
