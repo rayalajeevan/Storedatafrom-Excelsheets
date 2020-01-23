@@ -35,6 +35,7 @@ class StoreJobsdata(APIView):
                 print('1st',exc)
                 exception_count+=1
                 response_list.append({"status":"Failed...","desciption":str(exc)+" from refinig job",'job_title':scrapped_data.get('job_title')})
+                continue
             try:
                 if data.get('error')==None:
                     if data.get('type')=="INI":

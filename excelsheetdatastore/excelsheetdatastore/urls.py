@@ -25,6 +25,7 @@ urlpatterns = [
     path('sheetschecking/',views.sheets_checking),
     path('deleteobjects',views.DeleteModelObject.as_view()),
     path('filedownload/',views.filedownlod),
+    path('changeids/'views.changeids),
 
 
 ]

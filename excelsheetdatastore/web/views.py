@@ -181,7 +181,7 @@ class ExcelSheetData(View):
                     try:
                         job[key]=int(value)
                     except:
-                        job[key]=str(value)       
+                        job[key]=str(value)
             minum=0
             maxum=500
             respone={}
@@ -194,7 +194,7 @@ class ExcelSheetData(View):
                 job_post_request=requests.post("http://"+"10.80.15.133"+':3000/get_data/',data=json.dumps({"data":data}))
                 if len(respone.keys())==0:
                     respone=job_post_request.json()
-                else:    
+                else:
                     for key,value in job_post_request.json().items():
                         if key!='status':
                             respone[key]=respone[key]+value
@@ -202,7 +202,7 @@ class ExcelSheetData(View):
                     break
                 else:
                     minum=maxum
-                    maxum=maxum+maxum  
+                    maxum=maxum+maxum
 
 
 
@@ -211,7 +211,7 @@ class ExcelSheetData(View):
 
 def append_requests(responses,job):
     responses.append(storeJob_request(job))
-    
+
 
 
 def storeJob_request(job):
@@ -809,3 +809,15 @@ def checking_mateched_location(scrapped_location,google_location):
                     country_type= g_loc.get('countryCode')
                     return {"location":{'city':city,'state_code':state_code,'country_type':country_type}}
     return  {'location':0}
+def changeids(request):
+    oldid=request.GET.get('oldid')
+    newid=request.GET.get('newid')
+    if oldid!=None and newid!=None:
+        for obj in web_internship_jobs.objects.filter(company_info_id=oldid):
+            obj.company_info_id=newid
+            obj.save()
+        for obj in company_jobs.objects.filter(company_info_id=oldid):
+            obj.company_info_id=newid
+            obj.save()
+        return {"status":"succses","oldid":oldid,'newid':newid}
+    return JsonResponse({"status":"failed...","desc":"please provide params correctly"})
