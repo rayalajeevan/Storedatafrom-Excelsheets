@@ -6,6 +6,7 @@ from dateutil import parser
 from copy import deepcopy
 from fuzzywuzzy import fuzz
 import time
+import copy as cp
 import json
 import requests
 from StoreJobsRestservice.models import Locations,BeautifyCompanyJobs
@@ -406,7 +407,8 @@ def remving_extraSpacesHtmlContent(data):
                 if x.find_previous_sibling(x.previous_element.name)!=None:
                     x.find_previous_sibling(x.previous_element.name).decompose()
             if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
-                x.find_parent('p').decompose()
+                if  len(x.find_parent('p').getText().strip())!=0:
+                    x.find_parent('p').decompose()
     for x in soup.findAll():
         enabled=True
         if x.name in inline_elements or x.name=='br':
@@ -414,18 +416,24 @@ def remving_extraSpacesHtmlContent(data):
         if enabled==True:
             if (x.nextSibling!=None and x.nextSibling.name=='br') or (x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None and len(x.find_next_sibling(x.nextSibling.name).get_text().strip())==0):
                  x.find_next_sibling(x.nextSibling.name).decompose()
-    return BeautifyJobs(str(soup))
+    for x in soup.findAll('li'):
+        for y in x.findChildren():
+            if y.name=='br':
+                y.decompose()
+    return str(soup)
+
+
 
 def replacer(data):
     return data
 def HtmlParser(data,job={}):
     data=string_error(data)
-    items=('Type:','PRIMARY PURPOSE OF POSITION','Job   Location','Reports Directly To:','Title:','Job  Type','Overtime  Status','Employee  Status','Role opening date:','OPENING DATE:','Primary Location','Other Locations','Full-time / Part-time','Employee Status','Overtime Status','Job Type','Travel:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:','Job Title:','Req. ID:','Contract Type','HOURS:','WAGE:','Role Location:','Role opening date',
-    'Closing date for applications:','Posting ID:','City:','Req. ID:','Division:','Unit:','Full Performance level:','Number of Positions Available:','Duration:','Hiring Manager:','Relocation Level:','Job Number:','Pub Date:','Job Reference Code','Job/Requisition ID:','Location Name:','Education Level:','Relevant Experience Level:','Employee Group:','Employee Subgroup:','Primary  Location','Other  Locations','Full-time  /  Part-time')
-    items_starts_with=('Job Function:','Level','Job Location','Position Type','Education Level','POSITION:','Department:','Temporary position (1 year)',
-    'Bass (1 year appointmenLocation Name:t)','Position:','Shift:')
-    itemsNotEqual=('Working hours:','PRIMARY OBJECTIVE OF POSITION:','About This Role:','THIS POSITION HAS AN EDUCATION REQUIREMENT:','POSITION PURPOSE:','Travel, Meetings & Events (including Brand, Marketing and Communications)','DIRECTLY SUPERVISES (PLEASE LIST POSITION TITLES','SPECIAL REQUIREMENTS FOR THIS POSITION:','Travel role','POSITION REQUIRMENTS:','POSITION REQUIREMENTS','Level II:','Level III:','Salary Information:','Travel Required:','Level I to Level III is considered a progression and is approved by the appropriate manager.','Level I:','POSITION PROFILE','POSITION DIMENSIONS AND QUALIFICATIONS','POSITION SUMMARY','Reporting Relationships:','Core Duties and Responsibilities:','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
-    'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:',"""Our Company:""",'Employment Type:')
+    # items=('Type:','PRIMARY PURPOSE OF POSITION','Job   Location','Reports Directly To:','Title:','Job  Type','Overtime  Status','Employee  Status','Role opening date:','OPENING DATE:','Primary Location','Other Locations','Full-time / Part-time','Employee Status','Overtime Status','Job Type','Travel:','Salary:','Opening Date for Application:','Closing Date for Applications: ','JOB TYPE:','CLOSING DATE:','REPORTING TO','DATE:','Date posted','Job ID','GRADE:','DEADLINE TO APPLY:','Date Posted:','FLSA Designation:','Reports to:','Date written/ revised:','Date Created/Revised:','Job Description for:','Deadline','Deadline:','Salary:','location:','locations:','work location(s):','team:', 'reports to:','title:','hours:','pay rate:','Req. ID:','Recruiter:','Role:','Position Location:','Reports To:','Allocation Specialist','Business Unit:','Supervision:','Supervision:','Full Time, Fixed Term - 12 Months','Requisition ID:','Position Title:','Project:','Relocation Authorized:','Position to be Panel Interviewed?','Grade:','Work Authorization:','Other Requirements:','Req ID:','Date:','Start Date:','Work type:','Categories:','Job no:','Contract:','Profile :','Scope :','DEPARTMENT:','BASE RATE OF PAY:','SHIFT:','Your future manager :','Scope :','Reporting Relationship','Employee Status:','Work Location:','Role Location:','Role Type:','Shift Schedule:','Rostered Hours:','Hours and shift type','Job Family:','TITLE:','FACILITY:','START DATE:','FLSA CATEGORY:','Reports To:','Supervisor:',"Role:",'Permanent Position','Schedule:','Audition Date & Time:','permanent position','Posting Number:','Position Type:','Classification:','Status:','Department:','Hours:','Reports to:','POSITION TITLE','POSITION LOCATION','POSITION HOURS','Position Title:','Location:','POSITION','LOCATION','Posting Notes:','Job Title:','Req. ID:','Contract Type','HOURS:','WAGE:','Role Location:','Role opening date',
+    # 'Closing date for applications:','Posting ID:','City:','Req. ID:','Division:','Unit:','Full Performance level:','Number of Positions Available:','Duration:','Hiring Manager:','Relocation Level:','Job Number:','Pub Date:','Job Reference Code','Job/Requisition ID:','Location Name:','Education Level:','Relevant Experience Level:','Employee Group:','Employee Subgroup:','Primary  Location','Other  Locations','Full-time  /  Part-time')
+    # items_starts_with=('Job Function:','Level','Job Location','Position Type','Education Level','POSITION:','Department:','Temporary position (1 year)',
+    # 'Bass (1 year appointmenLocation Name:t)','Position:','Shift:')
+    # itemsNotEqual=('Working hours:','PRIMARY OBJECTIVE OF POSITION:','About This Role:','THIS POSITION HAS AN EDUCATION REQUIREMENT:','POSITION PURPOSE:','Travel, Meetings & Events (including Brand, Marketing and Communications)','DIRECTLY SUPERVISES (PLEASE LIST POSITION TITLES','SPECIAL REQUIREMENTS FOR THIS POSITION:','Travel role','POSITION REQUIRMENTS:','POSITION REQUIREMENTS','Level II:','Level III:','Salary Information:','Travel Required:','Level I to Level III is considered a progression and is approved by the appropriate manager.','Level I:','POSITION PROFILE','POSITION DIMENSIONS AND QUALIFICATIONS','POSITION SUMMARY','Reporting Relationships:','Core Duties and Responsibilities:','OVERVIEW OF POSITION:','POSITION PURPOSE','About the Company:','REQUIREMENTS FOR POSITION:','Our Company:'
+    # 'Weekday Day Hours:','Weekday Night Hours:','Weekend Day Hours:','Weekend Night Hours:','Salary range:',"""Our Company:""",'Employment Type:')
     soup=BeautifulSoup(data,"html.parser")
     for tag in soup.findAll():
         try:
@@ -463,135 +471,9 @@ def HtmlParser(data,job={}):
             continue
     for tag in soup.findAll(True):
         tag.attrs=None
-    for x in soup.findAll():
-         if len(x.findChildren())==0:
-            if '#' in x.getText().strip() and len(x.getText().strip())<=20:
-                x.decompose()
-                break
-            if '*' in x.getText().strip() and  len(x.getText().strip())<=20:
-                 x.decompose()
-                 break
-    removed_elements=[]
-    removed_tags=[]
-    for x in soup.findAll():
-        if job.get('job_title')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower())>80:
-            if x.parent!=None and len(x.parent.getText().strip())<=40:
-                x.parent.decompose()
-                removed_tags.append('job Title:')
-                removed_tags.append('Title:')
-            else:
-                if len(x.getText().strip())<=len(job.get('job_title').strip())+10:
-                    x.decompose()
-                    removed_tags.append('job Title:')
-                    removed_tags.append('Title:')
-            continue
-        if job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>80:
-            removed_tags.append('job location')
-            if x.parent!=None and len(x.parent.getText().strip())<=40:
-                x.parent.decompose()
-            else:
-                if len(x.getText().strip())<30:
-                    x.decompose()
-            continue
-        if job.get('functional_area')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('functional_area','qwertyuiopasdfghjklzxcvbnm').lower())>80:
-            removed_tags.append('functional area')
-            if x.parent!=None and len(x.parent.getText().strip())<=len(job.get('functional_area').strip())+10:
-                x.parent.decompose()
-            else:
-                if len(x.getText().strip())<30:
-                    x.decompose()
-            continue
-        if job.get('job_id')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_id','qwertyuiopasdfghjklzxcvbnm').lower())>80:
-            if x.parent!=None and len(x.parent.getText().strip())<=40:
-                x.parent.decompose()
-                removed_tags.append('job id')
-            else:
-                if len(x.getText().strip())<30:
-                    x.decompose()
-                    removed_tags.append('job id')
-            continue
-        if job.get('job_type')!=None and  fuzz.ratio(x.getText().strip().lower(),job.get('job_type','qwertyuiopasdfghjklzxcvbnm').lower())>70:
-            if x.parent!=None and len(x.parent.getText().strip())<=40:
-                x.parent.decompose()
-            else:
-                if len(x.getText().strip())<30:
-                    x.decompose()
-            removed_tags.append('job type')
-            continue
-        if  job.get('work_shift')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('work_shift','qwertyuiopasdfghjklzxcvbnm').lower())>70:
-            if x.parent!=None and len(x.parent.getText().strip())<=40:
-                x.parent.decompose()
-            else:
-                if len(x.getText().strip())<30:
-                    x.decompose()
-            removed_tags.append('work_shift')
-            continue
-        if job.get('job_title')!=None and job.get('job_location')!=None and fuzz.ratio(x.getText().strip().lower(),job.get('job_title','qwertyuiopasdfghjklzxcvbnm').lower()+" "+job.get('job_location','qwertyuiopasdfghjklzxcvbnm').lower())>80:
-            if x.parent!=None and len(x.parent.get_text().strip())<=200:
-                x.parent.decompose()
-            else:
-                if len(x.get_text().strip())<=100:
-                    x.decompose()
-        if 'job title::' in x.getText().strip().lower():
-            if x.name=='strong':
-                if 'location:' in x.parent().getText().strip():
-                    x.parent.decompose()
-        if 'Job ID:' in  x.get_text().strip():
-            if x.parent!=None and len(x.parent.get_text().strip())<=45:
-                x.parent.decompose()
-            else:
-                if len(x.get_text().strip())<=50:
-                    x.decompose()
-        for item in items:
-            if item=='Role opening date:':
-                if item.strip() in x.getText().strip():
-                    if x.parent!=None and len(x.parent.get_text().strip())<=70 and len(x.parent.getText().strip())>len(item)+7:
-                        true=True
-                        for item1 in itemsNotEqual:
-                            if item1.strip() in x.parent.getText().strip():
-                                true=False
-                        if true==True:
-                            if len(x.parent.get_text())!=len(x.getText().strip()):
-                                removed_elements.append(str(x.parent))
-                                x.parent.decompose()
-                    else:
-                        if len(x.get_text().strip())<=100 and len(x.getText().strip())>len(item)+7:
-                            true=True
-                            for item in itemsNotEqual:
-                                if item.strip() in x.getText().strip():
-                                    true=False
-                            if true==True:
-                                removed_elements.append(str(x))
-                                x.decompose()
     soup=BeautifulSoup(str(soup),'html.parser')
-    for tag in soup.findAll():
-        for item in removed_tags:
-            if item in tag.getText() and fuzz.ratio(item,tag.getText())>60:
-                try:
-                    tag.replace_with('')
-                    removed_elements.append(str(tag))
-                except:
-                    tag.decompose()
-                    removed_elements.append(str(tag))
-    for tag in soup.findAll():
-        for item in items:
-            if item in tag.getText() and len(tag.getText())<=50 and len(tag.getText().strip())>len(item)+7:
-                true=True
-                for item in itemsNotEqual:
-                    if item.strip() in tag.getText().strip():
-                        true=False
-                if true==True:
-                    removed_elements.append(str(tag))
-                    tag.decompose()
-    for tag in soup.findAll():
-        for item in items_starts_with:
-            if tag.getText().strip().startswith(item) and len(tag.getText())<50:
-                removed_elements.append(str(tag))
-                tag.decompose()        
-    for ele in removed_elements:
-        soup=str(soup)+str(ele)
-    soup=str(soup).replace('&#8203','').replace('Duties: JOB DESCRIPTION','').replace('CLOSE','').replace('OPEN','')
-    return BeautifyJobs(str(soup))
+    soup=replacer(str(soup))
+    return remving_extraSpacesHtmlContent(BeautifyJobs(str(soup)))
 def refineColumns(job):
     new_jobData={}
     for key,value in job.items():
