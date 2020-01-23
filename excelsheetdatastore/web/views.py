@@ -191,7 +191,7 @@ class ExcelSheetData(View):
                 print(count)
                 print(minum,maxum)
                 data=joblist[minum:maxum]
-                job_post_request=requests.post("http://"+"10.80.15.133"+':3000/get_data/',data=json.dumps({"data":data}))
+                job_post_request=requests.post("http://"+socket.gethostbyname(socket.gethostname())+':3000/get_data/',data=json.dumps({"data":data}))
                 if len(respone.keys())==0:
                     respone=job_post_request.json()
                 else:
@@ -819,5 +819,5 @@ def changeids(request):
         for obj in company_jobs.objects.filter(company_info_id=oldid):
             obj.company_info_id=newid
             obj.save()
-        return {"status":"succses","oldid":oldid,'newid':newid}
-    return JsonResponse({"status":"failed...","desc":"please provide params correctly"})
+        return JsonResponse({"status":"succses","oldid":oldid,'newid':newid})
+    return JsonResponse({"status":"failed...","desc":"please provide params correctly"},status=200)
