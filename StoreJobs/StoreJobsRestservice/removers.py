@@ -216,6 +216,7 @@ def checking_mateched_location(scrapped_location,google_location):
 def BeautifyJobs(data):
     soup=BeautifulSoup(data,'html.parser')
     span_list=list()
+    NegtiveTags=('br','i')
     for x in soup.findAll():
         if x.name=='table':
             x.name='div'
@@ -228,7 +229,7 @@ def BeautifyJobs(data):
                 x.name='h5'
         if x.name=='font':
             x.name='span'
-        if x.getText().strip()=='' and x.name!='br' and len(x.findChildren())==0:
+        if x.getText().strip()=='' and x.name not in NegtiveTags and len(x.findChildren())==0:
             x.name='br'
         if len(x.getText().strip())<=30 and ':' in x.getText():
             span_list.append(str(x))
@@ -303,7 +304,7 @@ def detect_job_type(job_type,job):
         "oughtn't ")
     if job_type!=None and str(job_type).strip()!='':
         detected_job_type=None
-        for item in ('intern ', 'intern,','intern.','intern!'):
+        for item in ('intern ', 'intern,','intern.','intern!','internship'):
             if item in job_type.lower().strip():
                 detected_job_type="Internship"
         if job_type.lower()=="intern":
@@ -387,8 +388,9 @@ def remving_extraSpacesHtmlContent(data):
                      'kbd','label','map','mark','meter','noscript','object','output','picture','progress','q','ruby','s','samp','script','select','slot','small','span','strong','sub','sup','t'
                      'template','svg','textarea','time','u','tt','var','video','wbr',)
     soup=BeautifulSoup(data,'html.parser')
+    NegtiveTags=('br','i')
     for x in soup.findAll():
-        if x.name!='br':
+        if x.name not in NegtiveTags:
             if len(x.getText().strip())==0:
                 if x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None:
                     if len(x.find_next_sibling(x.nextSibling.name).getText().strip())==0:
@@ -420,8 +422,24 @@ def remving_extraSpacesHtmlContent(data):
         for y in x.findChildren():
             if y.name=='br':
                 y.decompose()
-    return str(soup)
+    for x in range(10):
+        soup=break_replacer(str(soup))
+    return soup    
 
+def break_replacer(data):
+    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>")
+    for x in break_tags:
+        tag=''
+        a=10
+        for z in range(10):
+            for y in range(a):
+                tag=tag+x
+            a-=1
+            data=data.replace(tag,"<br>")
+            tag=""
+    return data        
+            
+        
 
 
 def replacer(data):
