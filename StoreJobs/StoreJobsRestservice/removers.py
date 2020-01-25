@@ -304,11 +304,13 @@ def detect_job_type(job_type,job):
         "oughtn't ")
     if job_type!=None and str(job_type).strip()!='':
         detected_job_type=None
+        job_type=job_type.split()
+        job_type=' '.join(job_type)
         for item in ('intern ', 'intern,','intern.','intern!','internship'):
             if item in job_type.lower().strip():
                 detected_job_type="Internship"
         if job_type.lower()=="intern":
-            detected_job_type="Internship"
+            detected_job_type="Internship"   
         for item in job_type_items:
             for key,value in item.items():
                 for type_item in value:
@@ -339,7 +341,6 @@ def detect_job_type(job_type,job):
                         detected_job_type=key
                         break
         return detected_job_type
-
 
 
 
