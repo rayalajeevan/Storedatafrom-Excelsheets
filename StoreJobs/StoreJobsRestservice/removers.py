@@ -429,7 +429,7 @@ def remving_extraSpacesHtmlContent(data):
     return soup    
 
 def break_replacer(data):
-    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>")
+    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;")
     for x in break_tags:
         tag=''
         a=10
@@ -606,6 +606,7 @@ def detect_experince(data,type="html"):
         split_data=(x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data)
         split_data=list((y for x in split_data for y in x.split()))
     else:
+        data=data+" experience"
         split_data=[x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data.split() if x.strip()!='']
     keywords=('years','year')
     notMatchedKeywords=('age','started','ended','we have achieved four straight',
