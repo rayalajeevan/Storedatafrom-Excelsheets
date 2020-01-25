@@ -232,7 +232,8 @@ def BeautifyJobs(data):
         if x.getText().strip()=='' and x.name not in NegtiveTags and len(x.findChildren())==0:
             x.name='br'
         if len(x.getText().strip())<=30 and ':' in x.getText() and len(x.getText().strip())>3 :
-            span_list.append(str(x))
+            if len(x.findChildren())==0:
+                span_list.append(str(x))
     for x in span_list:
         soup=str(soup).replace(x,"<span class='newLine'><b>{}</b></span>".format(x))
     return str(soup)
