@@ -719,6 +719,10 @@ def refining_job(job):
     job=job_data
 
     job=dict([(k.lower(),str(v).strip()) for k,v in job.items() ])#converting keys to lowercase
+    back_up_fields={"job_description":"org_job_description","job_roles_responsibilities":"org_job_roles_responsibilities","qualifications":"org_qualifications"}
+    for key,value in back_up_fields.items():
+        if job.get(key)!=None:
+            job[value]=cp.copy(job.get(key))
 
     #refineColumns
     job=refineColumns(job)
