@@ -231,7 +231,7 @@ def BeautifyJobs(data):
             x.name='span'
         if x.getText().strip()=='' and x.name not in NegtiveTags and len(x.findChildren())==0:
             x.name='br'
-        if len(x.getText().strip())<=30 and ':' in x.getText():
+        if len(x.getText().strip())<=30 and ':' in x.getText() and len(x.getText().strip())>3 :
             span_list.append(str(x))
     for x in span_list:
         soup=str(soup).replace(x,"<span class='newLine'><b>{}</b></span>".format(x))
@@ -428,7 +428,7 @@ def remving_extraSpacesHtmlContent(data):
     return soup    
 
 def break_replacer(data):
-    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>")
+    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>")
     for x in break_tags:
         tag=''
         a=10
