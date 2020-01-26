@@ -104,7 +104,6 @@ class WebInternshipJobs(models.Model):
     web_internship_jobs_id = models.BigAutoField(primary_key=True)
     job_id = models.CharField(max_length=1000, blank=True, null=True)
     company_info_id = models.BigIntegerField(blank=True, null=True)
-    company_id = models.CharField(max_length=100, blank=True, null=True)
     job_title = models.CharField(max_length=1000, blank=True, null=True)
     job_description = models.TextField(blank=True, null=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)

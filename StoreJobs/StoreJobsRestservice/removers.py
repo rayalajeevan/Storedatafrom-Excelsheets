@@ -719,13 +719,14 @@ def refining_job(job):
     job=job_data
 
     job=dict([(k.lower(),str(v).strip()) for k,v in job.items() ])#converting keys to lowercase
+    
+
+    #refineColumns
+    job=refineColumns(job)
     back_up_fields={"job_description":"org_job_description","job_roles_responsibilities":"org_job_roles_responsibilities","qualifications":"org_qualifications"}
     for key,value in back_up_fields.items():
         if job.get(key)!=None:
             job[value]=cp.copy(job.get(key))
-
-    #refineColumns
-    job=refineColumns(job)
     # removing utf 8
     for key,value in job.items():
         if value!=None and key not in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
@@ -748,7 +749,6 @@ def refining_job(job):
         job['experience']=detect_experince(soup.getText(),"text")
     else:
         job['experience']=detect_experince(split_data)
-
     #detect Experince Level
     exp_level=detect_experience_level(job.get('experience'),soup.getText(),job)
     if exp_level!=None:
