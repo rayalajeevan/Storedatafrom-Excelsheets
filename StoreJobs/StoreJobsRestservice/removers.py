@@ -136,8 +136,8 @@ def get_location_from_googleApi(location):
                     return {'location':0}
             else:
                 return {'location':0}
-        except:
-            print("get_location_from_googleApi got error so sleeping 20 secs")
+        except Exception as exc:
+            print("get_location_from_googleApi got error so sleeping 20 secs",Log.EXCEPTION.value)
             time.sleep(20)
             return get_location_from_googleApi(location)
     else:
@@ -231,11 +231,11 @@ def BeautifyJobs(data):
             x.name='span'
         if x.getText().strip()=='' and x.name not in NegtiveTags and len(x.findChildren())==0:
             x.name='br'
-        if len(x.getText().strip())<=30 and ':' in x.getText() and len(x.getText().strip())>3 :
-            if len(x.findChildren())==0:
-                span_list.append(str(x))
-    for x in span_list:
-        soup=str(soup).replace(x,"<span class='newLine'><b>{}</b></span>".format(x))
+    #     if len(x.getText().strip())<=30 and ':' in x.getText() and len(x.getText().strip())>3 :
+    #         if len(x.findChildren())==0:
+    #             span_list.append(str(x))
+    # for x in span_list:
+    #     soup=str(soup).replace(x,"<span class='newLine'><b>{}</b></span>".format(x))
     return str(soup)
 def regulardate(date=None):
     date=date.strip()
@@ -259,16 +259,16 @@ def regulardate(date=None):
         elif 'second ' in date.lower() or 'secs' in date.lower() or 'sec' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(seconds=1)
     else:
-        if 'days' in date.lower():
+        if 'days' in date.lower() or date.replace(str(value).strip(),'').strip().lower()=='ds':
             date=datetime.datetime.now()-datetime.timedelta(days=int(value))
-        elif 'day' in date.lower():
+        elif 'day' in date.lower()or date.replace(str(value).strip(),'').strip().lower()=='d':
             date=datetime.datetime.now()-datetime.timedelta(days=int(value))
-        elif 'weeks' in date.lower():
+        elif 'weeks' in date.lower()or date.replace(str(value).strip(),'').strip().lower()=='w' or date.replace(str(value).strip(),'').strip().lower()=='ws':
             date=datetime.datetime.now()-datetime.timedelta(weeks=int(value))
-        elif 'months' in date.lower():
+        elif 'months' in date.lower() or date.replace(str(value).strip(),'').strip().lower()=='m' or date.replace(str(value).strip(),'').strip().lower()=='ms':
             value=int(value)*31
             date=datetime.datetime.now()-datetime.timedelta(days=value)
-        elif 'years' in date.lower():
+        elif 'years' in date.lower()or date.replace(str(value).strip(),'').strip().lower()=='ys' or date.replace(str(value).strip(),'').strip().lower()=='y':
             value=int(value)*365
             date=datetime.datetime.now()-datetime.timedelta(days=int(value))
         elif 'minutes' in date.lower() or 'mins' in date.lower() or 'min' in date.lower():
@@ -292,6 +292,31 @@ def regulardate(date=None):
         elif 'seconds' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(seconds=int(value))
     return date
+def validatos(date,*args,**kwrgs):
+    datestr=None
+    if  date!=None and date!=float('nan') and date!="" and date!='NULL' and date !="null" and date.strip()!="Not Specified" :
+        date=date.strip()
+        if 'yesterday' in date.lower():
+            datestr=datetime.datetime.now()-datetime.timedelta(days=1)
+            return datestr
+        if 'today' in date.lower():
+            return datetime.datetime.now()
+        if 'week' in date.lower() or 'day' in date.lower() or 'year' in date.lower() or 'minutes' in date.lower() or 'hour' in date.lower() or 'month' in date.lower() or 'hr' in date.lower() or 'min' in date.lower() or 'sec' in date.lower() or " ".join(re.findall("[a-zA-Z]+",date)).strip() in ('d','ds','w','ws','m','ms'):
+            datestr=regulardate(str(date))
+            return str(datestr)
+        elif 'posted now' in date.lower() or 'few hours' in date.lower():
+            return datetime.datetime.now()
+        else:
+            try:
+                datestr=parser.parse(str(date))
+                return str(datestr)
+            except Exception as exc:
+                print(exc)
+                return str(datetime.datetime.now())
+        if datestr==None:
+            return str(datetime.datetime.now())
+    else:
+        return str(datetime.datetime.now())
 def detect_job_type(job_type,job):
     job_type_items=({'Full-time':
         ('full time','full-time','Full-time','Full-time (FT)','Full Time Regular','Casual / On Call','FULL_TIME','permanent')},
@@ -345,31 +370,7 @@ def detect_job_type(job_type,job):
 
 
 
-def validatos(date,*args,**kwrgs):
-    datestr=None
-    if  date!=None and date!=float('nan') and date!="" and date!='NULL' and date !="null" and date.strip()!="Not Specified" :
-        date=date.strip()
-        if 'yesterday' in date.lower():
-            datestr=datetime.datetime.now()-datetime.timedelta(days=1)
-            return datestr
-        if 'today' in date.lower():
-            return datetime.datetime.now()
-        if 'week' in date.lower() or 'day' in date.lower() or 'year' in date.lower() or 'minutes' in date.lower() or 'hour' in date.lower() or 'month' in date.lower() or 'hr' in date.lower() or 'min' in date.lower() or 'sec' in date.lower():
-            datestr=regulardate(str(date))
-            return str(datestr)
-        elif 'posted now' in date.lower() or 'few hours' in date.lower():
-            return datetime.datetime.now()
-        else:
-            try:
-                datestr=parser.parse(str(date))
-                return str(datestr)
-            except Exception as exc:
-                print(exc)
-                return str(datetime.datetime.now())
-        if datestr==None:
-            return str(datetime.datetime.now())
-    else:
-        return str(datetime.datetime.now())
+
 def string_error(data,type1="desc",*args,**kwrgs):
     if data!='' or data!='NULL' or data!='null' or data!=None or data!="None":
         try:
