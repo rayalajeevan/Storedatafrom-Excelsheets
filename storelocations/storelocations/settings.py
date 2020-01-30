@@ -94,17 +94,9 @@ WSGI_APPLICATION = 'storelocations.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DATABASE_ROUTERS=['storelocations.routers.Router']
-DATABASE_APPS_MAPPING={'web_scrapping':'scrap','pushcompany':'developers'}
+DATABASE_APPS_MAPPING={'pushcompany':'developers'}
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gradsirenv2.0_int_comp',
-        'USER': 'Jeevan',
-        'PASSWORD': CRYPTPASSWORD,
-        'HOST': '10.80.0.21',
-        'PORT': '3306',
-    },
-    'scrap':{
+    'default':{
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'web_scrapping_testdb_python',
         'USER': 'Jeevan',

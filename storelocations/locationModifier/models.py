@@ -2,7 +2,6 @@ from django.db import models
 class Bugs(models.Model):
     class Meta:
         db_table='Bugs'
-        app_label='web_scrapping'
         get_latest_by = 'Bug_id'
     Bug_id=models.IntegerField(primary_key=True)
     Resolved=models.CharField(max_length=50)
@@ -24,7 +23,6 @@ class StoreLocation(models.Model):
 class Web_internships_jobs_forSerlize(models.Model):
     class Meta:
         db_table='web_internship_jobs'
-        app_label='web_scrapping'
     web_internship_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
     company_info_id=models.CharField(max_length=100)
@@ -83,7 +81,6 @@ class Web_internships_jobs_forSerlize(models.Model):
 class Web_internships_jobs(models.Model):
     class Meta:
         db_table='web_internship_jobs'
-        app_label='web_scrapping'
     web_internship_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
     company_info_id=models.CharField(max_length=100)
@@ -143,8 +140,6 @@ class Web_internships_jobs(models.Model):
 class Web_company_jobs(models.Model):
     class Meta:
         db_table='web_company_jobs'
-        app_label='web_scrapping'
-
     web_company_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
     company_info_id=models.CharField(max_length=100)
@@ -201,7 +196,6 @@ class Web_company_jobs(models.Model):
 class Web_company_jobs_forSerlize(models.Model):
     class Meta:
         db_table='web_company_jobs'
-        app_label='web_scrapping'
     dcount=models.CharField(max_length=50)
     web_company_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100)
@@ -274,22 +268,11 @@ class company_info(models.Model):
     hq_company_address_line2=models.CharField(max_length=255,default=None)
     company_unique_id=models.CharField(max_length=50,default=None)
 
-class companies_internship(models.Model):
-    class Meta:
-        db_table='companies_internship'
-    company_info_company_info_id=models.IntegerField()
-    companies_internship_id=models.IntegerField(primary_key=True)
-    company_name=models.CharField(max_length=255)
-    contact_city=models.CharField(max_length=55)
-    contact_state_code=models.CharField(max_length=10)
-    contact_address=models.CharField(max_length=255)
-    contact_website=models.CharField(max_length=255)
-    internship_name=models.CharField(max_length=255)
+
 class company_infoCopy(models.Model):
     class Meta:
         db_table='company_info'
         get_latest_by='company_info_id'
-        app_label = 'web_scrapping'
     company_info_id=models.IntegerField(primary_key=True,)
     company_name=models.CharField(max_length=255)
     company_size=models.CharField(max_length=45)
@@ -303,7 +286,6 @@ class company_infoCopy(models.Model):
     company_unique_id=models.CharField(max_length=10)
     hq_company_address_line1=models.TextField()
     hq_company_address_line2=models.CharField(max_length=255)
-    addcompanystatus=models.CharField(max_length=50)
 class Locations(models.Model):
     class Meta:
         db_table='locations'

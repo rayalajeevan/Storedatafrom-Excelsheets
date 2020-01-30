@@ -84,13 +84,9 @@ class GetCompanyName(View):
         if data==None:
             if val==2:
                 data=company_infoCopy.objects.filter(company_name=companyname)
-            if val==1:
-                data=companies_internship.objects.filter(internship_name=companyname)
             if len(data)==0:
                 if val==2:
                     data=company_infoCopy.objects.filter(company_name__icontains=companyname)
-                if val==1:
-                    data=companies_internship.objects.filter(internship_name__icontains=companyname)
         list=[]
         if len(data)!=0 and len(data)<=10:
             if val==2:
