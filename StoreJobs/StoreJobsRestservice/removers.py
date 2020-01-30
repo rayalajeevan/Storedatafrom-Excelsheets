@@ -229,8 +229,8 @@ def BeautifyJobs(data):
                 x.name='h5'
         if x.name=='font':
             x.name='span'
-        if x.getText().strip()=='' and x.name not in NegtiveTags and len(x.findChildren())==0:
-            x.name='br'
+        # if x.getText().strip()=='' and x.name not in NegtiveTags and len(x.findChildren())==0:
+        #     x.name='br'
     #     if len(x.getText().strip())<=30 and ':' in x.getText() and len(x.getText().strip())>3 :
     #         if len(x.findChildren())==0:
     #             span_list.append(str(x))
