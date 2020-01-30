@@ -909,7 +909,8 @@ class Instructions():
                     text=x.getText().strip()
                     for y in x.findChildren():
                         y.decompose()
-                    x.string=text.replace('Ø','')
+                    x.string="<li>"+text.replace('Ø','')+"</li>"
+                    x.name="ul"
             self.html_data[key]=str(soup)
         return self.html_data    
 

@@ -90,16 +90,8 @@ WSGI_APPLICATION = 'excelsheetdatastore.wsgi.application'
 DATABASE_ROUTERS=['excelsheetdatastore.routers.Router']
 DATABASE_APPS_MAPPING={'web_scrapping':'scrap'}
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gradsirenv2.0_int_comp',
-        'USER': 'Jeevan',
-        'PASSWORD': CRYPTPASSWORD,
-        'HOST': '10.80.0.21',
-        'PORT': '3306',
-        'OPTIONS': {'charset':'utf8mb4'}
-        },
-    'scrap':{
+    
+    'default':{
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'web_scrapping_testdb_python',
         'USER': 'Jeevan',

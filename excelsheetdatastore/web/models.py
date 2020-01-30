@@ -3,7 +3,7 @@ from django.utils.encoding import python_2_unicode_compatible
 class Beautify_company_jobs(models.Model):
     class Meta:
         db_table='beautify_company_jobs'
-        app_label='web_scrapping'
+        
     beautify_company_id=models.BigIntegerField(primary_key=True)
     company_info_id=models.IntegerField()
     instruction_id=models.IntegerField()
@@ -11,7 +11,7 @@ class Beautify_company_jobs(models.Model):
 class web_internship_jobs(models.Model):
     class Meta:
         db_table='web_internship_jobs'
-        app_label='web_scrapping'
+        
     web_internship_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100,default=None)
     company_info_id=models.CharField(max_length=100,default=None)
@@ -70,7 +70,7 @@ class web_internship_jobs(models.Model):
 class company_jobs(models.Model):
     class Meta:
         db_table='web_company_jobs'
-        app_label='web_scrapping'
+        
     web_company_jobs_id=models.BigIntegerField(primary_key=True)
     job_id=models.CharField(max_length=100,default=None)
     company_info_id=models.CharField(max_length=100,default=None)
