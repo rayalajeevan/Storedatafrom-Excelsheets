@@ -236,6 +236,7 @@ def BeautifyJobs(data):
     #             span_list.append(str(x))
     # for x in span_list:
     #     soup=str(soup).replace(x,"<span class='newLine'><b>{}</b></span>".format(x))
+    soup=soup.prettify(formatter=None)  
     return str(soup)
 def regulardate(date=None):
     date=date.strip()
@@ -419,11 +420,11 @@ def remving_extraSpacesHtmlContent(data):
             if y.name=='br':
                 y.decompose()
     for x in range(10):
-        soup=break_replacer(str(soup))
+        soup=break_replacer(str(soup))  
     return soup    
 
 def break_replacer(data):
-    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;")
+    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;","<br>&nbsp; ","<br>&nbsp; ")
     for x in break_tags:
         tag=''
         a=10

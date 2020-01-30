@@ -45,6 +45,7 @@ class Instructions():
         33:self.rule_no_33,
         34:self.rule_no_34,
         37:self.rule_no_37,
+        38:self.rule_no_38,
         }
         self.instruction_id=instruction_id
         self.html_data=html_data
@@ -896,6 +897,23 @@ class Instructions():
             self.html_data[key]=modified_location
 
         return self.html_data
+    def rule_no_38(self):
+        """
+        Paytm
+        """
+        for key in ['job_description']:    
+            html=self.html_data[key]
+            soup=BeautifulSoup(html,"html.parser")
+            for x in soup.find_all('div'):
+                if "Ø" in x.getText() and len(x.findChildren())<6:
+                    text=x.getText().strip()
+                    for y in x.findChildren():
+                        y.decompose()
+                    x.string=text.replace('Ø','')
+            self.html_data[key]=str(soup)
+        return self.html_data    
+
+
 class InstructionsForAll():
     def __init__(self,job):
         self.html_data=job
