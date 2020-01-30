@@ -414,13 +414,6 @@ def remving_extraSpacesHtmlContent(data):
             if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
                 if  len(x.find_parent('p').getText().strip())!=0:
                     x.find_parent('p').decompose()
-    for x in soup.findAll():
-        enabled=True
-        if x.name in inline_elements or x.name=='br':
-            enabled=False
-        if enabled==True:
-            if (x.nextSibling!=None and x.nextSibling.name=='br') or (x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None and len(x.find_next_sibling(x.nextSibling.name).get_text().strip())==0):
-                 x.find_next_sibling(x.nextSibling.name).decompose()
     for x in soup.findAll('li'):
         for y in x.findChildren():
             if y.name=='br':
@@ -439,7 +432,7 @@ def break_replacer(data):
                 tag=tag+x
             a-=1
             data=data.replace(tag,"<br>")
-            tag=""
+            tag=""        
     return data        
             
         
