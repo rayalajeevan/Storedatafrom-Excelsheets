@@ -905,12 +905,13 @@ class Instructions():
             html=self.html_data[key]
             soup=BeautifulSoup(html,"html.parser")
             for x in soup.find_all('div'):
-                if "Ø" in x.getText() and len(x.findChildren())<6:
-                    text=x.getText().strip()
-                    for y in x.findChildren():
-                        y.decompose()
-                    x.string="<li>"+text.replace('Ø','')+"</li>"
-                    x.name="ul"
+                for a in ("Ø" ,'·'):
+                    if a in x.getText() and len(x.findChildren())<6:
+                        text=x.getText().strip()
+                        for y in x.findChildren():
+                            y.decompose()
+                        x.string="<li>"+text.replace(a,'')+"</li>"
+                        x.name="ul"
             self.html_data[key]=str(soup)
         return self.html_data    
 
