@@ -3,6 +3,11 @@ from django.db import models
 
 
 class WebCompanyJobs(models.Model):
+    class Meta:
+        managed = False
+        db_table = 'web_company_jobs'
+        app_label="production"
+
     web_company_jobs_id = models.BigAutoField(primary_key=True)
     company_info_id = models.BigIntegerField(blank=True, null=True)
     job_id = models.CharField(max_length=1000, blank=True, null=True)
@@ -62,9 +67,7 @@ class WebCompanyJobs(models.Model):
     org_qualifications = models.TextField(blank=True, null=True)
     org_job_roles_responsibilities = models.TextField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'web_company_jobs'
+   
 
 
 class Locations(models.Model):
@@ -94,6 +97,7 @@ class BeautifyCompanyJobs(models.Model):
     keywords=models.CharField(max_length=250)
     attrs=models.CharField(max_length=250)
     apply_link=models.CharField(max_length=250)
+    ul_li_tags=models.CharField(max_length=250)
 
     class Meta:
         managed = False
@@ -163,6 +167,7 @@ class WebInternshipJobs(models.Model):
     class Meta:
         managed = False
         db_table = 'web_internship_jobs'
+        app_label="production"
 class TopCities(models.Model):
     top_cities_id = models.BigAutoField(primary_key=True)
     city_name = models.CharField(max_length=45, blank=True, null=True)
