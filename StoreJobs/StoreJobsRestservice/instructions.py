@@ -933,13 +933,13 @@ class Instructions():
                             x.string="<li>"+text+"</li>"
                             x.name="ul" 
             self.html_data[key]=str(soup)
-        return self.html_data    
+        return self.html_data                    
 
 
 class InstructionsForAll():
     def __init__(self,job):
         self.html_data=job
-    def rule_for_all(self,html_tags=None,keywords=None,attrs=None,apply_link=None):
+    def rule_for_all(self,html_tags=None,keywords=None,attrs=None,apply_link=None,ul_li_tags=None):
         """
         removing elements
         """
@@ -970,6 +970,30 @@ class InstructionsForAll():
                 self.html_data['apply_link']=self.html_data.get('apply_link')+"&"+apply_link+"="+str(self.html_data.get('job_id'))
             else:
                 self.html_data['apply_link']=self.html_data.get('apply_link')+"?"+apply_link+"="+str(self.html_data.get('job_id'))
+        if ul_li_tags!=None:
+            for x in soup.findAll(ul_li_tags['tags']):
+                text=x.getText()
+                if len(x.findChildren())==0 and  len(x.getText().strip())>0:
+                    for key in ul_li_tags.get('li_keys'):
+                        for y in text.split(key):
+                            if text.split(key).index(y)> ul_li_tags.get('index_remover'):
+                                new_string=new_string+"<ul><li>"+y+"</li></ul>"
+                            else:
+                                new_string=y
+                    x.string=""
+                    new_soup=BeautifulSoup(new_string,"html.parser")
+                    x.insert(1,new_soup)
+                elif  len(x.findChildren())>0 and  len(x.getText().strip())>0:
+                    for a in ul_li_tags.get('li_keys'):
+                        print(a)
+                        if a in x.getText() and len(x.findChildren())<ul_li_tags.get('index_remover'):
+                            text=x.getText().strip().replace(a,'')
+                            if len(text)!=0:
+                                for y in x.findChildren():
+                                    y.decompose()
+                                x.string="<li>"+text+"</li>"
+                                x.name="ul"
+                
         for tag in removed_elemnts:
             soup=str(soup)+str(tag)
         self.html_data['job_description']=str(soup)

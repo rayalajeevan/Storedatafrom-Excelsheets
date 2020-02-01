@@ -799,12 +799,12 @@ def refining_job(job):
     Beautify_objects=BeautifyCompanyJobs.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
         for obj in Beautify_objects:
-            if obj.attrs==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None:
+            if obj.attrs==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None and obj.ul_li_tags==None:
                 job =Instructions(obj.instruction_id,job).method_caller()
             else:
                 query={}
-                for column_name in ('html_tags','attrs','keywords','apply_link'):
-                    if column_name=='attrs' and obj.__dict__.get(column_name)!=None:
+                for column_name in ('html_tags','attrs','keywords','apply_link',"ul_li_tags"):
+                    if (column_name=='attrs' or column_name=='ul_li_tags') and obj.__dict__.get(column_name)!=None:
                         query[column_name]=json.loads(obj.__dict__.get(column_name))
                         continue
                     if obj.__dict__.get(column_name)!=None:
@@ -814,8 +814,9 @@ def refining_job(job):
 
     #identifying the internship or jobs
     type=None
-    for value in (job['job_title'],job.get('job_type'),job.get('functional_area')):
+    for value in (job['job_title'],type_job,job.get('functional_area')):
         value=str(value).strip().replace('-',' ')
+
         value=value.replace(',',' ').replace('/',' ').replace(":",' ').replace(';',' ').replace('(',' ').replace(')',' ').replace('@',' ')
         for identifiers in ('intern','intern.','intern,','intern ','internships-','internships','internships.','internships,','internships ','internship-','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','fellowships','fellowships.','fellowships,','fellowships ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ','aperentships','aperentships.','aperentships,','aperentships '):
             if identifiers in [str(x).lower().strip() for x in value.split()] :
