@@ -939,6 +939,11 @@ class Instructions():
 class InstructionsForAll():
     def __init__(self,job):
         self.html_data=job
+    def check_break_tags(self,object_list):
+        for x in object_list:
+            if x.name!='br':
+                return False
+        return True        
     def rule_for_all(self,html_tags=None,keywords=None,attrs=None,apply_link=None,ul_li_tags=None):
         """
         removing elements
@@ -985,7 +990,6 @@ class InstructionsForAll():
                     x.insert(1,new_soup)
                 elif  len(x.findChildren())>0 and  len(x.getText().strip())>0:
                     for a in ul_li_tags.get('li_keys'):
-                        print(a)
                         if a in x.getText() and len(x.findChildren())<ul_li_tags.get('index_remover'):
                             text=x.getText().strip().replace(a,'')
                             if len(text)!=0:
@@ -993,6 +997,25 @@ class InstructionsForAll():
                                     y.decompose()
                                 x.string="<li>"+text+"</li>"
                                 x.name="ul"
+            for x in soup.findAll(ul_li_tags['tags']):
+                text=x.getText()
+                for key in ul_li_tags.get('li_keys'):
+                    if key in text and self.check_break_tags(x.findChildren()):
+                        new_string=""
+                        for text_str in text.split(key):
+                            new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
+                        x.string=''    
+                        for child_tag in x.findChildren():
+                            tag.decompose()
+                        new_soup=BeautifulSoup(new_string,"html.parser")
+                        x.insert(1,new_soup)    
+                    
+
+                
+                                    
+
+
+
                 
         for tag in removed_elemnts:
             soup=str(soup)+str(tag)
