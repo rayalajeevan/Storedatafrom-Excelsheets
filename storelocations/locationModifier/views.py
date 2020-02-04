@@ -204,7 +204,7 @@ def send_mail_to_interns(ip):
     body="Hello Interns\nIMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n For Getting Company Info id Ip is changed...at {time}\n Use this New url http://{ip}:7000/Home/   \n showing Bugs http://{ip}:7000/showbugs/ \n Please Use this urls in Mozila Browser\n IMP NOTE:- EVERYTIME DONT FORGET TO ALLOW NOTOFIACTIONS IN MOZILLA WHEN IP CHANGED\n                             Thank you".format(ip=ip,time=time)
     send_mail('Ip is Changed',body , 'rayalajeevan@gmail.com', ['jeevan.rayala@cogentdatasolutions.in',
         'anusha.upputholla@cogentdatasolutions.in',
-        
+        'rasikapotekar18@gmail.com',
         'santhialapati6@gmail.com',
         'ravalim03@gmail.com',
         'madhu21897@gmail.com',
@@ -275,7 +275,7 @@ font-family: "Segoe UI", sans-serif !important;
                 if value!=None:
                     if key!='web_internship_jobs_id' :
                         if key=='apply_link':
-                            htmlcode=htmlcode+"<a href='{}'>CLICK HERE TO APPLY</a>".format(str(value))
+                            htmlcode=htmlcode+"<a href='{}' target='_blank'>CLICK HERE TO APPLY</a>".format(str(value))
                             continue
                         elif key=='job_description':
                             htmlcode=htmlcode+"<h5><b>"+ key +": </b></h5><div class='job_description'>"+str(value)+"</div>"
