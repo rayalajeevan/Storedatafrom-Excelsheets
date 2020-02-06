@@ -995,7 +995,8 @@ class InstructionsForAll():
                             if len(text)!=0:
                                 for y in x.findChildren():
                                     y.decompose()
-                                x.string="<li>"+text+"</li>"
+                                if text.strip()!='':    
+                                    x.string="<li>"+text+"</li>"
                                 x.name="ul"
             for x in soup.findAll(ul_li_tags['tags']):
                 text=x.getText()
@@ -1003,7 +1004,8 @@ class InstructionsForAll():
                     if key in text and self.check_break_tags(x.findChildren()):
                         new_string=""
                         for text_str in text.split(key):
-                            new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
+                            if text_str.strip()!='':
+                                new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
                         x.string=''    
                         for child_tag in x.findChildren():
                             tag.decompose()
