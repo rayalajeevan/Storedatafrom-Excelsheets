@@ -949,7 +949,7 @@ class InstructionsForAll():
         removing elements
         """
         removed_elemnts=[]
-        for key in ['job_description']:
+        for key in ['job_description','qualifications','job_roles_responsibilities']:
             data=self.html_data[key]
             data=re.sub('\s+',' ',str(data))
             soup=BeautifulSoup(str(data),"html.parser")
