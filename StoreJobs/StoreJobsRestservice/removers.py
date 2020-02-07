@@ -597,10 +597,12 @@ def detect_experience_level(experience,data,job):
             return None
         return  exp_levels
 def detect_experince(data,type="html"):
+    
     if type=='html':
         split_data=(x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data)
         split_data=list((y for x in split_data for y in x.split()))
     else:
+        print(data,"ksjfkjsgkjsgfkjsvhkbfs")
         data=data+" experience"
         split_data=[x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data.split() if x.strip()!='']
     keywords=('years','year')
@@ -622,7 +624,6 @@ def detect_experince(data,type="html"):
     exp=None
     exp_list=list()
     indexer=None
-    # print(index)
     count=0
     year_dict={1:'one',2:'two',3:'three',4:'four',5:'five',6:'six' ,7:'seven',8:'eight',9:'nine',10:'ten',11:'eleven',12:'twelve',13:'thirteen',14:'fourteen',20:'twenty'}
     for  x in index:
@@ -633,7 +634,7 @@ def detect_experince(data,type="html"):
             indexer=4
         try:
             if x==1:
-                string=" ".join(y for y in split_data[0:x+indexer:] if y!='')+" "
+                string=" ".join(y for y in split_data[0:x:] if y!='')+" "
                 enabled=True
                 for y in notMatchedKeywords:
                     if '@AUTOMATION' in string:
@@ -655,7 +656,6 @@ def detect_experince(data,type="html"):
                     index.append(x)
                     continue    
             if enabled==True:
-                # print("ejnfskj")
                 expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
                 search=re.search(expression,string)
                 if search!=None:
@@ -663,7 +663,7 @@ def detect_experince(data,type="html"):
                     exp_list.append(exp)
                 else:    
                     expression=re.compile(r'\d+ - \d+|\d+ to \d+|\d+to\d+|\d+to \d+')
-                    search=re.search(expression,string)      
+                    search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
                     exp_list.append(exp)
@@ -685,9 +685,9 @@ def detect_experince(data,type="html"):
                             exp_list.append(exp)                                            
         except :pass
     if exp==None:
-        return None 
-    exp=str(exp).lower().replace('to','-').replace('~','-')
-    exp_list=[str(x).lower().replace('to','-').replace('~','-') for x in exp_list if str(x).strip()!='']
+        return None
+    exp=exp.replace('to','-').replace(" ",'')
+    exp_list=[str(x).lower().replace('to','-').replace('~','-').replace(' ','') for x in exp_list if str(x).strip()!='']
     for x in exp_list:
         if '-' not in str(exp):
             if '-' in str(x):
@@ -703,7 +703,6 @@ def detect_experince(data,type="html"):
             else:
                 if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
                     exp=x
-
     return str(exp)+" year(s)"
 def refining_job(job):
     # removing Null values
@@ -739,9 +738,9 @@ def refining_job(job):
     split_data=list()
     for tag in soup.find_all():
         if tag.getText().strip()!='':
-            split_data.append(str(tag.getText())+" @AUTOMATION")
-    if job.get('experience')!=None and len(str(job.get('experience')).strip())>15:
-        job['experience']=detect_experince(soup.getText(),"text")
+            split_data.append(str(tag.getText())+" @AUTOMATION")          
+    if job.get('experience')!=None:
+        job['experience']=detect_experince(job.get('experience'),"text")
     else:
         job['experience']=detect_experince(split_data)
     #detect Experince Level
@@ -836,7 +835,8 @@ def refining_job(job):
                 language_detector=detect_langs(str(BeautifulSoup(detect_data,'html.parser').get_text()))
                 break
     except Exception as e:
-        return {'error':{'another_language_job':"Exception Raised at detetcting language {} and Job title is {job}".format(str(e),job=job.get('job_title'))}}
+        if 'No features in text' not in str(e):
+            return {'error':{'another_language_job':"Exception Raised at detetcting language {} and Job title is {job}".format(str(e),job=job.get('job_title'))}}
     if len(language_detector)>1:
         return {'error':{'another_language_job':str(language_detector)}}
     elif len(language_detector)!=0:

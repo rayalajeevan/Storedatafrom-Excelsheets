@@ -949,79 +949,73 @@ class InstructionsForAll():
         removing elements
         """
         removed_elemnts=[]
-        for key in ['job_description','qualifications','job_roles_responsibilities']:
-            data=self.html_data[key]
-            data=re.sub('\s+',' ',str(data))
-            soup=BeautifulSoup(str(data),"html.parser")
-            if html_tags!=None and keywords!=None:
-                for tag in soup.findAll([html_tags.split(',')]):
-                    for item in keywords.split(','):
-                        if tag!=None and  item.lower() in tag.getText().lower():
-                            if tag.parent!=None and len(tag.parent.getText().strip())<=150:
-                                tag.parent.decompose()
-                                removed_elemnts.append(str(tag))
-                            else:
-                                if len(tag.getText())<=50:
-                                    tag.decompose()
+        for key_h in ['job_description','qualifications','job_roles_responsibilities']:
+            data=self.html_data.get(key_h)
+            soup=None
+            if data!=None:
+                data=re.sub('\s+',' ',str(data))
+                soup=BeautifulSoup(str(data),"html.parser")
+                if html_tags!=None and keywords!=None:
+                    for tag in soup.findAll([html_tags.split(',')]):
+                        for item in keywords.split(','):
+                            if tag!=None and  item.lower() in tag.getText().lower():
+                                if tag.parent!=None and len(tag.parent.getText().strip())<=150:
+                                    tag.parent.decompose()
                                     removed_elemnts.append(str(tag))
-            if attrs!=None:
-                for tag,attr in attrs.items():
-                    if soup.find(tag,attr)!=None:
-                        if attrs.get("append"):
-                            removed_elemnts.append(deepcopy(str(soup.find(tag,attr))))
-                        soup.find(tag,attr).decompose()
+                                else:
+                                    if len(tag.getText())<=50:
+                                        tag.decompose()
+                                        removed_elemnts.append(str(tag))
+                if attrs!=None:
+                    for tag,attr in attrs.items():
+                        if soup.find(tag,attr)!=None:
+                            if attrs.get("append"):
+                                removed_elemnts.append(deepcopy(str(soup.find(tag,attr))))
+                            soup.find(tag,attr).decompose()
+                if ul_li_tags!=None:
+                    for x in soup.findAll(ul_li_tags['tags']):
+                        text=x.getText()
+                        if len(x.findChildren())==0 and  len(x.getText().strip())>0:
+                            for key in ul_li_tags.get('li_keys'):
+                                for y in text.split(key):
+                                    if text.split(key).index(y)> ul_li_tags.get('index_remover'):
+                                        new_string=new_string+"<ul><li>"+y+"</li></ul>"
+                                    else:
+                                        new_string=y
+                            x.string=""
+                            new_soup=BeautifulSoup(new_string,"html.parser")
+                            x.insert(1,new_soup)
+                        elif  len(x.findChildren())>0 and  len(x.getText().strip())>0:
+                            for a in ul_li_tags.get('li_keys'):
+                                if a in x.getText() and len(x.findChildren())<ul_li_tags.get('index_remover'):
+                                    text=x.getText().strip().replace(a,'')
+                                    if len(text)!=0:
+                                        for y in x.findChildren():
+                                            y.decompose()
+                                        if text.strip()!='':    
+                                            x.string="<li>"+text+"</li>"
+                                        x.name="ul"
+                    for x in soup.findAll(ul_li_tags['tags']):
+                        text=x.getText()
+                        for key in ul_li_tags.get('li_keys'):
+                            if key in text and self.check_break_tags(x.findChildren()):
+                                new_string=""
+                                for text_str in text.split(key):
+                                    if text_str.strip()!='':
+                                        new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
+                                x.string=''    
+                                for child_tag in x.findChildren():
+                                    tag.decompose()
+                                new_soup=BeautifulSoup(new_string,"html.parser")
+                                x.insert(1,new_soup)            
+
+                if soup!=None:                               
+                    self.html_data[key_h]=str(soup)
         if apply_link!=None and self.html_data.get('job_id')!=None:
             if '?' in self.html_data.get('apply_link'):
                 self.html_data['apply_link']=self.html_data.get('apply_link')+"&"+apply_link+"="+str(self.html_data.get('job_id'))
             else:
                 self.html_data['apply_link']=self.html_data.get('apply_link')+"?"+apply_link+"="+str(self.html_data.get('job_id'))
-        if ul_li_tags!=None:
-            for x in soup.findAll(ul_li_tags['tags']):
-                text=x.getText()
-                if len(x.findChildren())==0 and  len(x.getText().strip())>0:
-                    for key in ul_li_tags.get('li_keys'):
-                        for y in text.split(key):
-                            if text.split(key).index(y)> ul_li_tags.get('index_remover'):
-                                new_string=new_string+"<ul><li>"+y+"</li></ul>"
-                            else:
-                                new_string=y
-                    x.string=""
-                    new_soup=BeautifulSoup(new_string,"html.parser")
-                    x.insert(1,new_soup)
-                elif  len(x.findChildren())>0 and  len(x.getText().strip())>0:
-                    for a in ul_li_tags.get('li_keys'):
-                        if a in x.getText() and len(x.findChildren())<ul_li_tags.get('index_remover'):
-                            text=x.getText().strip().replace(a,'')
-                            if len(text)!=0:
-                                for y in x.findChildren():
-                                    y.decompose()
-                                if text.strip()!='':    
-                                    x.string="<li>"+text+"</li>"
-                                x.name="ul"
-            for x in soup.findAll(ul_li_tags['tags']):
-                text=x.getText()
-                for key in ul_li_tags.get('li_keys'):
-                    if key in text and self.check_break_tags(x.findChildren()):
-                        new_string=""
-                        for text_str in text.split(key):
-                            if text_str.strip()!='':
-                                new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
-                        x.string=''    
-                        for child_tag in x.findChildren():
-                            tag.decompose()
-                        new_soup=BeautifulSoup(new_string,"html.parser")
-                        x.insert(1,new_soup)    
-                    
-
-                
-                                    
-
-
-
-                
-        for tag in removed_elemnts:
-            soup=str(soup)+str(tag)
-        self.html_data['job_description']=str(soup)
         return self.html_data
 
 

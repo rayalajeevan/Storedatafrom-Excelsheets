@@ -140,6 +140,9 @@ class ExcelSheetData(View):
                                 if cdata.get('pin')==None:
                                     if pdata.get('pin')!=None:
                                         cdata['pin']=pdata.get('pin')
+                                if cdata.get('experience')==None:
+                                    if pdata.get('experience')!=None:
+                                        cdata['experience']=pdata.get('experience')
                                 break
                             elif pdata.get('job_title')!=None and  pdata.get('job_id')!=None:
                                 if str(pdata.get('job_id')).strip()==str(cdata.get('job_id')).strip() :
@@ -156,6 +159,9 @@ class ExcelSheetData(View):
                                     if cdata.get('pin')==None:
                                         if pdata.get('pin')!=None:
                                             cdata['pin']=pdata.get('pin')
+                                    if cdata.get('experience')==None:
+                                        if pdata.get('experience')!=None:
+                                            cdata['experience']=pdata.get('experience')       
                                     break
 
                     joblist=childList

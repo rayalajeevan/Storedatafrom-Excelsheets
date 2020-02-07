@@ -434,20 +434,9 @@ def raiseBug(request):
         for chunk in excelsheets.chunks():
             fileread.write(chunk)
         fileread.close()
-    jobsDel=Web_company_jobs.objects.filter(company_info_id=cinfoid)
-    interDel=Web_internships_jobs.objects.filter(company_info_id=cinfoid)
-    for obj in jobsDel:
-        obj.delete()
-    for obj in interDel:
-        obj.delete()
-    try:
-        elastic_reserch=requests.get('http://10.80.0.98:8080/gradsiren-jobs/dumpallscrapingjobstoes')
-        if elastic_reserch.status_code==200:
-            return bugList(request)
-        else:
-            return HttpResponse("Failed Elastic Search Updation But Bug Is raised !"+elastic_reserch.status_code)
-    except:
-        return bugList(request)
+    jobsDel=Web_company_jobs.objects.filter(company_info_id=cinfoid).delete()
+    interDel=Web_internships_jobs.objects.filter(company_info_id=cinfoid).delete()
+    return bugList(request)
 def bugList(request):
     dic={}
     if request.POST.get('infoid') != None or request.POST.get('bugid') != None :
