@@ -50,7 +50,6 @@ class StoreJobsdata(APIView):
                 continue
             try:
                 if data.get('error')==None:
-                    print(response_list)
                     if data.get('type')=="INI":
                         obj=checking_duplicates(data.get('job'))
                         if obj==0:
@@ -108,7 +107,8 @@ def checking_duplicates(job,type='INI'):
             return 0      
         else:
             for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
-                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70:
+                lev=Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70
+                if lev>70:
                     if   parser.parse(job.get('posted_date').replace("00:00:00","00:05:00")).date()> parser.parse(str(obj.posted_date).replace("00:00:00","00:05:00")).date():
                         obj.posted_date=job.get('posted_date')
                         obj.scrapped_date=datetime.datetime.now()
@@ -124,7 +124,8 @@ def checking_duplicates(job,type='INI'):
             return 0  
         else:
             for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
-                 if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),job.get('job_description'))>70:
+                lev=Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))
+                if lev>70:
                     if   parser.parse(job.get('posted_date').replace("00:00:00","00:05:00")).date()> parser.parse(str(obj.posted_date).replace("00:00:00","00:05:00")).date():
                         obj.posted_date=job.get('posted_date')
                         obj.save()
