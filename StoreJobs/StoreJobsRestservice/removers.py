@@ -686,7 +686,7 @@ def detect_experince(data,type="html"):
         except :pass
     if exp==None:
         return None
-    exp=exp.replace('to','-').replace(" ",'')
+    exp=str(exp).replace('to','-').replace(" ",'')
     exp_list=[str(x).lower().replace('to','-').replace('~','-').replace(' ','') for x in exp_list if str(x).strip()!='']
     for x in exp_list:
         if '-' not in str(exp):

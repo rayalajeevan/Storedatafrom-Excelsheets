@@ -17,6 +17,7 @@ from copy import deepcopy
 from .utils import Levenshtein,Soup
 import time
 import datetime
+from dateutil import parser
 
 
 
@@ -26,6 +27,7 @@ import datetime
 class StoreJobsdata(APIView):
     @csrf_exempt
     def post(self,request):
+        t1=time.time()
         try:
             scrapped_data_dict = JSONParser().parse(request)
         except Exception as exc:
@@ -48,8 +50,9 @@ class StoreJobsdata(APIView):
                 continue
             try:
                 if data.get('error')==None:
+                    print(response_list)
                     if data.get('type')=="INI":
-                        obj=checking_duplicates(scrapped_data,data.get('job'))
+                        obj=checking_duplicates(data.get('job'))
                         if obj==0:
                             serializer=WebInternshipJobsSerilizer(data=data.get('job'))
                             inserted_internship_jobs_count+=1
@@ -64,7 +67,7 @@ class StoreJobsdata(APIView):
                             continue
 
                     else:
-                        obj=checking_duplicates(scrapped_data,data.get('job'),'JOB')
+                        obj=checking_duplicates(data.get('job'),'JOB')
                         if obj==0:
                             serializer=WebCompanyJobsSerilizer(data=data.get('job'))
                             inserted_jobs_count+=1
@@ -93,35 +96,39 @@ class StoreJobsdata(APIView):
                 print("2nd",str(exception))
                 exception_count+=1
                 response_list.append({"status":"Failed...","desciption":str(exception)+" from storig  job",'job_title':scrapped_data.get('job_title')})
-        return JsonResponse({"status":"succses","response":response_list,"inserted_job_count":inserted_jobs_count,"interships_count":inserted_internship_jobs_count,"scrapped_count":scrapped_count,"exception_count":exception_count,"dupliacte_count":duplicated_count})        
-def checking_duplicates(scrapped_data,job,type='INI'):
+        t2=time.time()        
+        t=t2-t1
+        return JsonResponse({"status":"succses","response":response_list,"inserted_job_count":inserted_jobs_count,"interships_count":inserted_internship_jobs_count,"scrapped_count":scrapped_count,"exception_count":exception_count,"dupliacte_count":duplicated_count,"time_taken":t})        
+def checking_duplicates(job,type='INI'):
     if type=="INI":
-        if scrapped_data.get('posted_date')==None:
+        if job.get('posted_date')==None:
             for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],deleted_status=None):
-              if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(scrapped_data.get('job_description')))>70:
+              if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70:
                   return 1
             return 0      
         else:
-            for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],posted_date=job['posted_date'],deleted_status=None):
-                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(scrapped_data.get('job_description')))>70:
-                    if  scrapped_data.get('posted_date')> obj.posted_date:
-                        obj.posted_date=scrapped_data.get('posted_date')
+            for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
+                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70:
+                    if   parser.parse(job.get('posted_date').replace("00:00:00","00:05:00")).date()> parser.parse(str(obj.posted_date).replace("00:00:00","00:05:00")).date():
+                        obj.posted_date=job.get('posted_date')
+                        obj.scrapped_date=datetime.datetime.now()
                         obj.save()
                         return 3
                     return 1
             return 0  
     else:
-        if scrapped_data.get('posted_date')==None:
+        if job.get('posted_date')==None:
             for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
-                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(scrapped_data.get('job_description')))>70:
+                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70:
                     return 1
             return 0  
         else:
-            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],posted_date=job['posted_date'],deleted_status=None):
-                 if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),scrapped_data.get('job_description'))>70:
-                    if  scrapped_data.get('posted_date')> obj.posted_date:
-                        obj.posted_date=scrapped_data.get('posted_date')
+            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
+                 if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),job.get('job_description'))>70:
+                    if   parser.parse(job.get('posted_date').replace("00:00:00","00:05:00")).date()> parser.parse(str(obj.posted_date).replace("00:00:00","00:05:00")).date():
+                        obj.posted_date=job.get('posted_date')
                         obj.save()
+                        obj.scrapped_date=datetime.datetime.now()
                         return 3
                     return 1
             return 0  
