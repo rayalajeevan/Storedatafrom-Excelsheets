@@ -11,11 +11,18 @@ import json
 from rest_framework import status
 from StoreJobsRestservice.instructions import Instructions,InstructionsForAll
 from StoreJobsRestservice.removers import refining_job,HtmlParser,validatos,locationIdentifier
+from fuzzywuzzy import fuzz
 from StoreJobsRestservice.models import WebCompanyJobs,WebInternshipJobs
 from copy import deepcopy
+from .utils import Levenshtein,Soup
 import time
+import datetime
+
+
+
 
 # Create your views here.
+
 class StoreJobsdata(APIView):
     @csrf_exempt
     def post(self,request):
@@ -29,6 +36,7 @@ class StoreJobsdata(APIView):
         inserted_internship_jobs_count=0
         duplicated_count=0
         exception_count=0 
+        updated_jobs=0
         scrapped_count=len(scrapped_data_dict.get('data'))  
         for  scrapped_data in scrapped_data_dict.get('data'):
             try:
@@ -41,23 +49,34 @@ class StoreJobsdata(APIView):
             try:
                 if data.get('error')==None:
                     if data.get('type')=="INI":
-                        if checking_duplicates(scrapped_data,data.get('job'))!=1:
+                        obj=checking_duplicates(scrapped_data,data.get('job'))
+                        if obj==0:
                             serializer=WebInternshipJobsSerilizer(data=data.get('job'))
                             inserted_internship_jobs_count+=1
                             response_list.append({"status":"succses",'job_title':scrapped_data.get('job_title')})
-                        else:
+                        elif obj==1:
                             response_list.append({"status":"Failed...","desciption":"duplicated internhip job",'job_title':scrapped_data.get('job_title')})
                             duplicated_count+=1
                             continue
+                        else:
+                            response_list.append({"status":"Succses","desciption":"posted date updated",'job_title':scrapped_data.get('job_title')})
+                            updated_jobs+=1
+                            continue
+
                     else:
-                        if checking_duplicates(scrapped_data,data.get('job'),'JOB')!=1:
+                        obj=checking_duplicates(scrapped_data,data.get('job'),'JOB')
+                        if obj==0:
                             serializer=WebCompanyJobsSerilizer(data=data.get('job'))
                             inserted_jobs_count+=1
                             response_list.append({"status":"succses",'job_title':scrapped_data.get('job_title')})
-                        else:
+                        elif obj==1:
                             response_list.append({"status":"Failed...","desciption":"duplicated  job",'job_title':scrapped_data.get('job_title')})
                             duplicated_count+=1
                             continue
+                        else:
+                            response_list.append({"status":"Succses","desciption":"posted date updated",'job_title':scrapped_data.get('job_title')})
+                            updated_jobs+=1
+                            continue 
                 else:
                     print("3rd",str(data.get('error')))
                     exception_count+=1
@@ -78,26 +97,34 @@ class StoreJobsdata(APIView):
 def checking_duplicates(scrapped_data,job,type='INI'):
     if type=="INI":
         if scrapped_data.get('posted_date')==None:
-            if len(WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],job_id=job.get('job_id'),apply_link=job['apply_link'],deleted_status=None))==0:
-                return 0
-            else:
-                return 1
+            for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],deleted_status=None):
+              if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(scrapped_data.get('job_description')))>70:
+                  return 1
+            return 0      
         else:
-            if len(WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],job_id=job.get('job_id'),apply_link=job['apply_link'],posted_date=job['posted_date'],deleted_status=None))==0:
-                return 0
-            else:
-                return 1
+            for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],posted_date=job['posted_date'],deleted_status=None):
+                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(scrapped_data.get('job_description')))>70:
+                    if  scrapped_data.get('posted_date')> obj.posted_date:
+                        obj.posted_date=scrapped_data.get('posted_date')
+                        obj.save()
+                        return 3
+                    return 1
+            return 0  
     else:
         if scrapped_data.get('posted_date')==None:
-            if len(WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],job_id=job.get('job_id'),apply_link=job['apply_link'],deleted_status=None))==0:
-                return 0
-            else:
-                return 1
+            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
+                if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(scrapped_data.get('job_description')))>70:
+                    return 1
+            return 0  
         else:
-            if len(WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],job_id=job.get('job_id'),apply_link=job['apply_link'],posted_date=job['posted_date'],deleted_status=None))==0:
-                return 0
-            else:
-                return 1
+            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],posted_date=job['posted_date'],deleted_status=None):
+                 if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),scrapped_data.get('job_description'))>70:
+                    if  scrapped_data.get('posted_date')> obj.posted_date:
+                        obj.posted_date=scrapped_data.get('posted_date')
+                        obj.save()
+                        return 3
+                    return 1
+            return 0  
 def showjob(request,*args,**kwrgs):
     job={}
     if request.method=='GET':
