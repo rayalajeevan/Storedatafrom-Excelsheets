@@ -933,7 +933,7 @@ class Instructions():
                             x.string="<li>"+text+"</li>"
                             x.name="ul" 
             self.html_data[key]=str(soup)
-        return self.html_data                    
+        return self.html_data     
 
 
 class InstructionsForAll():
@@ -985,9 +985,13 @@ class InstructionsForAll():
                             x.string=""
                             new_soup=BeautifulSoup(new_string,"html.parser")
                             x.insert(1,new_soup)
-                        elif  len(x.findChildren())>0 and  len(x.getText().strip())>0:
+                        elif  len(x.findChildren())>0 and  len(x.getText().strip())>0:                                
                             for a in ul_li_tags.get('li_keys'):
                                 if a in x.getText() and len(x.findChildren())<ul_li_tags.get('index_remover'):
+                                    if ul_li_tags.get('removebla_tags_in_children')!=None:
+                                        for child_tag in x.findChildren():
+                                            if child_tag.name in ul_li_tags.get('removebla_tags_in_children'):
+                                                child_tag.decompose()
                                     text=x.getText().strip().replace(a,'')
                                     if len(text)!=0:
                                         for y in x.findChildren():
@@ -998,6 +1002,11 @@ class InstructionsForAll():
                     for x in soup.findAll(ul_li_tags['tags']):
                         text=x.getText()
                         for key in ul_li_tags.get('li_keys'):
+                            if ul_li_tags.get('removebla_tags_in_children')!=None:
+                                for child_tag in x.findChildren():
+                                    if child_tag.name in ul_li_tags.get('removebla_tags_in_children'):
+                                        child_tag.decompose()
+                            print(self.check_break_tags(x.findChildren()))            
                             if key in text and self.check_break_tags(x.findChildren()):
                                 new_string=""
                                 for text_str in text.split(key):
@@ -1007,7 +1016,8 @@ class InstructionsForAll():
                                 for child_tag in x.findChildren():
                                     tag.decompose()
                                 new_soup=BeautifulSoup(new_string,"html.parser")
-                                x.insert(1,new_soup)            
+                                x.insert(1,new_soup) 
+
 
                 if soup!=None:                               
                     self.html_data[key_h]=str(soup)
