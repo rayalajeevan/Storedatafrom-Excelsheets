@@ -106,7 +106,7 @@ def checking_duplicates(job,type='INI'):
                   return 1
             return 0      
         else:
-            for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
+            for obj in WebInternshipJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],deleted_status=None):
                 lev=Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70
                 if lev>70:
                     if   parser.parse(job.get('posted_date').replace("00:00:00","00:05:00")).date()> parser.parse(str(obj.posted_date).replace("00:00:00","00:05:00")).date():
@@ -118,12 +118,12 @@ def checking_duplicates(job,type='INI'):
             return 0  
     else:
         if job.get('posted_date')==None:
-            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
+            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],deleted_status=None):
                 if Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))>70:
                     return 1
             return 0  
         else:
-            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],apply_link=job['apply_link'],deleted_status=None):
+            for obj in WebCompanyJobs.objects.filter(company_info_id=job['company_info_id'],job_title=job['job_title'],job_location=job['job_location'],deleted_status=None):
                 lev=Levenshtein.get_similarty_percentage(Soup.text(obj.job_description),Soup.text(job.get('job_description')))
                 if lev>70:
                     if   parser.parse(job.get('posted_date').replace("00:00:00","00:05:00")).date()> parser.parse(str(obj.posted_date).replace("00:00:00","00:05:00")).date():

@@ -305,7 +305,7 @@ def validatos(date,*args,**kwrgs):
         if 'week' in date.lower() or 'day' in date.lower() or 'year' in date.lower() or 'minutes' in date.lower() or 'hour' in date.lower() or 'month' in date.lower() or 'hr' in date.lower() or 'min' in date.lower() or 'sec' in date.lower() or " ".join(re.findall("[a-zA-Z]+",date)).strip() in ('d','ds','w','ws','m','ms'):
             datestr=regulardate(str(date))
             return str(datestr)
-        elif 'posted now' in date.lower() or 'few hours' in date.lower():
+        elif 'posted now' in date.lower() or 'few hours' in date.lower() or 'new' in date.lower().strip():
             return datetime.datetime.now()
         else:
             try:
@@ -459,6 +459,12 @@ def HtmlParser(data,job={}):
                 tag.name='b'
         except AttributeError:
             continue
+    for tag in soup.findAll('ul'): 
+        if any(x.name!='li' for x in tag.findChildren()):
+            continue
+        if len(tag.findChildren('li'))>0 and len(tag.findChildren('li'))<=1:
+            if tag.findChildren('li')[0].getText().strip()=='•':
+                tag.decompose()
     datarefineer=('primary_location',
                 'recruiter_name',
                 'job_id')
@@ -731,9 +737,10 @@ def refining_job(job):
     string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications','job_requirements')and value!=None )
     soup=BeautifulSoup(string,'html.parser')
     type_job=detect_job_type(job.get('job_type'),soup.getText())
+    type_job1=None
     if type_job!=None:
-        type_job=json.dumps({"jobType":[type_job,]})
-    job['job_type']=type_job
+        type_job1=json.dumps({"jobType":[type_job,]})
+    job['job_type']=type_job1
     #detect Experince
     split_data=list()
     for tag in soup.find_all():

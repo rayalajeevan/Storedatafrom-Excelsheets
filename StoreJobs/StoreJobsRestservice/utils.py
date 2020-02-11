@@ -41,3 +41,125 @@ class Soup:
     @staticmethod
     def text(data):       
         return re.sub('\s+',' ',BeautifulSoup(data,"html.parser").getText())
+seq1="""<span>
+</span>
+
+<span>
+ Role Designation- Technology Analyst
+</span>
+<br>
+<br>
+<span>
+ Responsibilities-
+ <ul>
+<li>
+   Ensure effective Design, Development, Validation and Support activities in line with client needs and architectural requirements.,
+  </li>
+</ul>
+<ul>
+<li>
+   Ensure continual knowledge management.,
+  </li>
+</ul>
+<ul>
+<li>
+   Adherence to the organizational guidelines and processes
+  </li>
+</ul>
+</span>
+<br>
+<br>
+<span>
+ Technical and Professional Requirements- Minimum experience of 4 years required in java.,Should have worked on java development/implementation project.,Knowledge of Spring is an absolute must.,Location of posting is subjected to business requirements.
+</span>
+<br>
+<br>
+<p>
+<b>
+  Educational Requirements:
+ </b>
+<span>
+  BE
+ </span>
+<br>
+<b>
+  Service Line:
+ </b>
+<span>
+  Enterprise Package Application Services
+ </span>
+</p>"""
+seq2="""<span>
+</span>
+
+<span>
+ Role Designation- Technology Analyst
+</span>
+<br>
+<br>
+<span>
+ Responsibilities-
+ <ul>
+<li>
+   Ensure effective Design, Development, Validation and Support activities in line with client needs and architectural requirements.,
+  </li>
+</ul>
+<ul>
+<li>
+   Ensure continual knowledge management.,
+  </li>
+</ul>
+<ul>
+<li>
+   Adherence to the organizational guidelines and processes
+  </li>
+</ul>
+</span>
+<br>
+<br>
+<span>
+ Technical and Professional Requirements-
+ <ul>
+<li>
+   Required minimum 4 years of experience in Java, J2EE, Spring, Springboot, Hibernate,Microservices, Webservices, full stack developer,
+  </li>
+</ul>
+<ul>
+<li>
+   Able to understand SDLC process,
+  </li>
+</ul>
+<ul>
+<li>
+   Extensive experience designing and,developing RESTful APIs,
+  </li>
+</ul>
+<ul>
+<li>
+   Extensive coding experience with either Java/J2EE/Spring or Node JS,
+  </li>
+</ul>
+<ul>
+<li>
+   Location of posting is driven by business requirements
+  </li>
+</ul>
+</span>
+<br>
+<br>
+<p>
+<b>
+  Educational Requirements:
+ </b>
+<span>
+  BE , BTech , MCA , MTech , MSc
+ </span>
+<br>
+<b>
+  Service Line:
+ </b>
+<span>
+  Unit-Engineering services
+ </span>
+</p>"""
+print(Levenshtein.get_similarty_percentage(Soup.text(seq1),Soup.text(seq2)))
