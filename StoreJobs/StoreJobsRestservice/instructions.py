@@ -1042,12 +1042,3 @@ class InstructionsForAll():
             else:
                 self.html_data['apply_link']=self.html_data.get('apply_link')+"?"+apply_link+"="+str(self.html_data.get('job_id'))
         return self.html_data
-
-
-
-# data=""""""
-# job={'job_description':data}
-# incobj=Instructions(1000,job)
-# opr=open(r'D:\web.html','w')
-# opr.write(incobj.rule_for_all(tags='tr,',keywords='Division:,Project Location(s):,Minimum Years Experience:,Travel Involved:,Job Type:,Job Classification:,Education:,Job Family:,Compensation:',attrs=None)['job_description'])
-# opr.close()
