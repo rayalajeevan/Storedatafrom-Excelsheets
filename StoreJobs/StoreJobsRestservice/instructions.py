@@ -525,13 +525,6 @@ class Instructions():
                 for x in replacer_data:
                     soup=str(soup).replace(x,'').replace("**",'').replace('https://bit.ly/2RzuuZW','')
             self.html_data[key]=str(soup)
-            job_id=self.html_data.get('job_id','')
-            if "CLOSE" not in job_id:
-                job_id =job_id+"CLOSE"
-            id=re.findall(r'\|(.+?)CLOSE',job_id)
-            if id!=[]:
-                self.html_data['job_id']=job_id.replace(id[0],'')
-            self.html_data['job_id']=self.html_data['job_id'].replace('|','').replace("CLOSE",'')
         return self.html_data
     def rule_no_15(self):
         """
@@ -996,13 +989,16 @@ class InstructionsForAll():
                                             if child_tag.name in ul_li_tags.get('removebla_tags_in_children'):
                                                 child_tag.decompose()
                                     text=x.getText().strip().replace(a,'')
-                                    # if len(text)!=0:
-                                    #     for y in x.findChildren():
-                                    #         print(y)
-                                    #         y.decompose()
-                                    #     if text.strip()!='':    
-                                    #         x.string="<li>"+text+"</li>"
-                                    #     x.name="ul"
+                                    new_string=''
+                                    if len(text.strip())!=0:
+                                        for y in x.findChildren():
+                                            y.decompose()
+                                        if text.strip()!='' and len(text)>1:    
+                                            new_string=new_string+"<li>"+text+"</li>"
+                                        new_soup=BeautifulSoup(new_string,'html.parser')
+                                        x.string=''   
+                                        x.insert(1,new_soup) 
+                                        x.name="ul"
                     for x in soup.findAll(ul_li_tags['tags']):
                         text=x.getText()
                         for key in ul_li_tags.get('li_keys'):        
@@ -1038,9 +1034,6 @@ class InstructionsForAll():
                                                     tag.decompose()
                                                 new_soup=BeautifulSoup(new_string,"html.parser")
                                                 x.insert(1,new_soup)
-
-                                                        
-
                 if soup!=None:                               
                     self.html_data[key_h]=str(soup)
         if apply_link!=None and self.html_data.get('job_id')!=None:

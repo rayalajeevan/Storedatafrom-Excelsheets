@@ -494,6 +494,9 @@ def HtmlParser(data,job={}):
     for tag in soup.findAll(True):
         tag.attrs=None
     soup=BeautifulSoup(str(soup),'html.parser')
+    for x in soup.findAll('li'):
+        if x.getText().strip()=='':
+            x.decompose()
     soup=replacer(str(soup))
     return remving_extraSpacesHtmlContent(BeautifyJobs(str(soup)))
 def refineColumns(job):
