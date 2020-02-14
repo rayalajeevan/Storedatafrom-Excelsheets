@@ -424,7 +424,7 @@ def remving_extraSpacesHtmlContent(data):
     return soup    
 
 def break_replacer(data):
-    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;","<br>&nbsp; ","<br>&nbsp; ",r"<br>\n<br>")
+    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;","<br>&nbsp; ","<br>&nbsp; ","<br>\n<br>")
     for x in break_tags:
         tag=''
         a=10
