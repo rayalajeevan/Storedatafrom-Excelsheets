@@ -936,7 +936,14 @@ class InstructionsForAll():
         self.html_data=job
     def check_break_tags(self,object_list):
         for x in object_list:
-            if x.name!='br':
+            if x.name!='br' and x.name!='tag':
+                return False
+        return True
+    def check_break_tags_and_other(self,object_list,tags):
+        if tags==None or len(tags)==0:
+            return False
+        for x in object_list:
+            if x.name not in [y for z in tags for y in z.keys()]:
                 return False
         return True        
     def rule_for_all(self,html_tags=None,keywords=None,attrs=None,apply_link=None,ul_li_tags=None):
@@ -968,18 +975,37 @@ class InstructionsForAll():
                                 removed_elemnts.append(deepcopy(str(soup.find(tag,attr))))
                             soup.find(tag,attr).decompose()
                 if ul_li_tags!=None:
+                    append_list=list()
                     for x in soup.findAll(ul_li_tags['tags']):
                         text=x.getText()
                         for key in ul_li_tags.get('li_keys'):        
+                            if key in text and self.check_break_tags_and_other(x.findChildren(),ul_li_tags.get('removble_tags_not_text')):    
+                                for tag_text in  ul_li_tags.get('removble_tags_not_text'):
+                                    for child_tag in x.findChildren(list(tag_text.keys())[0]):
+                                        if child_tag!=None:
+                                            if list(tag_text.values())[0]:
+                                                child_tag.decompose()
+                                            else:
+                                                if len(child_tag.getText().strip())==0:
+                                                    child_tag.decompose()
+                                                    continue
+                                                child_tag.name="tag"
+                                                append_list.append(child_tag.getText().strip())
+                                                child_tag.string=key+" "+child_tag.getText().strip()
+                            text=x.getText()                   
                             if key in text and self.check_break_tags(x.findChildren()):
                                 new_string=""
                                 if ul_li_tags.get('removebla_tags_in_children')!=None:
                                     for child_tag in x.findChildren():
                                         if child_tag.name in ul_li_tags.get('removebla_tags_in_children'):
-                                            child_tag.decompose() 
+                                            child_tag.decompose()      
                                 for text_str in text.split(key):
                                     if text_str.strip()!='':
-                                        new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
+                                        print("hello1",append_list,text_str)
+                                        if text_str.strip() in append_list:
+                                            new_string=new_string+"<p><b>"+text_str+"<b></p>"
+                                        else:    
+                                            new_string=new_string+"<ul><li>"+text_str+"</li></ul>"
                                 x.string=''    
                                 for child_tag in x.findChildren():
                                     tag.decompose()
@@ -1034,7 +1060,8 @@ class InstructionsForAll():
                                         x.string=''   
                                         x.insert(1,new_soup) 
                                         x.name="ul"
-                    
+                    for text in append_list:
+                        pass
                 if soup!=None:                               
                     self.html_data[key_h]=str(soup)
         if apply_link!=None and self.html_data.get('job_id')!=None:

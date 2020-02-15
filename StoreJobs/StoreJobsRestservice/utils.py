@@ -1,10 +1,15 @@
 from bs4 import BeautifulSoup
 import re
+from fuzzywuzzy import fuzz
+import copy as cp
 class Levenshtein:
     @staticmethod
     def get_similarty_percentage(seq1, seq2):
         seq1=seq1.lower()
         seq2=seq2.lower()
+        j12=cp.copy(seq1)
+        j13=cp.copy(seq2)
+        return fuzz.WRatio(j12,j13)
         n,m=len(seq1),len(seq2)
         if n==0:
             return m
@@ -36,7 +41,7 @@ class Levenshtein:
         tot=n+m
         res=float((tot-lev)/tot)
         result=res*100
-        return result
+        return result,fuzz.WRatio(j12,j13)
 class Soup:
     @staticmethod
     def text(data):       
