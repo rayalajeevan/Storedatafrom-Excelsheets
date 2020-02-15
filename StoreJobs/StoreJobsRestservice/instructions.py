@@ -5,7 +5,11 @@ from fuzzywuzzy import fuzz
 import re
 import json
 from copy import deepcopy
+
 class Instructions():
+    """
+      Instructions for particular company
+    """
     def __init__(self,instruction_id,html_data):
         self.instructions_dictionary={
         36:self.rule_no_36,
