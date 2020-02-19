@@ -261,8 +261,6 @@ class Instructions():
             for p in soup.findAll(['P','article']):
                 if "Job ID:" in p.get_text().strip() or 'Location:' in p.get_text().strip() or 'Organization:' in p.get_text().strip() or 'Job Type:' in p.get_text().strip() or 'Department:' in p.getText().strip() or 'Position' in p.getText().strip() or 'Job Family:' in p.getText().strip() or 'Position Title:' in p.getText().strip():
                     if p.name=='p':
-                        if 'Position Title:' in p.getText().strip():
-                            print("hello")
                         if len(p.getText.strip())<=100:
                             p.decompose()
                     else:
@@ -979,6 +977,10 @@ class InstructionsForAll():
                                 removed_elemnts.append(deepcopy(str(soup.find(tag,attr))))
                             soup.find(tag,attr).decompose()
                 if ul_li_tags!=None:
+                    if ul_li_tags.get('replace')!=None:
+                        for keyword_dict in ul_li_tags.get('replace'):
+                            for key,value in keyword_dict.items():
+                                soup=BeautifulSoup(str(soup).replace(key,value),"html.parser")  
                     append_list=list()
                     for x in soup.findAll(ul_li_tags['tags']):
                         text=x.getText()
@@ -1005,7 +1007,7 @@ class InstructionsForAll():
                                             child_tag.decompose()      
                                 for text_str in text.split(key):
                                     if text_str.strip()!='':
-                                        print("hello1",append_list,text_str)
+    
                                         if text_str.strip() in append_list:
                                             new_string=new_string+"<p><b>"+text_str+"<b></p>"
                                         else:    
