@@ -1076,7 +1076,8 @@ class InstructionsForAll():
                                     for child in tag.findChildren():
                                         child.decompose()
                                     tag.name='p'
-                                    tag.string=text    
+                                    new_soup=BeautifulSoup("<b>{}</b>".format(text),"html.parser")
+                                    tag.insert(0,new_soup)
                 if soup!=None:                               
                     self.html_data[key_h]=str(soup)
         if apply_link!=None and self.html_data.get('job_id')!=None:
