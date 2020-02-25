@@ -51,6 +51,7 @@ class Instructions():
         37:self.rule_no_37,
         38:self.rule_no_38,
         39:self.rule_no_39,
+        40:self.rule_no_40,
         }
         self.instruction_id=instruction_id
         self.html_data=html_data
@@ -494,35 +495,6 @@ class Instructions():
                     replacer=re.findall(r'Have questions about(.+?)today!',str(span))
                     if replacer!=[]:
                         replacer_data.append("Have questions about"+replacer[0]+"today!")
-            for b in soup.findAll(['b','span']):
-                if 'Shifts:' in b.getText():
-                    if len(b.getText().strip())<=25:
-                        b.decompose()
-                if 'night' in b.getText().strip() or 'Morning' in b.getText().strip() or 'Evening' in b.getText().strip() or 'Weekend' in b.getText().strip():
-                    if len(b.getText().strip())<=100:
-                        b.decompose()
-                if 'Location' in b.getText().strip() and b.name=='b':
-                    if b.findNext('br')!=None:
-                        if b.findNext('br').findNext('span')!=None:
-                            if len( b.findNext('br').findNext('span')) <=100:
-                                   b.findNext('br').findNext('span').decompose()
-                            if len(b.getText().strip())<=50:
-                                b.decompose()
-                if 'Salary' in b.getText().strip() and b.name=='b':
-                    if b.findNext('br')!=None:
-                        if b.findNext('br').findNext('span')!=None:
-                            if len( b.findNext('br').findNext('span')) <=100:
-                                   b.findNext('br').findNext('span').decompose()
-                            if len(b.getText().strip())<=50:
-                                b.decompose()
-            for title in soup.findAll():
-                if fuzz.ratio(title.getText().strip(),self.html_data.get('job_title',''))>=50:
-                    title.decompose()
-                # if title.name=='br':
-                #     if title.findNext().name=='br':
-                #         title.findNext().decompose()
-                #         title.decompose()
-
             if len(replacer_data)>0:
                 for x in replacer_data:
                     soup=str(soup).replace(x,'').replace("**",'').replace('https://bit.ly/2RzuuZW','')
@@ -929,10 +901,21 @@ class Instructions():
                             x.name="ul" 
             self.html_data[key]=str(soup)
         return self.html_data
-
-
-
-
+    def rule_no_40(self):
+        """
+        geojit
+        """
+        for key in ['job_description']:
+            html=self.html_data[key]
+            soup=BeautifulSoup(html,"html.parser")
+            for li_tag in soup.findAll('li'):
+                if li_tag.findChildren('div')!=None and len(li_tag.findChildren('div'))>=2:
+                    text=li_tag.getText()
+                    for child_tag in li_tag.findChildren('div'):
+                        child_tag.decompose()
+                    li_tag.string=text
+            self.html_data[key]=str(soup)        
+        return self.html_data    
 class InstructionsForAll():
     def __init__(self,job):
         self.html_data=job
