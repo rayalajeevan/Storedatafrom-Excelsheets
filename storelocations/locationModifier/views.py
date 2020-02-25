@@ -405,6 +405,7 @@ def GetCred(request):
         list=[
         {'username':'jeevan','password':'jeevan@123'},
         {'username':'anusha','password':'AnushA@123'},
+        {'username':'RavaliM','password':'Ravali@123'}
        
         ]
         return JsonResponse({'data':list})

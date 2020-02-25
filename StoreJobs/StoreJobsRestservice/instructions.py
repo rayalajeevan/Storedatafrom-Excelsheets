@@ -1068,6 +1068,15 @@ class InstructionsForAll():
                                         x.name="ul"
                     for text in append_list:
                         pass
+                    if ul_li_tags.get('keyword_not_in_li')!=None:
+                        for keyword in  ul_li_tags.get('keyword_not_in_li'):
+                            for tag in soup.findAll('ul'):
+                                if tag.getText().strip()==keyword:
+                                    text=tag.getText()
+                                    for child in tag.findChildren():
+                                        child.decompose()
+                                    tag.name='p'
+                                    tag.string=text    
                 if soup!=None:                               
                     self.html_data[key_h]=str(soup)
         if apply_link!=None and self.html_data.get('job_id')!=None:
