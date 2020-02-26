@@ -465,6 +465,12 @@ def HtmlParser(data,job={}):
         if len(tag.findChildren('li'))>0 and len(tag.findChildren('li'))<=1:
             if tag.findChildren('li')[0].getText().strip()=='•':
                 tag.decompose()
+    for tag in soup.findAll('ul'):          
+        if tag.findChildren('ul')!=None and len(tag.findChildren('ul'))!=0:
+            tag.name='p'
+    for tag in soup.findAll('li'):          
+        if tag.findChildren('ul')!=None and len(tag.findChildren('ul'))!=0:
+            tag.name='p'        
     datarefineer=('primary_location',
                 'recruiter_name',
                 'job_id')
