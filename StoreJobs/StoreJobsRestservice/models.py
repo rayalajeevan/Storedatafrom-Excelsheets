@@ -91,7 +91,7 @@ class Locations(models.Model):
         db_table = 'locations'
 class BeautifyCompanyJobs(models.Model):
     beautify_company_id = models.AutoField(primary_key=True)
-    company_info_id = models.IntegerField()
+    company_info_id = models.CharField(max_length=50)
     instruction_id = models.IntegerField()
     html_tags=models.CharField(max_length=250)
     keywords=models.CharField(max_length=250)
