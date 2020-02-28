@@ -877,4 +877,6 @@ def refining_job(job):
         job['company_info_id']=job.get('company_info_id').split('_')[0]
         #spliting infoid
     job['scrapped_date']=str(datetime.datetime.now())
+    if job.get('country_type')=="IN" and job.get('job_type')!=None:
+        job['job_type']=job.get('job_type').replace('Entry-Level',"Fresher")
     return {'type':type,'job':job}
