@@ -915,7 +915,9 @@ class Instructions():
                         child_tag.decompose()
                     li_tag.string=text
             self.html_data[key]=str(soup)        
-        return self.html_data    
+        return self.html_data 
+    
+
 class InstructionsForAll():
     def __init__(self,job):
         self.html_data=job
@@ -1000,7 +1002,7 @@ class InstructionsForAll():
                                     tag.decompose()
                                 new_soup=BeautifulSoup(new_string,"html.parser")
                                 x.insert(1,new_soup)
-                            if ul_li_tags.get('started_key'):
+                            if ul_li_tags.get('started_key'):    
                                 for started_key in ul_li_tags.get('started_key'):
                                     if x.getText().strip().startswith(started_key):
                                         if len(x.findChildren())==0:
@@ -1061,6 +1063,13 @@ class InstructionsForAll():
                                     tag.name='p'
                                     new_soup=BeautifulSoup("<b>{}</b>".format(text),"html.parser")
                                     tag.insert(0,new_soup)
+                    if ul_li_tags.get('break_replcing_in_ul')==True:
+                        for tag in soup.findAll():                
+                            text=str(tag).replace(' ','')
+                            if '<ul' in text or '<li' in text:
+                                if tag.findNext()!=None and tag.findNext().name=='br' :
+                                    tag.findNext().decompose()
+
                 if soup!=None:                               
                     self.html_data[key_h]=str(soup)
         if apply_link!=None and self.html_data.get('job_id')!=None:

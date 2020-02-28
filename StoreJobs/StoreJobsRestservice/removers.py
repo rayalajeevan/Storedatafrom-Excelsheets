@@ -617,7 +617,6 @@ def detect_experince(data,type="html"):
         split_data=(x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data)
         split_data=list((y for x in split_data for y in x.split()))
     else:
-        print(data,"ksjfkjsgkjsgfkjsvhkbfs")
         data=data+" experience"
         split_data=[x.lower().replace(',','').replace('.','').replace(':','').replace(';','') for x in data.split() if x.strip()!='']
     keywords=('years','year')
@@ -791,11 +790,11 @@ def refining_job(job):
     #validateing column names
 
     for column_name in ['job_title','company_info_id','company_name','job_location','apply_link']:
-        if job.get(column_name)==None or str(job.get(column_name))=='None':
+        if job.get(column_name)==None or str(job.get(column_name)).strip()=='None':
             return {'error':{'column_name_error':'{} column name is missing'.format(column_name)}}
         elif job.get(column_name)=='':
-            return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}
-    if job.get('job_description')==None and job.get('job_roles_responsibilities')==None and job.get('qualifications')==None and job.get('job_requirements')==None:
+            return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}        
+    if (job.get('job_description')==None or str(job.get('job_description')).strip()=='None') and (job.get('job_roles_responsibilities')==None or str(job.get('job_roles_responsibilities')).strip()=='None' ) and (job.get('qualifications')==None or str(job.get('qualifications')).strip()=='None' ) and (job.get('job_requirements')==None or str(job.get('job_requirements')).strip()=='None'):
         return {'error':{'column_name_error':"['job_description','job_roles_responsibilities','qualifications','job_requirements'] atleast one of the column must exist "}}
     #setting the posted date in database information
 
@@ -875,6 +874,4 @@ def refining_job(job):
         else:
             job['apply_link']=job.get('apply_link')+"&job="+str(job.get('job_id'))
     job['scrapped_date']=str(datetime.datetime.now())
-    if '_' in job.get('company_info_id'):
-        job['company_info_id']=job.get('company_info_id').split('_')[0]
     return {'type':type,'job':job}
