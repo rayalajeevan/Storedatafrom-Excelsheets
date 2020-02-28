@@ -127,6 +127,15 @@ def get_location_from_googleApi(location):
             if location_data.get('totalResultsCount')!=0 or location_data.get('totalResultsCount')!=None:
                 if len(location_data['geonames'])!=0:
                     state_code=location_data['geonames'][0].get('adminCode1')
+                    try:
+                        state_code=int(state_code)
+                        if location_data['geonames'][0].get('adminCodes1')!=None:
+                            state_code1=location_data['geonames'][0].get('adminCodes1')
+                            if 'dict' in str(type(state_code1)):
+                                if len(state_code1)>0:
+                                    state_code=state_code1.values()[0]
+                    except:
+                        pass    
                     city=location_data['geonames'][0].get('name')
                     if city=='Bengaluru':
                         city='Bangalore'
@@ -350,24 +359,7 @@ def detect_job_type(job_type,job):
                     break
 
         return detected_job_type
-    else:
-        detected_job_type=None
-        split_data=[x for x in str(job).split(',') if x!='' ]
-        matched_list=list()
-        for x  in range(len(split_data)):
-            for  y in [item  for obj in job_type_items[0:5:] for items in obj.values() for item in items]:
-                if y in split_data[x]:
-                    for not_item in NegtiveMatches:
-                       if not_item not in split_data[x].split(y)[0][-20::]:
-                           matched_list.append(y)
-                           break
-        for x in matched_list:
-            for obj in job_type_items[0:5]:
-                for key,values in obj.items():
-                    if x in values:
-                        detected_job_type=key
-                        break
-        return detected_job_type
+    
 
 
 
@@ -877,6 +869,4 @@ def refining_job(job):
         job['company_info_id']=job.get('company_info_id').split('_')[0]
         #spliting infoid
     job['scrapped_date']=str(datetime.datetime.now())
-    if job.get('country_type')=="IN" and job.get('job_type')!=None:
-        job['job_type']=job.get('job_type').replace('Entry-Level',"Fresher")
     return {'type':type,'job':job}
