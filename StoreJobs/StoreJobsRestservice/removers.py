@@ -133,7 +133,7 @@ def get_location_from_googleApi(location):
                             state_code1=location_data['geonames'][0].get('adminCodes1')
                             if 'dict' in str(type(state_code1)):
                                 if len(state_code1)>0:
-                                    state_code=state_code1.values()[0]
+                                    state_code=tuple(state_code1.values())[0]
                     except:
                         pass    
                     city=location_data['geonames'][0].get('name')
@@ -683,7 +683,9 @@ def detect_experince(data,type="html"):
                             indexer=indexer-1
                             index.append(x)
                             continue
-                        exp_list.append(exp)
+                         else:
+                            exp_list.append(exp)
+                            break
                 if exp==None:
                     for key,value in year_dict.items():
                         if value in string.split():
@@ -865,6 +867,25 @@ def refining_job(job):
             job['apply_link']=job.get('apply_link')+"?job="+str(job.get('job_id'))
         else:
             job['apply_link']=job.get('apply_link')+"&job="+str(job.get('job_id'))
+     if job.get('job_type')!=None and 'intern' in job.get('job_type').lower()  and job.get('experience')!=None:        
+        if '-' in job.get('experience'):
+            max1=max(job.get('experience').replace('year(s)','').split('-'))
+            job['experience']="0-"+str(max1).strip()+" year(s)"
+            job['experience_level']=json.dumps({"experienceLevels": ["Entry-Level"]})
+        else:
+            try:
+                max1=int(job.get('experience').replace('year(s)','').strip())
+                max1="0-"+max1+" year(s)"
+                job['experience']=max1
+                job['experience_level']=json.dumps({"experienceLevels": ["Entry-Level"]})
+            except:
+                pass    
+    if job.get('country_type').lower()=="in"  and job.get('job_type')!=None:
+        job['job_type']=job.get('job_type').replace('Entry-Level',"Fresher") 
+    if job.get('country_type').lower()=="in"  and job.get('experience_level')!=None:
+        job['experience_level']=job.get('experience_level').replace('Entry-Level',"Fresher")            
+    if ''    
+
     if '_' in job.get('company_info_id'):
         job['company_info_id']=job.get('company_info_id').split('_')[0]
         #spliting infoid
