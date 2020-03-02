@@ -683,7 +683,7 @@ def detect_experince(data,type="html"):
                             indexer=indexer-1
                             index.append(x)
                             continue
-                         else:
+                        else:
                             exp_list.append(exp)
                             break
                 if exp==None:
@@ -867,7 +867,7 @@ def refining_job(job):
             job['apply_link']=job.get('apply_link')+"?job="+str(job.get('job_id'))
         else:
             job['apply_link']=job.get('apply_link')+"&job="+str(job.get('job_id'))
-     if job.get('job_type')!=None and 'intern' in job.get('job_type').lower()  and job.get('experience')!=None:        
+    if job.get('job_type')!=None and 'intern' in job.get('job_type').lower()  and job.get('experience')!=None:        
         if '-' in job.get('experience'):
             max1=max(job.get('experience').replace('year(s)','').split('-'))
             job['experience']="0-"+str(max1).strip()+" year(s)"
@@ -884,8 +884,6 @@ def refining_job(job):
         job['job_type']=job.get('job_type').replace('Entry-Level',"Fresher") 
     if job.get('country_type').lower()=="in"  and job.get('experience_level')!=None:
         job['experience_level']=job.get('experience_level').replace('Entry-Level',"Fresher")            
-    if ''    
-
     if '_' in job.get('company_info_id'):
         job['company_info_id']=job.get('company_info_id').split('_')[0]
         #spliting infoid
