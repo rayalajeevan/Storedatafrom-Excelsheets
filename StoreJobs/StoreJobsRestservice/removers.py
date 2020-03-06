@@ -662,13 +662,13 @@ def detect_experince(data,type="html"):
                     index.append(x)
                     continue    
             if enabled==True:
-                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
+                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+|\d+\.\d+-\d+|\d+\.\d+ - \d+')
                 search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
                     exp_list.append(exp)
                 else:    
-                    expression=re.compile(r'\d+ - \d+|\d+ to \d+|\d+to\d+|\d+to \d+')
+                    expression=re.compile(r'\d+ - \d+|\d+ to \d+|\d+to\d+|\d+to \d+|\d+\.\d+to\d+|\d+\.\d+ to \d+')
                     search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
@@ -880,11 +880,11 @@ def refining_job(job):
                 job['experience_level']=json.dumps({"experienceLevels": ["Entry-Level"]})
             except:
                 pass    
-    if job.get('country_type').lower()=="in"  and job.get('job_type')!=None:
+    if str(job.get('country_type')).lower()=="in"  and str(job.get('job_type'))!="None":
         job['job_type']=job.get('job_type').replace('Entry-Level',"Fresher") 
-    if job.get('country_type').lower()=="in"  and job.get('experience_level')!=None:
+    if str(job.get('country_type')).lower()=="in"  and str(job.get('experience_level')).strip()!="None":
         job['experience_level']=job.get('experience_level').replace('Entry-Level',"Fresher")            
-    if '_' in job.get('company_info_id'):
+    if '_' in str(job.get('company_info_id')):
         job['company_info_id']=job.get('company_info_id').split('_')[0]
         #spliting infoid
     job['scrapped_date']=str(datetime.datetime.now())
