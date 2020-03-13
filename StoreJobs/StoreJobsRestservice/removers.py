@@ -146,7 +146,7 @@ def get_location_from_googleApi(location):
             else:
                 return {'location':0}
         except Exception as exc:
-            print("get_location_from_googleApi got error so sleeping 20 secs",Log.EXCEPTION.value)
+            print("get_location_from_googleApi got error so sleeping 20 secs")
             time.sleep(20)
             return get_location_from_googleApi(location)
     else:
@@ -662,8 +662,13 @@ def detect_experince(data,type="html"):
                     index.append(x)
                     continue    
             if enabled==True:
-                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+|\d+\.\d+-\d+|\d+\.\d+ - \d+')
+                expression=re.compile(r'\d+\.\d+ - \d+|\d+\.\d+-\d+')
                 search=re.search(expression,string)
+                if search!=None:
+                    print(search.group())
+                else:    
+                    expression=re.compile(r'\d+\.\d+ - \d+|\d+\.\d+-\d+|\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
+                    search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
                     exp_list.append(exp)
@@ -711,10 +716,30 @@ def detect_experince(data,type="html"):
             else:
                 if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
                     exp=x
+    if '-' in str(exp):
+        minum=str(exp).split('-')[0].strip()
+        maxum=str(exp).split('-')[1].strip()
+        if len(minum)>1:
+            if str(minum[0]+"."+minum[1]) in data:
+                minum=minum[0]+"."+minum[1]
+        if len(maxum)>1:
+            if str(maxum[0]+"."+maxum[1]) in data:
+                maxum=maxum[0]+"."+maxum[1]
+        exp=minum+" - "+maxum        
+                
+    else:
+        minum=exp
+        if len(minum)>1:
+            if str(minum[0]+"."+minum[1]) in data:
+                minum=minum[0]+"."+minum[1]
+            exp=minum  
     return str(exp)+" year(s)"
+
+    
 def refining_job(job):
     # removing Null values
     job_data={}
+    
     for job_key,job_value in job.items():
         if job_value!=None and str(job_value).strip().lower()!='null' and str(job_value).strip()!='':
             job_data[job_key]=job_value
@@ -722,9 +747,10 @@ def refining_job(job):
 
     job=dict([(k.lower(),str(v).strip()) for k,v in job.items() ])#converting keys to lowercase
     
-
+    
     #refineColumns
     job=refineColumns(job)
+    
     back_up_fields={"job_description":"org_job_description","job_roles_responsibilities":"org_job_roles_responsibilities","qualifications":"org_qualifications"}
     for key,value in back_up_fields.items():
         if job.get(key)!=None:
@@ -733,7 +759,7 @@ def refining_job(job):
     for key,value in job.items():
         if value!=None and key not in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
             job[key]=string_error(value,'not_desc')
-
+    
     #detect Job type
 
     string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications','job_requirements')and value!=None )
@@ -743,6 +769,7 @@ def refining_job(job):
     if type_job!=None:
         type_job1=json.dumps({"jobType":[type_job,]})
     job['job_type']=type_job1
+    
     #detect Experince
     split_data=list()
     for tag in soup.find_all():
@@ -759,6 +786,7 @@ def refining_job(job):
     job['experience_level']=exp_level
     #get location with postal_code
     pin=None
+    
     if job.get('pin')!=None:
         job['pin']=str(job.get('pin'))
         if len(job.get('pin'))<5:
@@ -803,7 +831,7 @@ def refining_job(job):
         return {'error':{'position was closed':'Postion has been closed '}}
 
     #Beautify the Data-->removing unwanted data from particular company
-
+    
     Beautify_objects=BeautifyCompanyJobs.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
         for obj in Beautify_objects:
@@ -822,9 +850,9 @@ def refining_job(job):
 
     #identifying the internship or jobs
     type=None
+    
     for value in (job['job_title'],type_job,job.get('functional_area')):
         value=str(value).strip().replace('-',' ')
-
         value=value.replace(',',' ').replace('/',' ').replace(":",' ').replace(';',' ').replace('(',' ').replace(')',' ').replace('@',' ')
         for identifiers in ('intern','intern.','intern,','intern ','internships-','internships','internships.','internships,','internships ','internship-','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','fellowships','fellowships.','fellowships,','fellowships ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ','aperentships','aperentships.','aperentships,','aperentships '):
             if identifiers in [str(x).lower().strip() for x in value.split()] :
