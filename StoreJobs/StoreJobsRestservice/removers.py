@@ -9,8 +9,11 @@ import time
 import copy as cp
 import json
 import requests
-from StoreJobsRestservice.models import Locations,BeautifyCompanyJobs
+from django.conf import settings
+from StoreJobsRestservice.models import Locations,JobsBeautification,BeautifyTemplateCodes
 from langdetect import detect,detect_langs
+from project_utils import DescriptionException
+from automation_task.automation_utils import AutomationUtils
 from StoreJobsRestservice.instructions import Instructions,InstructionsForAll
 def locationIdentifier(org_location):
     job_location=None
@@ -127,15 +130,6 @@ def get_location_from_googleApi(location):
             if location_data.get('totalResultsCount')!=0 or location_data.get('totalResultsCount')!=None:
                 if len(location_data['geonames'])!=0:
                     state_code=location_data['geonames'][0].get('adminCode1')
-                    try:
-                        state_code=int(state_code)
-                        if location_data['geonames'][0].get('adminCodes1')!=None:
-                            state_code1=location_data['geonames'][0].get('adminCodes1')
-                            if 'dict' in str(type(state_code1)):
-                                if len(state_code1)>0:
-                                    state_code=tuple(state_code1.values())[0]
-                    except:
-                        pass    
                     city=location_data['geonames'][0].get('name')
                     if city=='Bengaluru':
                         city='Bangalore'
@@ -146,7 +140,7 @@ def get_location_from_googleApi(location):
             else:
                 return {'location':0}
         except Exception as exc:
-            print("get_location_from_googleApi got error so sleeping 20 secs")
+            print("get_location_from_googleApi got error so sleeping 20 secs",Log.EXCEPTION.value)
             time.sleep(20)
             return get_location_from_googleApi(location)
     else:
@@ -359,7 +353,24 @@ def detect_job_type(job_type,job):
                     break
 
         return detected_job_type
-    
+    else:
+        detected_job_type=None
+        split_data=[x for x in str(job).split(',') if x!='' ]
+        matched_list=list()
+        for x  in range(len(split_data)):
+            for  y in [item  for obj in job_type_items[0:5:] for items in obj.values() for item in items]:
+                if y in split_data[x]:
+                    for not_item in NegtiveMatches:
+                       if not_item not in split_data[x].split(y)[0][-20::]:
+                           matched_list.append(y)
+                           break
+        for x in matched_list:
+            for obj in job_type_items[0:5]:
+                for key,values in obj.items():
+                    if x in values:
+                        detected_job_type=key
+                        break
+        return detected_job_type
 
 
 
@@ -457,12 +468,6 @@ def HtmlParser(data,job={}):
         if len(tag.findChildren('li'))>0 and len(tag.findChildren('li'))<=1:
             if tag.findChildren('li')[0].getText().strip()=='•':
                 tag.decompose()
-    for tag in soup.findAll('ul'):          
-        if tag.findChildren('ul')!=None and len(tag.findChildren('ul'))!=0:
-            tag.name='p'
-    for tag in soup.findAll('li'):          
-        if tag.findChildren('ul')!=None and len(tag.findChildren('ul'))!=0:
-            tag.name='p'        
     datarefineer=('primary_location',
                 'recruiter_name',
                 'job_id')
@@ -662,18 +667,13 @@ def detect_experince(data,type="html"):
                     index.append(x)
                     continue    
             if enabled==True:
-                expression=re.compile(r'\d+\.\d+ - \d+|\d+\.\d+-\d+')
+                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
                 search=re.search(expression,string)
-                if search!=None:
-                    print(search.group())
-                else:    
-                    expression=re.compile(r'\d+\.\d+ - \d+|\d+\.\d+-\d+|\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
-                    search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
                     exp_list.append(exp)
                 else:    
-                    expression=re.compile(r'\d+ - \d+|\d+ to \d+|\d+to\d+|\d+to \d+|\d+\.\d+to\d+|\d+\.\d+ to \d+')
+                    expression=re.compile(r'\d+ - \d+|\d+ to \d+|\d+to\d+|\d+to \d+')
                     search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
@@ -688,9 +688,7 @@ def detect_experince(data,type="html"):
                             indexer=indexer-1
                             index.append(x)
                             continue
-                        else:
-                            exp_list.append(exp)
-                            break
+                        exp_list.append(exp)
                 if exp==None:
                     for key,value in year_dict.items():
                         if value in string.split():
@@ -716,30 +714,19 @@ def detect_experince(data,type="html"):
             else:
                 if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
                     exp=x
-    if '-' in str(exp):
-        minum=str(exp).split('-')[0].strip()
-        maxum=str(exp).split('-')[1].strip()
-        if len(minum)>1:
-            if str(minum[0]+"."+minum[1]) in data:
-                minum=minum[0]+"."+minum[1]
-        if len(maxum)>1:
-            if str(maxum[0]+"."+maxum[1]) in data:
-                maxum=maxum[0]+"."+maxum[1]
-        exp=minum+" - "+maxum        
-                
-    else:
-        minum=exp
-        if len(minum)>1:
-            if str(minum[0]+"."+minum[1]) in data:
-                minum=minum[0]+"."+minum[1]
-            exp=minum  
     return str(exp)+" year(s)"
-
-    
 def refining_job(job):
+    #removing job description leass than admin defined charcters
+    job_description=str()
+    for field in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
+        if job.get(field)!=None and str(job.get(field)).strip()!='None' and str(job.get(field)).strip()!='':
+            job_description=job_description.strip()+job.get(field).strip()
+    soup=BeautifulSoup(job_description,"html.parser")
+    desc_len=AutomationUtils.get_configuration(settings.JOB_DESCRIPTION_LESS_THAN_TEXT)
+    if len(str(soup.getText()).strip())<= int(desc_len):
+        raise DescriptionException("this job doesn't having more than {}".format(desc_len))
     # removing Null values
     job_data={}
-    
     for job_key,job_value in job.items():
         if job_value!=None and str(job_value).strip().lower()!='null' and str(job_value).strip()!='':
             job_data[job_key]=job_value
@@ -747,10 +734,9 @@ def refining_job(job):
 
     job=dict([(k.lower(),str(v).strip()) for k,v in job.items() ])#converting keys to lowercase
     
-    
+
     #refineColumns
     job=refineColumns(job)
-    
     back_up_fields={"job_description":"org_job_description","job_roles_responsibilities":"org_job_roles_responsibilities","qualifications":"org_qualifications"}
     for key,value in back_up_fields.items():
         if job.get(key)!=None:
@@ -759,7 +745,8 @@ def refining_job(job):
     for key,value in job.items():
         if value!=None and key not in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
             job[key]=string_error(value,'not_desc')
-    
+
+
     #detect Job type
 
     string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications','job_requirements')and value!=None )
@@ -769,7 +756,6 @@ def refining_job(job):
     if type_job!=None:
         type_job1=json.dumps({"jobType":[type_job,]})
     job['job_type']=type_job1
-    
     #detect Experince
     split_data=list()
     for tag in soup.find_all():
@@ -786,7 +772,6 @@ def refining_job(job):
     job['experience_level']=exp_level
     #get location with postal_code
     pin=None
-    
     if job.get('pin')!=None:
         job['pin']=str(job.get('pin'))
         if len(job.get('pin'))<5:
@@ -812,11 +797,11 @@ def refining_job(job):
     #validateing column names
 
     for column_name in ['job_title','company_info_id','company_name','job_location','apply_link']:
-        if job.get(column_name)==None or str(job.get(column_name)).strip()=='None':
+        if job.get(column_name)==None or str(job.get(column_name))=='None':
             return {'error':{'column_name_error':'{} column name is missing'.format(column_name)}}
         elif job.get(column_name)=='':
-            return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}        
-    if (job.get('job_description')==None or str(job.get('job_description')).strip()=='None') and (job.get('job_roles_responsibilities')==None or str(job.get('job_roles_responsibilities')).strip()=='None' ) and (job.get('qualifications')==None or str(job.get('qualifications')).strip()=='None' ) and (job.get('job_requirements')==None or str(job.get('job_requirements')).strip()=='None'):
+            return {'error':{'column_data_error':'{} column name exist but data is missing'.format(column_name)}}
+    if job.get('job_description')==None and job.get('job_roles_responsibilities')==None and job.get('qualifications')==None and job.get('job_requirements')==None:
         return {'error':{'column_name_error':"['job_description','job_roles_responsibilities','qualifications','job_requirements'] atleast one of the column must exist "}}
     #setting the posted date in database information
 
@@ -831,16 +816,16 @@ def refining_job(job):
         return {'error':{'position was closed':'Postion has been closed '}}
 
     #Beautify the Data-->removing unwanted data from particular company
-    
-    Beautify_objects=BeautifyCompanyJobs.objects.filter(company_info_id=job['company_info_id'])
+
+    Beautify_objects=JobsBeautification.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
         for obj in Beautify_objects:
-            if obj.attrs==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None and obj.ul_li_tags==None:
-                job =Instructions(obj.instruction_id,job).method_caller()
+            if obj.html_attribute==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None and obj.ul_li_tags==None:
+                job =Instructions(obj.beautify_template.template_code ,job).method_caller()    
             else:
                 query={}
-                for column_name in ('html_tags','attrs','keywords','apply_link',"ul_li_tags"):
-                    if (column_name=='attrs' or column_name=='ul_li_tags') and obj.__dict__.get(column_name)!=None:
+                for column_name in ('html_tags','html_attribute','keywords','apply_link',"ul_li_tags"):
+                    if (column_name=='html_attribute' or column_name=='ul_li_tags') and obj.__dict__.get(column_name)!=None:
                         query[column_name]=json.loads(obj.__dict__.get(column_name))
                         continue
                     if obj.__dict__.get(column_name)!=None:
@@ -850,9 +835,9 @@ def refining_job(job):
 
     #identifying the internship or jobs
     type=None
-    
     for value in (job['job_title'],type_job,job.get('functional_area')):
         value=str(value).strip().replace('-',' ')
+
         value=value.replace(',',' ').replace('/',' ').replace(":",' ').replace(';',' ').replace('(',' ').replace(')',' ').replace('@',' ')
         for identifiers in ('intern','intern.','intern,','intern ','internships-','internships','internships.','internships,','internships ','internship-','internship','internship.','internship,','internship ','fellowship','fellowship.','fellowship,','fellowship ','fellowships','fellowships.','fellowships,','fellowships ','aperentship','aperentship.','aperentship,','aperentship ','trainee','trainee.','trainee,','trainee ','apprenticeship','apprenticeship.','apprenticeship,','apprenticeship ','aperentships','aperentships.','aperentships,','aperentships '):
             if identifiers in [str(x).lower().strip() for x in value.split()] :
@@ -895,25 +880,5 @@ def refining_job(job):
             job['apply_link']=job.get('apply_link')+"?job="+str(job.get('job_id'))
         else:
             job['apply_link']=job.get('apply_link')+"&job="+str(job.get('job_id'))
-    if job.get('job_type')!=None and 'intern' in job.get('job_type').lower()  and job.get('experience')!=None:        
-        if '-' in job.get('experience'):
-            max1=max(job.get('experience').replace('year(s)','').split('-'))
-            job['experience']="0-"+str(max1).strip()+" year(s)"
-            job['experience_level']=json.dumps({"experienceLevels": ["Entry-Level"]})
-        else:
-            try:
-                max1=int(job.get('experience').replace('year(s)','').strip())
-                max1="0-"+max1+" year(s)"
-                job['experience']=max1
-                job['experience_level']=json.dumps({"experienceLevels": ["Entry-Level"]})
-            except:
-                pass    
-    if str(job.get('country_type')).lower()=="in"  and str(job.get('job_type'))!="None":
-        job['job_type']=job.get('job_type').replace('Entry-Level',"Fresher") 
-    if str(job.get('country_type')).lower()=="in"  and str(job.get('experience_level')).strip()!="None":
-        job['experience_level']=job.get('experience_level').replace('Entry-Level',"Fresher")            
-    if '_' in str(job.get('company_info_id')):
-        job['company_info_id']=job.get('company_info_id').split('_')[0]
-        #spliting infoid
     job['scrapped_date']=str(datetime.datetime.now())
     return {'type':type,'job':job}
