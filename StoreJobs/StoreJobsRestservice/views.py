@@ -89,6 +89,7 @@ class StoreJobsdata(APIView):
                 else:
                     print(serializer.errors)
                     exception_count+=1
+                    print(type(data.get('job').get('job_description')))
                     response_list.append({"status":"Failed...","desciption":str(serializer.errors)+" serializer error",'job_title':scrapped_data.get('job_title')})
                     continue
             except Exception as exception:
@@ -161,7 +162,6 @@ def showjob(request,*args,**kwrgs):
     optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
     for k,v in job.items():
         if k!='job_title' and k!='company_info_id':
-            print(optimizer.get(k),k)
             job[k]=optimizer.get(k)(v)
     data="<html>"
     for k,v in job.items():

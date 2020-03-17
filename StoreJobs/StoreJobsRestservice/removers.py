@@ -487,7 +487,7 @@ def HtmlParser(data,job={}):
         if x.getText().strip()=='':
             x.decompose()
     soup=replacer(str(soup))
-    return remving_extraSpacesHtmlContent(BeautifyJobs(str(soup)))
+    return str(remving_extraSpacesHtmlContent(BeautifyJobs(str(soup))))
 def refineColumns(job):
     new_jobData={}
     for key,value in job.items():
@@ -700,6 +700,23 @@ def detect_experince(data,type="html"):
             else:
                 if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
                     exp=x
+    if '-' in str(exp):
+        minum=str(exp).split('-')[0].strip()
+        maxum=str(exp).split('-')[1].strip()
+        if len(minum)>1:
+            if str(minum[0]+"."+minum[1]) in data:
+                minum=minum[0]+"."+minum[1]
+        if len(maxum)>1:
+            if str(maxum[0]+"."+maxum[1]) in data:
+                maxum=maxum[0]+"."+maxum[1]
+        exp=minum+" - "+maxum        
+                
+    else:
+        minum=exp
+        if len(minum)>1:
+            if str(minum[0]+"."+minum[1]) in data:
+                minum=minum[0]+"."+minum[1]
+            exp=minum                 
     return str(exp)+" year(s)"
 def refining_job(job):
     #removing job description leass than admin defined charcters
