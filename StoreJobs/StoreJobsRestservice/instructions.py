@@ -5,7 +5,18 @@ from fuzzywuzzy import fuzz
 import re
 import json
 from copy import deepcopy
-
+def break_replacer(data):
+    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;","<br>&nbsp; ","<br>&nbsp; ","<br>\n<br>")
+    for x in break_tags:
+        tag=''
+        a=10
+        for z in range(10):
+            for y in range(a):
+                tag=tag+x
+            a-=1
+            data=data.replace(tag,"<br>")
+            tag=""        
+    return data    
 class Instructions():
     """
       Instructions for particular company
@@ -52,6 +63,7 @@ class Instructions():
         38:self.rule_no_38,
         39:self.rule_no_39,
         40:self.rule_no_40,
+        41:self.rule_no_41,
         }
         self.instruction_id=instruction_id
         self.html_data=html_data
@@ -126,7 +138,7 @@ class Instructions():
                         html_dct_val=self.html_data.get(key).split('-')
                         html_dct_val=html_dct_val[3]
             self.html_data[key]=html_dct_val
-        return self.html_data
+        return self.html_data    
     def rule_no_4(self):
         """
         companies Under This Function--
@@ -916,6 +928,19 @@ class Instructions():
                     li_tag.string=text
             self.html_data[key]=str(soup)        
         return self.html_data 
+    def rule_no_41(self):
+        """
+        breaks replacing
+        """
+        for key in ['job_description',"qualifications", 'job_requirements',"job_roles_responsibilities"]:
+            html=self.html_data.get(key)
+            if html!=None:
+                soup=None
+                for x in range(10):
+                    soup=break_replacer(str(html))
+                self.html_data[key]=soup 
+        return self.html_data           
+
     
 
 class InstructionsForAll():

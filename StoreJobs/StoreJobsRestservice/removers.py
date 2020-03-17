@@ -395,48 +395,35 @@ def remving_extraSpacesHtmlContent(data):
                      'template','svg','textarea','time','u','tt','var','video','wbr',)
     soup=BeautifulSoup(data,'html.parser')
     NegtiveTags=('br','i')
-    for x in soup.findAll():
-        if x.name not in NegtiveTags:
-            if len(x.getText().strip())==0:
-                if x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None:
-                    if len(x.find_next_sibling(x.nextSibling.name).getText().strip())==0:
-                        x.find_next_sibling(x.nextSibling.name).decompose()
-                if  x.previous_element!=None   and x.find_previous_sibling(x.previous_element.name)!=None :
-                    if  x.find_previous_sibling(x.previous_element.name).name=='br' and x.find_previous_sibling(x.previous_element.name).parent.name=='p':
-                        continue
-                    if len(x.find_previous_sibling(x.previous_element.name).get_text().strip())==0:
-                        x.find_previous_sibling(x.previous_element.name).decompose()
-    for x in soup.findAll('br'):
-        if x.parent!=None and x.parent.name!='p' and len(x.parent.getText())!=0:
-            if x.nextSibling!=None and x.nextSibling.name=='br':
-                if x.find_next_sibling(x.nextSibling.name)!=None:
-                    x.find_next_sibling(x.nextSibling.name).decompose()
-            if x.previous_element!=None and x.previous_element.name=='br':
-                if x.find_previous_sibling(x.previous_element.name)!=None:
-                    x.find_previous_sibling(x.previous_element.name).decompose()
-            if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
-                if  len(x.find_parent('p').getText().strip())!=0:
-                    x.find_parent('p').decompose()
+    # for x in soup.findAll():
+    #     if x.name not in NegtiveTags:
+    #         if len(x.getText().strip())==0:
+    #             if x.nextSibling!=None and x.find_next_sibling(x.nextSibling.name)!=None:
+    #                 if len(x.find_next_sibling(x.nextSibling.name).getText().strip())==0:
+    #                     x.find_next_sibling(x.nextSibling.name).decompose()
+    #             if  x.previous_element!=None   and x.find_previous_sibling(x.previous_element.name)!=None :
+    #                 if  x.find_previous_sibling(x.previous_element.name).name=='br' and x.find_previous_sibling(x.previous_element.name).parent.name=='p':
+    #                     continue
+    #                 if len(x.find_previous_sibling(x.previous_element.name).get_text().strip())==0:
+    #                     x.find_previous_sibling(x.previous_element.name).decompose()
+    # for x in soup.findAll('br'):
+    #     if x.parent!=None and x.parent.name!='p' and len(x.parent.getText())!=0:
+    #         if x.nextSibling!=None and x.nextSibling.name=='br':
+    #             if x.find_next_sibling(x.nextSibling.name)!=None:
+    #                 x.find_next_sibling(x.nextSibling.name).decompose()
+    #         if x.previous_element!=None and x.previous_element.name=='br':
+    #             if x.find_previous_sibling(x.previous_element.name)!=None:
+    #                 x.find_previous_sibling(x.previous_element.name).decompose()
+    #         if x.find_parent('p')!=None and len(x.find_parent('p').getText().strip())==0:
+    #             if  len(x.find_parent('p').getText().strip())!=0:
+    #                 x.find_parent('p').decompose()
     for x in soup.findAll('li'):
         for y in x.findChildren():
             if y.name=='br':
                 y.decompose()
-    for x in range(10):
-        soup=break_replacer(str(soup))  
     return soup    
 
-def break_replacer(data):
-    break_tags=('<br>',"<br/>","<br\>"," <br>"," <br/>"," <br\>","<br> ","<br/> ","<br\> ","  <br>","  <br/>","  <br\>","<br>&nbsp;<br>","<br> &nbsp; <br>","<br>&nbsp;","<br> &nbsp;","<br>&nbsp; ","<br>&nbsp; ","<br>\n<br>")
-    for x in break_tags:
-        tag=''
-        a=10
-        for z in range(10):
-            for y in range(a):
-                tag=tag+x
-            a-=1
-            data=data.replace(tag,"<br>")
-            tag=""        
-    return data        
+    
             
         
 

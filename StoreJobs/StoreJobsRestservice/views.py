@@ -161,6 +161,7 @@ def showjob(request,*args,**kwrgs):
     optimizer={'job_description':HtmlParser,'posted_date':validatos,'job_location':locationIdentifier}
     for k,v in job.items():
         if k!='job_title' and k!='company_info_id':
+            print(optimizer.get(k),k)
             job[k]=optimizer.get(k)(v)
     data="<html>"
     for k,v in job.items():
