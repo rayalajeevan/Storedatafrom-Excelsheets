@@ -8,12 +8,11 @@ from fuzzywuzzy import fuzz
 import time
 import copy as cp
 import json
+import pytz
 import requests
 from django.conf import settings
-from StoreJobsRestservice.models import Locations,JobsBeautification,BeautifyTemplateCodes
+from StoreJobsRestservice.models import Locations,BeautifyCompanyJobs
 from langdetect import detect,detect_langs
-from project_utils import DescriptionException
-from automation_task.automation_utils import AutomationUtils
 from StoreJobsRestservice.instructions import Instructions,InstructionsForAll
 def locationIdentifier(org_location):
     job_location=None
@@ -140,7 +139,7 @@ def get_location_from_googleApi(location):
             else:
                 return {'location':0}
         except Exception as exc:
-            print("get_location_from_googleApi got error so sleeping 20 secs",Log.EXCEPTION.value)
+            print("get_location_from_googleApi got error so sleeping 20 secs")
             time.sleep(20)
             return get_location_from_googleApi(location)
     else:
@@ -294,7 +293,7 @@ def regulardate(date=None):
         elif 'second ' in date.lower() or 'secs' in date.lower() or 'sec' in date.lower():
             date=datetime.datetime.now()-datetime.timedelta(seconds=int(value))
         elif 'seconds' in date.lower():
-            date=datetime.datetime.now()-datetime.timedelta(seconds=int(value))
+            date=datetime.datetime.now()-datetime.timedelta(seconds=int(value))       
     return date
 def validatos(date,*args,**kwrgs):
     datestr=None
@@ -667,7 +666,7 @@ def detect_experince(data,type="html"):
                     index.append(x)
                     continue    
             if enabled==True:
-                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+')
+                expression=re.compile(r'\d+-\d+|\d+- \d+|\d+ -\d+|\d+ ~ \d+|\d+\.\d+-\d+|\d+\.\d+ - \d+')
                 search=re.search(expression,string)
                 if search!=None:
                     exp=search.group()
@@ -746,7 +745,6 @@ def refining_job(job):
         if value!=None and key not in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
             job[key]=string_error(value,'not_desc')
 
-
     #detect Job type
 
     string=' '.join(value for key,value in job.items() if key  in ('job_description','job_roles_responsibilities','qualifications','job_requirements')and value!=None )
@@ -816,6 +814,7 @@ def refining_job(job):
         return {'error':{'position was closed':'Postion has been closed '}}
 
     #Beautify the Data-->removing unwanted data from particular company
+
 
     Beautify_objects=JobsBeautification.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
