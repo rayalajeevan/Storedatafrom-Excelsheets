@@ -700,23 +700,33 @@ def detect_experince(data,type="html"):
             else:
                 if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
                     exp=x
-    if '-' in str(exp):
+   if '-' in str(exp):
         minum=str(exp).split('-')[0].strip()
         maxum=str(exp).split('-')[1].strip()
         if len(minum)>1:
             if str(minum[0]+"."+minum[1]) in data:
                 minum=minum[0]+"."+minum[1]
+        if len(minum)!=0 and len(minum) <=1:
+            if '0.'+minum[0] in data:
+                minum='0.'+minum[0]
         if len(maxum)>1:
             if str(maxum[0]+"."+maxum[1]) in data:
                 maxum=maxum[0]+"."+maxum[1]
+        if len(maxum)!=0 and len(maxum) <=1:
+            if '0.'+maxum[0] in data:
+                maxum='0.'+maxum[0]        
+                
         exp=minum+" - "+maxum        
                 
     else:
-        minum=exp
+        minum=str(exp)
         if len(minum)>1:
             if str(minum[0]+"."+minum[1]) in data:
-                minum=minum[0]+"."+minum[1]
-            exp=minum                 
+                minum=minum[0]+"."+minum[1]  
+        if len(minum)!=0 and len(minum) <=1:
+            if '0.'+minum[0] in data:
+                minum='0.'+minum[0]
+        exp=str(minum).strip()            
     return str(exp)+" year(s)"
 def refining_job(job):
     #removing job description leass than admin defined charcters
