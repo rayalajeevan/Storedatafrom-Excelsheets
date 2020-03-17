@@ -721,7 +721,7 @@ def refining_job(job):
         if job.get(field)!=None and str(job.get(field)).strip()!='None' and str(job.get(field)).strip()!='':
             job_description=job_description.strip()+job.get(field).strip()
     soup=BeautifulSoup(job_description,"html.parser")
-    desc_len=AutomationUtils.get_configuration(settings.JOB_DESCRIPTION_LESS_THAN_TEXT)
+    desc_len=250
     if len(str(soup.getText()).strip())<= int(desc_len):
         raise DescriptionException("this job doesn't having more than {}".format(desc_len))
     # removing Null values
@@ -816,7 +816,7 @@ def refining_job(job):
     #Beautify the Data-->removing unwanted data from particular company
 
 
-    Beautify_objects=JobsBeautification.objects.filter(company_info_id=job['company_info_id'])
+    Beautify_objects=BeautifyCompanyJobs.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
         for obj in Beautify_objects:
             if obj.html_attribute==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None and obj.ul_li_tags==None:
