@@ -14,6 +14,8 @@ from django.conf import settings
 from StoreJobsRestservice.models import Locations,BeautifyCompanyJobs
 from langdetect import detect,detect_langs
 from StoreJobsRestservice.instructions import Instructions,InstructionsForAll
+class DescriptionException(Exception):
+    pass
 def locationIdentifier(org_location):
     job_location=None
     country_type=None
@@ -119,7 +121,7 @@ def get_location_from_googleApi(location):
     try:
         location_request=requests.get('http://api.geonames.org/searchJSON?q={location}&maxRows=1&username=optncpt'.format(location=location.replace('#','')))
     except Exception as e:
-        print("get_location_from_googleApi got Error So Sleeping for 20 secs")
+        print("get_location_from_googleApi got Error So Sleeping for 20 secs {}".format(location))
         time.sleep(20)
         print(str(e))
         return get_location_from_googleApi(location)
@@ -139,11 +141,11 @@ def get_location_from_googleApi(location):
             else:
                 return {'location':0}
         except Exception as exc:
-            print("get_location_from_googleApi got error so sleeping 20 secs")
+            print("get_location_from_googleApi got Error So Sleeping for 20 secs {}".format(location))
             time.sleep(20)
             return get_location_from_googleApi(location)
     else:
-        print("get_location_from_googleApi not got 200 status So Sleeping for 20 secs")
+        print("get_location_from_googleApi got Error So Sleeping for 20 secs {}".format(location))
         time.sleep(20)
         return get_location_from_googleApi(location)
 def get_postalCode_from_googleApi(location):
@@ -699,21 +701,21 @@ def detect_experince(data,type="html"):
                     exp=int(x)
             else:
                 if int(exp.replace(' ','').split('-')[1])<int(x.replace(' ','').split('-')[1]):
-                    exp=x
-   if '-' in str(exp):
+                    exp=x             
+    if '-' in str(exp):
         minum=str(exp).split('-')[0].strip()
         maxum=str(exp).split('-')[1].strip()
         if len(minum)>1:
-            if str(minum[0]+"."+minum[1]) in data:
+            if str(minum[0]+"."+minum[1]) in ''.join(data):
                 minum=minum[0]+"."+minum[1]
         if len(minum)!=0 and len(minum) <=1:
-            if '0.'+minum[0] in data:
+            if '0.'+minum[0] in ''.join(data):
                 minum='0.'+minum[0]
         if len(maxum)>1:
-            if str(maxum[0]+"."+maxum[1]) in data:
+            if str(maxum[0]+"."+maxum[1]) in ''.join(data):
                 maxum=maxum[0]+"."+maxum[1]
         if len(maxum)!=0 and len(maxum) <=1:
-            if '0.'+maxum[0] in data:
+            if '0.'+maxum[0] in ''.join(data):
                 maxum='0.'+maxum[0]        
                 
         exp=minum+" - "+maxum        
@@ -721,14 +723,22 @@ def detect_experince(data,type="html"):
     else:
         minum=str(exp)
         if len(minum)>1:
-            if str(minum[0]+"."+minum[1]) in data:
+            if str(minum[0]+"."+minum[1]) in ''.join(data):
                 minum=minum[0]+"."+minum[1]  
         if len(minum)!=0 and len(minum) <=1:
-            if '0.'+minum[0] in data:
+            if '0.'+minum[0] in ''.join(data):
                 minum='0.'+minum[0]
         exp=str(minum).strip()            
     return str(exp)+" year(s)"
 def refining_job(job):
+    if job.get('job_location')==None:
+        for column_name in ['city','state','country']:
+            if job.get(column_name)!=None and str(job.get(column_name))!='None'  and str(job.get(column_name)).lower()!='null':
+                if job.get('job_location')==None:
+                    job['job_location']=job.get(column_name)
+                else:
+                    job['job_location']=job['job_location']+" "+job.get(column_name)
+                del job[column_name]
     #removing job description leass than admin defined charcters
     job_description=str()
     for field in ('job_description','job_roles_responsibilities','qualifications','job_requirements'):
@@ -833,11 +843,11 @@ def refining_job(job):
     Beautify_objects=BeautifyCompanyJobs.objects.filter(company_info_id=job['company_info_id'])
     if len(Beautify_objects)!=0:
         for obj in Beautify_objects:
-            if obj.html_attribute==None and obj.keywords==None and obj.html_tags==None and obj.apply_link==None and obj.ul_li_tags==None:
-                job =Instructions(obj.beautify_template.template_code ,job).method_caller()    
+            if obj.attrs==None and obj.keywords==None and obj.html_tags==None and obj.ul_li_tags==None:
+                job =Instructions(obj.instruction_id,job).method_caller() 
             else:
                 query={}
-                for column_name in ('html_tags','html_attribute','keywords','apply_link',"ul_li_tags"):
+                for column_name in ('html_tags','attrs','keywords','ul_li_tags'):
                     if (column_name=='html_attribute' or column_name=='ul_li_tags') and obj.__dict__.get(column_name)!=None:
                         query[column_name]=json.loads(obj.__dict__.get(column_name))
                         continue
